@@ -1,0 +1,31 @@
+# Connect a host
+
+The live server speaks the MCP revision {{ v('mcp.revision') }} over streamable HTTP at
+{{ v('deploy.base_url') }}/mcp, read only, no token. Every block below is rendered from
+docs/connect.yaml, the one source the /connect page also reads.
+{% set c = data('docs/connect.yaml') %}
+{% for h in c['hosts'] %}
+
+## {{ h['name'] }}
+
+In {{ h['where'] }}:
+
+```{{ h['language'] }}
+{{ h['config'] }}```
+{% endfor %}
+
+## Protocol conformance
+
+Revision {{ v('mcp.revision') }}; {{ v('mcp.tools') }} tools, {{ v('mcp.output_schemas') }} with an
+output schema; conformance {{ v('mcp.conformance') }} over {{ v('mcp.transports') }}; an unsupported
+version gets error {{ v('mcp.unsupported_version_error') }}. results/conformance.json has the run.
+
+The registry entry is server.json, under the io.github namespace of the account. It is published
+by hand with a device code login; until then this page says it is not published.
+
+## What the platform engineer would push back on
+
+A public server with no token can be called by anyone, which is why it is read only, why each
+client is held to an hourly and a daily budget, and why every query has a row, time and size ceiling.
+
+{{ statement() }}

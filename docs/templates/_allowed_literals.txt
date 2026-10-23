@@ -1,0 +1,7 @@
+# Literals a template may type: names, not results.
+2026-07-28
+v0.1.0
+Apache 2.0
+CC BY 4.0
+mekala27-45
+SHA-256

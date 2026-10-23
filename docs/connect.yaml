@@ -1,0 +1,54 @@
+# One source for every host's configuration. docs/connect.md and the /connect page both render
+# from this file, so the two cannot drift. url is the live streamable HTTP endpoint; the stdio
+# command runs this repository's server from a clone.
+url: https://readback-mcp.vercel.app/mcp
+hosts:
+  - name: Claude Desktop, remote
+    where: Settings, Connectors, Add custom connector
+    language: text
+    config: |
+      Name: readback
+      URL: https://readback-mcp.vercel.app/mcp
+  - name: Claude Desktop, local over stdio
+    where: claude_desktop_config.json
+    language: json
+    config: |
+      {
+        "mcpServers": {
+          "readback": {
+            "command": "uv",
+            "args": ["run", "--directory", "/path/to/readback", "readback-mcp"]
+          }
+        }
+      }
+  - name: claude.ai
+    where: Settings, Connectors, Add custom connector
+    language: text
+    config: |
+      Name: readback
+      URL: https://readback-mcp.vercel.app/mcp
+  - name: Cursor
+    where: ~/.cursor/mcp.json
+    language: json
+    config: |
+      {
+        "mcpServers": {
+          "readback": { "url": "https://readback-mcp.vercel.app/mcp" }
+        }
+      }
+  - name: VS Code
+    where: .vscode/mcp.json
+    language: json
+    config: |
+      {
+        "servers": {
+          "readback": { "type": "http", "url": "https://readback-mcp.vercel.app/mcp" }
+        }
+      }
+  - name: Codex
+    where: ~/.codex/config.toml
+    language: toml
+    config: |
+      [mcp_servers.readback]
+      command = "uv"
+      args = ["run", "--directory", "/path/to/readback", "readback-mcp"]

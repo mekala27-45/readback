@@ -1,0 +1,90 @@
+# Results
+
+Every figure here is rendered from results/manifest.json by the claim gate; the gate re-renders
+this file in CI and fails on any difference. Built {{ manifest.as_of }}.
+
+## The definition of done
+
+{{ done() }} of the eighteen items are done.
+
+| Item | Status | Evidence |
+|---:|---|---|
+{% for row in rows('checklist') %}
+| {{ row[0] }} | {{ row[1] }} | {{ row[2] }} |
+{% endfor %}
+
+Stretch items (the apps extension, the agent card, the browser floor, the fourth warehouse, the
+editor manifests, the container hardening): not done, and not counted toward the list.
+
+## The warehouses
+
+{{ table('data.warehouses') }}
+
+## The golden set
+
+{{ table('golden.families') }}
+
+{{ v('golden.first_ten_agree') }} of the ten development answers checked by SQL written by hand
+agreed with the generator (results/golden_first_ten.json).
+
+## The scorecard, test split
+
+{{ table('eval.test') }}
+
+The default live provider is **{{ v('eval.default_provider') }}**: {{ v('eval.default_reason') }}.
+Prompt registry {{ v('eval.prompt_hash') }}, registered plan {{ v('eval.plan_hash') }}. Not run yet:
+{{ v('eval.providers_not_run') }}.
+
+### By family
+
+{{ table('eval.families') }}
+
+### The development split, for the gap
+
+{{ table('eval.dev') }}
+
+### Interior tests
+
+{{ table('eval.interior') }}
+
+The ranking at the first neighbour of each operating point: {{ v('eval.interior_ranking') }}. At a
+quarter unit of the published rounding the floor falls to {{ v('eval.floor.tolerance_quarter') }},
+against {{ v('eval.floor.tolerance_half') }} at half a unit: half a unit is where a value displayed at
+the published rounding stops agreeing with itself.
+
+### The red team
+
+{{ table('redteam.cases') }}
+
+The gate caught {{ v('eval.catches') }} unsupported numbers on the test split.
+
+## The catalog quarantine
+
+{{ table('catalog.quarantine') }}
+
+## The live server
+
+Host {{ v('deploy.host') }}, {{ v('deploy.base_url') }}, {{ v('deploy.status') }} by
+{{ v('deploy.client') }} at {{ v('deploy.checked_at') }}; its readback: {{ v('deploy.readback') }}.
+Latency: {{ v('latency.status') }}. The browser live check: {{ v('live.status') }}. Providers the
+probe reached with a key: {{ v('providers.reached') }}.
+
+## Limitations
+
+- No model has a graded row until the live eval records its cassettes with a key; the floor is the
+  only graded provider, and it shares its measures table with the golden truth.
+- The clarity judge has not run, for the same reason, so there is no kappa yet.
+- {{ v('catalog.quarantine') }} catalog rows are quarantined, most of them manifest keys whose builds
+  recorded no table behind them; describe says so instead of guessing.
+- The golden set has no multi turn question, so the summarization threshold is never exercised by
+  the eval.
+- The stdio server needs a clone of this repository; the registry entry is the remote one.
+
+## What the platform engineer would push back on
+
+A scorecard with one graded provider is a baseline, not a comparison. The gate proves arithmetic
+agreement with the cited query, not that the question was mapped to the right query; the graders
+check that, against truth the builds published. Free quotas make any live eval partial, and the
+scorecard prints the share graded rather than extrapolating.
+
+{{ statement() }}

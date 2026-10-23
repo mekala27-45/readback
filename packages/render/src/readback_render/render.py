@@ -70,6 +70,16 @@ def table_html(manifest: Manifest, key: str) -> str:
     return f"<table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>"
 
 
+def _data(path: Path) -> object:
+    """A committed YAML or JSON file a template reads whole, such as the one source for connect configs."""
+    import json
+
+    import yaml
+
+    text = path.read_text(encoding="utf-8")
+    return json.loads(text) if path.suffix == ".json" else yaml.safe_load(text)
+
+
 def _missing(section: str) -> str:
     raise ClaimGateError(f"a required section was not written: {section}")
 
@@ -97,6 +107,10 @@ def environment(template_roots: Sequence[Path], manifest: Manifest, root: Path) 
         manifest=manifest,
         missing=_missing,
         inline=lambda rel: (root / rel).read_text(encoding="utf-8").rstrip("\n"),
+        data=lambda rel: _data(root / rel),
+        rows=lambda key: manifest.tables[key].rows,
+        done=lambda: sum(1 for r in manifest.tables["checklist"].rows if r[1] == "done"),
+        open_items=lambda: [r for r in manifest.tables["checklist"].rows if r[1] != "done"],
     )
     return env
 

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "readback": {
+      "command": "uv",
+      "args": ["run", "readback-mcp"]
+    }
+  }
+}

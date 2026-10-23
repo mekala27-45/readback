@@ -1,0 +1,23 @@
+{
+ "skills": [
+  {
+   "skill": "golden-question",
+   "errors": [],
+   "lines": 30,
+   "under_500": true
+  },
+  {
+   "skill": "release-gate",
+   "errors": [],
+   "lines": 27,
+   "under_500": true
+  },
+  {
+   "skill": "warehouse-question",
+   "errors": [],
+   "lines": 25,
+   "under_500": true
+  }
+ ],
+ "valid": true
+}
