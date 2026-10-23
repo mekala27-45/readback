@@ -11,10 +11,11 @@ async function askOnDesk(page: Page, question: string) {
   await page.getByTestId("ask").click();
 }
 
-test("the statement is in the footer of every route", async ({ page }) => {
+test("every route has the statement in its footer and a pushback paragraph", async ({ page }) => {
   for (const route of ROUTES) {
     await page.goto(`${BASE}${route}`);
     await expect(page.locator("[data-statement]")).toContainText("Every number is read back to the warehouse");
+    await expect(page.getByTestId("pushback")).toBeVisible();
   }
 });
 

@@ -1,3 +1,4 @@
+import { Pushback } from "@/components/Pushback";
 import type { Metadata } from "next";
 
 import { Figure } from "@/components/Figure";
@@ -360,6 +361,9 @@ export default function Page() {
           <dd className="font-sans">{card.judge.reason}</dd>
         </dl>
       </section>
+      <Pushback>
+        The known answers are this portfolio's own published numbers, so the scorecard measures reading, not truth. The floor shares a measures table with the golden truth, and a model graded on a free quota covers only the share of the test split its budget allowed, which every row states.
+      </Pushback>
     </div>
   );
 }
