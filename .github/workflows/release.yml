@@ -1,0 +1,35 @@
+name: release
+
+# On a version tag: the release gate runs again on the tagged commit, and the release notes are the
+# rendered RESULTS.md, so the notes say exactly what the repository says at the tag.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: uv sync --frozen
+      - run: uv run python scripts/fetch_warehouses.py
+      - run: make gates
+      - run: uv run python scripts/check_published_numbers.py
+      - run: uv run python scripts/check_registration.py
+      - name: Publish the release with RESULTS.md as its notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --title "readback $GITHUB_REF_NAME" --notes-file RESULTS.md
