@@ -18,10 +18,13 @@ rules:
   - {table: "models_fraud_account_variants", pattern: "base|variant_ii", role: measure, unit: none}
   - {table: "f07_topic_trend", pattern: "topic", role: key, unit: none}
   # Counts whose names end in share or carry the word share: the denominators of a share.
-  - {pattern: "renters_with_share|renters_with_share_moe|owners_mortgage_with_share|purchase_ltv_over_95|purchase_under_35|quarters_at|rate_quarters|explanation|non_monetary_relief", role: measure, unit: count}
+  - {pattern: "renters_with_share|renters_with_share_moe|owners_mortgage_with_share|purchase_ltv_over_95|purchase_under_35|purchase_with_.*|quarters_at|rate_quarters|explanation|non_monetary_relief", role: measure, unit: count}
   - {pattern: "burdened_moe|severe_moe|under_35_latest", role: measure, unit: fraction}
   - {pattern: "purchase_median_ltv", role: measure, unit: percent}
   - {pattern: "allowance_coverage|overlay", role: measure, unit: ratio}
+  # Ratios named for an income: caught by the first readback through the server, where the dollar
+  # rule below had claimed them by their suffix.
+  - {pattern: "price_to_income|price_to_income_.*|.*_value_to_income|value_to_income|income_ratio|borrower_income_ratio", role: measure, unit: ratio}
   - {pattern: "triage|rule_mule|rule_rapid_movement|rule_round_tripping|rule_structuring", role: measure, unit: none}
   # Keys and calendar positions: numbers that name a thing or a time, never a measure.
   - {pattern: "cbsa_code|county_fips|alert_id|loan_id|customer_id|account_id|episode_id|community|rotation_id|ring|tail_number", role: key, unit: none}

@@ -1,0 +1,1 @@
+Read values from a warehouse's published manifest, the numbers its own documents print, by exact key or by a glob such as ch5.* (at most 50, sorted by key). Each value comes with its unit, its published rounding, its interval where one was published, and its display string.

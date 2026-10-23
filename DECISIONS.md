@@ -59,3 +59,39 @@ ledger's queue and retention tables carry customer, account and loan identifiers
 the generated records of a fictional bank, so the warehouse holds no person. The server does not
 drop them, because they are what those tables are; the agent refuses any question about one
 identified customer, account or loan, and the refusal set tests it.
+
+## 2026-10-23: the server is stateless, and a result handle carries its own statement (revision 2026-07-28)
+
+The revision removed the session, so nothing the server mints may depend on memory between calls.
+run_sql returns a result_id that is the normalized statement, the digest of its rows and the trace
+id of the caller's request chain, encoded and sealed with an HMAC. readback opens the handle,
+re-runs the statement, and refuses it if the rows changed, the seal does not match, or the trace id
+belongs to another chain. Nothing is stored. The key comes from READBACK_RESULT_KEY or, when that is
+unset, from the digest of the lock file, which makes the seal an integrity check and not a secret:
+forging one buys only a read only query the caller could have run anyway.
+
+## 2026-10-23: lookup uses the multi round trip pattern, with a fallback (revision 2026-07-28)
+
+The SDK at 2.3 exposes the revision's input required result. When a name matches more than one
+entity (Portland, Springfield, Columbus) and the client declared the elicitation capability, lookup
+returns an input required result carrying one elicitation whose schema is an enum of the
+candidates; the client retries with the choice and the echoed request state. A client that did not
+declare elicitation gets the candidates as structured content with needs_choice set, and the
+agent asks the person through a graph interrupt. Both paths are tested.
+
+## 2026-10-23: cache hints are public and an hour on every list and read (revision 2026-07-28)
+
+tools/list, prompts/list, resources/list, resources/templates/list, resources/read and
+server/discover carry ttlMs 3600000 and cacheScope public. The catalog and the published values
+change only with a deploy, and none of these results depends on who asked.
+
+## 2026-10-23: nothing deprecated is implemented (revision 2026-07-28)
+
+No roots, no sampling, no logging feature, and no subscriptions/listen (the server has nothing that
+changes). The capabilities test asserts logging is absent.
+
+## 2026-10-23: the catalog's dollar rule claimed price to income, and the readback caught it
+
+The first readback through the server returned price_to_income in dollars: the dollar rule's
+.*_income pattern matched it before the ratio rule did. A ratio rule for income ratios now runs
+first, and purchase_with_income moved to the counts. Recorded as the second fix to the unit rules.

@@ -279,7 +279,7 @@ tables:
   - name: price_to_income
     type: DOUBLE
     role: measure
-    unit: dollars
+    unit: ratio
     definition: The anchored value over the median household income of the same metro and year (table B19013).
     citation:
       file: docs/definitions.md
@@ -289,7 +289,7 @@ tables:
   - name: price_to_income_low
     type: DOUBLE
     role: measure
-    unit: dollars
+    unit: ratio
     definition: The anchored value over the median household income of the same metro and year (table B19013).
     citation:
       file: docs/definitions.md
@@ -299,7 +299,7 @@ tables:
   - name: price_to_income_high
     type: DOUBLE
     role: measure
-    unit: dollars
+    unit: ratio
     definition: The anchored value over the median household income of the same metro and year (table B19013).
     citation:
       file: docs/definitions.md
@@ -4984,7 +4984,7 @@ tables:
   - name: purchase_median_value_to_income
     type: DOUBLE
     role: measure
-    unit: dollars
+    unit: ratio
     definition: Originated loans (action taken 1) for home purchase, refinance and cash out refinance (loan purposes
       1, 31 and 32) on principal residences (occupancy type 1), 2018 to 2025.
     citation:
@@ -5069,7 +5069,7 @@ tables:
   - name: purchase_with_income
     type: BIGINT
     role: measure
-    unit: dollars
+    unit: count
     definition: null
     citation: null
     definition_source: null
@@ -6446,7 +6446,7 @@ tables:
   - name: purchase_median_value_to_income
     type: DOUBLE
     role: measure
-    unit: dollars
+    unit: ratio
     definition: Originated loans (action taken 1) for home purchase, refinance and cash out refinance (loan purposes
       1, 31 and 32) on principal residences (occupancy type 1), 2018 to 2025.
     citation:
@@ -6531,7 +6531,7 @@ tables:
   - name: purchase_with_income
     type: BIGINT
     role: measure
-    unit: dollars
+    unit: count
     definition: null
     citation: null
     definition_source: null
@@ -6587,7 +6587,7 @@ tables:
   - name: price_to_income
     type: DOUBLE
     role: measure
-    unit: dollars
+    unit: ratio
     definition: The anchored value over the median household income of the same metro and year (table B19013).
     citation:
       file: docs/definitions.md

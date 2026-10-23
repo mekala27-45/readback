@@ -1,0 +1,1 @@
+Describe one table: its grain, every column with its type, unit and definition (cited to the build's definitions file where one exists), the manifest figures that read it, and its first five rows sorted by the grain. Call it for one table at a time, after search_catalog has named the table.
