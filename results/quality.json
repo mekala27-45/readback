@@ -1,0 +1,10 @@
+{
+  "ruff": true,
+  "ruff_format": true,
+  "mypy": true,
+  "mypy_errors": 0,
+  "coverage": 85.4,
+  "tests": 156,
+  "failed": 0,
+  "passed": true
+}
