@@ -2,7 +2,7 @@
  "as_of": "2026-10-23",
  "values": {
   "build.commits": {
-   "value": 12,
+   "value": 27,
    "fmt": "int",
    "provenance": {
     "origin": "git",
@@ -13,7 +13,7 @@
    }
   },
   "build.decisions": {
-   "value": 26,
+   "value": 27,
    "fmt": "int",
    "provenance": {
     "origin": "DECISIONS.md",
@@ -35,7 +35,7 @@
    }
   },
   "build.reversals": {
-   "value": 1,
+   "value": 2,
    "fmt": "int",
    "provenance": {
     "origin": "DECISIONS.md",
@@ -816,7 +816,7 @@
    }
   },
   "quality.coverage": {
-   "value": 0,
+   "value": 0.8540000000000001,
    "fmt": "pct1",
    "provenance": {
     "origin": "results/quality.json",
@@ -827,7 +827,7 @@
    }
   },
   "quality.tests": {
-   "value": 0,
+   "value": 156,
    "fmt": "int",
    "provenance": {
     "origin": "results/quality.json",
@@ -1022,13 +1022,13 @@
     ],
     [
      17,
-     "not done",
-     "DECISIONS.md has 26 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03"
+     "done",
+     "DECISIONS.md has 27 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03"
     ],
     [
      18,
      "not done",
-     "coverage not measured, mypy not run, ruff not run, commits 12"
+     "coverage 85.4, mypy clean, ruff clean, commits 27, rederive not run"
     ]
    ],
    "provenance": {

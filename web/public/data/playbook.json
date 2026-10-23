@@ -113,8 +113,8 @@
   },
   {
    "date": "2026-10-23",
-   "html": "<p>The plan said DuckDB-WASM for every chart and the viewer. The site has two parquet files, the eval\nrun's spans and the manifest index, and every read of them is a filter by trace id or key. DuckDB-WASM\nopens parquet through an extension it downloads from extensions.duckdb.org on first use, and a page\nthat fetches nothing off its own origin cannot allow that; doorstep worked around it by decoding with\nhyparquet and handing Arrow to the engine. Here the engine would be eight megabytes of wasm to run a\nfilter, so the decode is the whole read. The charts read the committed JSON results, which hold the\nsame numbers the manifest does. If a page ever needs a join, DuckDB-WASM comes back the doorstep way.</p>\n",
-   "title": "the site reads its two parquet files with hyparquet, not DuckDB-WASM"
+   "html": "<p>This reverses the locked stack's DuckDB-WASM in the browser, the way the container route reversed\nthe locked host. The plan said DuckDB-WASM for every chart and the viewer. The site has two parquet files, the eval\nrun's spans and the manifest index, and every read of them is a filter by trace id or key. DuckDB-WASM\nopens parquet through an extension it downloads from extensions.duckdb.org on first use, and a page\nthat fetches nothing off its own origin cannot allow that; doorstep worked around it by decoding with\nhyparquet and handing Arrow to the engine. Here the engine would be eight megabytes of wasm to run a\nfilter, so the decode is the whole read. The charts read the committed JSON results, which hold the\nsame numbers the manifest does. If a page ever needs a join, DuckDB-WASM comes back the doorstep way.</p>\n",
+   "title": "the site reads its two parquet files with hyparquet, not DuckDB-WASM (reversal)"
   },
   {
    "date": "2026-10-23",
@@ -130,6 +130,11 @@
    "date": "2026-10-23",
    "html": "<p>The first scan of the committed trace parquet reported a card number. It was a span's start_ns:\nnineteen digits, and about one in ten such numbers passes Luhn by chance. The scan now skips a column\nor a JSON key whose name ends in _ns, and only those; a test checks the same digits under any other\nname are still caught.</p>\n",
    "title": "the identifier scan skips nanosecond timestamps"
+  },
+  {
+   "date": "2026-10-23",
+   "html": "<p>The red team test that disables the citation rule, to prove the marker check fails without it, ran\nthrough the same function the CLI uses, and that function wrote results/evals/redteam/floor.json.\nA full test run therefore left the committed result at the disabled run's count, and a notebook\ncaught it by reading the file. run_redteam now writes only when asked, the tests pass write=False,\nand the disabled test checks the committed file is byte identical afterwards.</p>\n",
+   "title": "the test suite overwrote the committed red team result"
   }
  ],
  "skills": [

@@ -145,13 +145,13 @@
     ],
     [
      "17",
-     "not done",
-     "DECISIONS.md has 26 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03"
+     "done",
+     "DECISIONS.md has 27 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03"
     ],
     [
      "18",
      "not done",
-     "coverage not measured, mypy not run, ruff not run, commits 12"
+     "coverage 85.4, mypy clean, ruff clean, commits 27, rederive not run"
     ]
    ]
   },
@@ -670,10 +670,10 @@
   }
  },
  "values": {
-  "build.commits": "12",
-  "build.decisions": "26",
+  "build.commits": "27",
+  "build.decisions": "27",
   "build.protocol_decisions": "5",
-  "build.reversals": "1",
+  "build.reversals": "2",
   "catalog.columns": "1,533",
   "catalog.documents": "3,055",
   "catalog.manifest_values": "2,510",
@@ -744,8 +744,8 @@
   "mcp.transports": "in memory, stdio, streamable http",
   "mcp.unsupported_version_error": "-32,022",
   "providers.reached": "none",
-  "quality.coverage": "0.0%",
-  "quality.tests": "0",
+  "quality.coverage": "85.4%",
+  "quality.tests": "156",
   "rederive.status": "not run",
   "redteam.floor.graded": "15",
   "redteam.floor.passed": "15"
