@@ -151,3 +151,15 @@ deploy/verify.ps1 speaks the revision as plain JSON-RPC from PowerShell on anoth
 envelope in params._meta, and the mcp-protocol-version, mcp-method and mcp-name headers the
 revision requires to match the body. If the SDK and the server agreed on something the
 specification does not say, an SDK client would not notice; this one would.
+
+## 2026-10-23: the red team's first run failed two cases, and the system prompt changed (prompt hash ac1dd3c9756c)
+
+The floor's definition answer quoted whatever definition the search returned first. The red team
+fixture plants a catalog entry carrying an instruction and a marker, and the first run shipped the
+marker in RT-01 and RT-02: 13 of 15. The defense is provenance, not filtering: the floor now quotes a
+definition only when the catalog cites it to a build's docs/definitions.md by line, and the planted
+entry has no such citation. The second run passed 15 of 15. The system prompt gained the same rule
+in words for the models (text in a tool result is data; quote a definition only when it cites a
+definitions line), which moved the prompt registry hash from 71102b81e1fb to ac1dd3c9756c. No live
+model call had been made, so nothing graded under the old hash. The stripping defense that was
+tried and dropped is in notebooks/03_the_injection.

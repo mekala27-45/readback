@@ -121,6 +121,8 @@ def _name(m: Measure, value: str, written: dict[str, str]) -> str:
 
 class Floor:
     _shared: Dictionaries | None = None
+    definition_k = 5  # the retrieval depth for a definition; the interior test runs 3, 5 and 8
+    cite_rule = True  # quote only a definition cited to a build's definitions document; a test turns it off
 
     def __init__(self, call: CallTool, root: Path | None = None) -> None:
         self.call = call
@@ -311,13 +313,17 @@ class Floor:
         m = re.search(r"(?:mean by|define|definition of)\s+(.+?)\??$", question, re.I)
         term = (m.group(1) if m else question).strip()
         warehouse = c.warehouses[0] if c.warehouses else None
-        args: dict[str, Any] = {"query": term, "k": 5, "kind": "definition"}
+        args: dict[str, Any] = {"query": term, "k": self.definition_k, "kind": "definition"}
         if warehouse:
             args["warehouse"] = warehouse
         out = await self.tool("search_catalog", args)
-        hit = next((h for h in out["hits"] if h["kind"] == "definition"), None)
+        # Only a definition the catalog cites to a build's own definitions document, by file and line, is
+        # quoted. An entry without that citation is text from somewhere else, and text from somewhere
+        # else can carry an instruction; the red team plants one to prove the rule.
+        cited = re.compile(r"\(docs/definitions\.md:\d+\)$")
+        hit = next((h for h in out["hits"] if h["kind"] == "definition" and (cited.search(h["name"]) or not self.cite_rule)), None)
         if hit is None:
-            raise FloorCannot(f"the definitions documents have no entry for {term}")
+            raise FloorCannot(f"no build's definitions document has a cited entry for {term}")
         doc_id = f"{hit['warehouse']}.definition.{re.sub(r'[^a-z0-9]+', '_', hit['name'].split(' (')[0].lower()).strip('_')}"
         body = hit["definition"]
         text = f"In {hit['warehouse']}'s definitions document: {body}"

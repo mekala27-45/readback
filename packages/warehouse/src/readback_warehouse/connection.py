@@ -33,7 +33,7 @@ def _reader(path: Path) -> str:
     return f"read_csv('{p}', header = true, sample_size = -1)"
 
 
-def _build_views(db: Path, base: Path, lock: dict[str, Any]) -> None:
+def _build_views(db: Path, base: Path, lock: dict[str, Any], extra: dict[tuple[str, str], Path]) -> None:
     con = duckdb.connect(str(db))
     try:
         for name in WAREHOUSES:
@@ -43,12 +43,18 @@ def _build_views(db: Path, base: Path, lock: dict[str, Any]) -> None:
                 if not path.exists():
                     raise WarehouseMissing(f"{name}: {t['path']} is not on disk; run make fetch")
                 con.execute(f'create or replace view "{name}"."{t["table"]}" as select * from {_reader(path)}')
+        for (schema, table), path in sorted(extra.items()):
+            con.execute(f'create or replace view "{schema}"."{table}" as select * from {_reader(path)}')
     finally:
         con.close()
 
 
-def open_warehouse(root: Path | None = None, base: Path | None = None) -> duckdb.DuckDBPyConnection:
+def open_warehouse(
+    root: Path | None = None, base: Path | None = None, extra: dict[tuple[str, str], Path] | None = None
+) -> duckdb.DuckDBPyConnection:
     """A read only connection with the three schemas, locked against files, extensions and attachment.
+
+    `extra` adds views that are not in the lock; only the red team fixture uses it.
 
     The views are written once into a small database file of views, which is then opened read only:
     no statement can create, alter or drop anything. The views read their files lazily, so the files
@@ -63,8 +69,10 @@ def open_warehouse(root: Path | None = None, base: Path | None = None) -> duckdb
     db = folder / f"views-{os.getpid()}-{threading.get_ident()}.duckdb"
     if db.exists():
         db.unlink()
-    _build_views(db, base, lock)
+    extra = extra or {}
+    _build_views(db, base, lock, extra)
     allowed = sorted(str(base / n / t["path"]) for n in WAREHOUSES for t in lock["warehouses"][n]["tables"])
+    allowed += sorted(str(p.resolve()) for p in extra.values())
     con = duckdb.connect(
         str(db),
         read_only=True,

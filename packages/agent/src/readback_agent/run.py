@@ -141,7 +141,7 @@ class Agent:
                     while sent < len(tools.records):
                         r = tools.records[sent]
                         sent += 1
-                        yield {"event": "tool", **meta, "id": r.id, "tool": r.tool, "ok": r.ok,
+                        yield {"event": "tool", **meta, "id": r.id, "tool": r.tool, "ok": r.ok, "args": r.args,
                                "result_id": (r.result or {}).get("result_id"), "error": r.error}
                     if node == "classify" and values:
                         yield {"event": "classified", **meta, "family": values.get("family"), "rule": values.get("rule"),
