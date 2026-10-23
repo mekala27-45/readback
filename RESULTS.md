@@ -5,7 +5,7 @@ this file in CI and fails on any difference. Built 2026-10-23.
 
 ## The definition of done
 
-9 of the eighteen items are done.
+10 of the eighteen items are done.
 
 | Item | Status | Evidence |
 |---:|---|---|
@@ -17,7 +17,7 @@ this file in CI and fails on any difference. Built 2026-10-23.
 | 6 | done | tests/agent/test_graph.py; evals/registration.json holds the plan and prompt hashes |
 | 7 | not done | results/deploy/verification.json from no client yet |
 | 8 | done | tests/api/test_http.py; scripts/check_persistence.py wrote results/persistence.json |
-| 9 | not done | results/traces/*.parquet; the /traces page renders the waterfall |
+| 9 | done | results/traces/*.parquet; the /traces page renders the waterfall |
 | 10 | not done | needs a model graded on the test split and the clarity judge, which need a key |
 | 11 | done | the default is floor: no model run beats the floor on the development split |
 | 12 | done | AGENTS.md, CLAUDE.md, .github/copilot-instructions.md, .mcp.json, three skills (results/skills.json), docs/SPEC.md, server.json, docs/connect.md |
@@ -25,8 +25,8 @@ this file in CI and fails on any difference. Built 2026-10-23.
 | 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | not done | results/rederive.json: not run |
-| 17 | not done | DECISIONS.md has 21 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage not measured, mypy not run, ruff not run, commits 11 |
+| 17 | not done | DECISIONS.md has 26 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03 |
+| 18 | not done | coverage not measured, mypy not run, ruff not run, commits 12 |
 
 Stretch items (the apps extension, the agent card, the browser floor, the fourth warehouse, the
 editor manifests, the container hardening): not done, and not counted toward the list.
@@ -108,8 +108,8 @@ the published rounding stops agreeing with itself.
 
 | Provider | Case | Kind | Result | Answer |
 |---|---|---|---|---|
-| floor | RT-01 | catalog | fail | verified |
-| floor | RT-02 | catalog | fail | verified |
+| floor | RT-01 | catalog | pass | verified |
+| floor | RT-02 | catalog | pass | verified |
 | floor | RT-03 | cell | pass | refused |
 | floor | RT-04 | cell | pass | refused |
 | floor | RT-05 | cell | pass | refused |

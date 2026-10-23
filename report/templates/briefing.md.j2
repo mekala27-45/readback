@@ -1,0 +1,60 @@
+# readback: the briefing
+
+*For a hiring manager or a platform lead with ten minutes. Every figure below is rendered from
+results/manifest.json; the claim gate fails the build if this page says a number the manifest does
+not hold.*
+
+## The question this build answers
+
+Can an analyst agent be trusted with a number? Not in general. In this build, a number is trusted
+when plain code has read it back to the warehouse it came from, in the unit it claims, within half
+the rounding it is shown at. Everything else follows from that rule: the gate, the refusals, the
+floor, the scorecard.
+
+## What was measured
+
+| | |
+|---|---|
+| Published tables in reach | {{ v('data.tables') }} across doorstep, turnaround and ledger |
+| Measure columns with a unit | {{ v('catalog.with_unit') }} of {{ v('catalog.measure_columns') }} |
+| Measure columns with a cited definition | {{ v('catalog.with_definition') }} |
+| Golden questions | {{ v('golden.questions') }}, split {{ v('golden.dev') }} development and {{ v('golden.test') }} test |
+| Floor accuracy on the test split | {{ v('eval.floor.accuracy') }}, interval {{ v('eval.floor.low') }} to {{ v('eval.floor.high') }} |
+| Shipped numbers read back | {{ v('eval.floor.readback_rate') }} of {{ v('eval.floor.claims') }} |
+| Red team cases passed on the floor | {{ v('redteam.floor.passed') }} of {{ v('redteam.floor.graded') }} |
+| Protocol conformance | {{ v('mcp.conformance') }} over {{ v('mcp.transports') }} |
+| The live endpoint | {{ v('deploy.status') }} |
+
+## Three findings
+
+**The gate earns its place on the catalog, not on the arithmetic.** The first catalog build tagged a
+ratio column as dollars. No test caught it; the readback did, because a ratio read back in dollars
+never agrees. Unit rules are now table specific and ordered, and a range check quarantines any
+column whose values do not fit its unit. The quarantine is {{ v('catalog.quarantine') }} named rows
+rather than a guess.
+
+**A red team case is a catalog problem before it is a prompt problem.** The first red team run on
+the floor passed fewer cases than it does now, because the floor quoted a planted definition from the
+catalog. The fix was a provenance rule: the floor quotes only definitions cited to a line of a build's
+own documents. The system prompt got the same rule, which changed the prompt hash; DECISIONS.md
+records it.
+
+**The floor is a ceiling, not a rival.** The floor and the golden truth read one measures table, so
+its row is the best the in scope families can do, and a model is called better only when its
+interval clears the floor's. {{ v('eval.providers_not_run') }} have not run yet on a free key; their
+rows appear when their cassettes exist, and never from a partial run.
+
+## What I would push back on, as the reviewer
+
+The known answers are this portfolio's own published numbers, so the eval measures reading, not
+truth. The gate checks that a number agrees with the query it cites, not that the query was the right
+one; the graders check that separately. A free quota bounds how much of the test split a model sees,
+and the scorecard prints that share beside every row.
+
+## Where to look next
+
+The desk at https://mekala27-45.github.io/readback/ answers live when the API is awake and from a
+labeled recording when it is not. The scorecard, the traces and the catalog are pages beside it.
+docs/SPEC.md is the specification; DECISIONS.md is the record of what changed and why.
+
+{{ statement() }}

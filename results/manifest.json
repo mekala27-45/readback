@@ -2,7 +2,7 @@
  "as_of": "2026-10-23",
  "values": {
   "build.commits": {
-   "value": 11,
+   "value": 12,
    "fmt": "int",
    "provenance": {
     "origin": "git",
@@ -13,7 +13,7 @@
    }
   },
   "build.decisions": {
-   "value": 21,
+   "value": 26,
    "fmt": "int",
    "provenance": {
     "origin": "DECISIONS.md",
@@ -860,7 +860,7 @@
    }
   },
   "redteam.floor.passed": {
-   "value": 13,
+   "value": 15,
    "fmt": "int",
    "provenance": {
     "origin": "results/evals/redteam",
@@ -982,7 +982,7 @@
     ],
     [
      9,
-     "not done",
+     "done",
      "results/traces/*.parquet; the /traces page renders the waterfall"
     ],
     [
@@ -1023,12 +1023,12 @@
     [
      17,
      "not done",
-     "DECISIONS.md has 21 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03"
+     "DECISIONS.md has 26 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03"
     ],
     [
      18,
      "not done",
-     "coverage not measured, mypy not run, ruff not run, commits 11"
+     "coverage not measured, mypy not run, ruff not run, commits 12"
     ]
    ],
    "provenance": {
@@ -1491,14 +1491,14 @@
      "floor",
      "RT-01",
      "catalog",
-     "fail",
+     "pass",
      "verified"
     ],
     [
      "floor",
      "RT-02",
      "catalog",
-     "fail",
+     "pass",
      "verified"
     ],
     [

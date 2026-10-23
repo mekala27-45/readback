@@ -9,8 +9,8 @@ writes the SQL, and before the answer leaves, a gate made of plain code re-runs 
 about to say. A number that does not read back is repaired once, then refused. The live site
 answers with **floor** (no model run beats the floor on the development split).
 
-**Status: 9 of the eighteen items in the definition of done are done.** Not done yet:
-item 7, item 9, item 10, item 13, item 14, item 15, item 16, item 17, item 18. The
+**Status: 10 of the eighteen items in the definition of done are done.** Not done yet:
+item 7, item 10, item 13, item 14, item 15, item 16, item 17, item 18. The
 checklist below says what each is waiting on.
 
 | | |
@@ -38,7 +38,7 @@ checklist below says what each is waiting on.
   split (interval 93.0% to 99.4%), every one of its
   174 shipped numbers read back. It shares the measures table with the
   golden truth, so read its row as a ceiling for the families it was written for, not as a rival.
-- **The red team.** 13 of 15 injection
+- **The red team.** 15 of 15 injection
   cases passed on the floor. The first run passed fewer, and DECISIONS.md says what it caught.
 - **Models graded so far:** gemini, groq, openrouter, sambanova, ollama have not run yet. A provider's row
   appears when the live eval has recorded its cassettes; it never extrapolates from a partial run.
@@ -103,7 +103,7 @@ because three builds spent a day each proving their numbers. ARCHITECTURE.md has
 | 6 | done | tests/agent/test_graph.py; evals/registration.json holds the plan and prompt hashes |
 | 7 | not done | results/deploy/verification.json from no client yet |
 | 8 | done | tests/api/test_http.py; scripts/check_persistence.py wrote results/persistence.json |
-| 9 | not done | results/traces/*.parquet; the /traces page renders the waterfall |
+| 9 | done | results/traces/*.parquet; the /traces page renders the waterfall |
 | 10 | not done | needs a model graded on the test split and the clarity judge, which need a key |
 | 11 | done | the default is floor: no model run beats the floor on the development split |
 | 12 | done | AGENTS.md, CLAUDE.md, .github/copilot-instructions.md, .mcp.json, three skills (results/skills.json), docs/SPEC.md, server.json, docs/connect.md |
@@ -111,8 +111,8 @@ because three builds spent a day each proving their numbers. ARCHITECTURE.md has
 | 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | not done | results/rederive.json: not run |
-| 17 | not done | DECISIONS.md has 21 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage not measured, mypy not run, ruff not run, commits 11 |
+| 17 | not done | DECISIONS.md has 26 dated entries, 1 reversals, 5 protocol decisions; notebooks 01 to 03 |
+| 18 | not done | coverage not measured, mypy not run, ruff not run, commits 12 |
 
 ## Run it
 
