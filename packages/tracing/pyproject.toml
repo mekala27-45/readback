@@ -1,0 +1,19 @@
+[project]
+name = "readback-tracing"
+version = "0.1.0"
+description = "OpenTelemetry spans and the Parquet exporter"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+dependencies = [
+  "readback-core",
+  "opentelemetry-sdk>=1.30",
+  "opentelemetry-api>=1.30",
+  "pyarrow>=18.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/readback_tracing"]

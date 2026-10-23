@@ -1,0 +1,119 @@
+[project]
+name = "readback"
+version = "0.1.0"
+description = "An analyst agent over three warehouses, served as an MCP server at the 2026-07-28 revision, where every number it says is read back to the warehouse before you see it"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+authors = [{ name = "Ajay Mekala" }]
+dependencies = [
+  "readback-core",
+  "readback-render",
+  "readback-catalog",
+  "readback-warehouse",
+  "readback-gate",
+  "readback-tracing",
+  "readback-mcp-server",
+  "readback-providers",
+  "readback-planner",
+  "readback-agent",
+  "readback-evals",
+  "readback-api",
+  "typer>=0.15",
+  "httpx>=0.28",
+]
+
+[project.scripts]
+readback = "readback_evals.cli:app"
+readback-mcp = "readback_mcp_server.stdio:main"
+
+[project.optional-dependencies]
+live = [
+  "langchain-google-genai>=4.0",
+  "langchain-groq>=1.0",
+  "langchain-openai>=1.0",
+  "langchain-ollama>=1.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-cov>=6.0",
+  "pytest-asyncio>=0.25",
+  "anyio>=4.6",
+  "hypothesis>=6.120",
+  "ruff>=0.11",
+  "mypy>=1.15",
+  "types-PyYAML",
+  "nbmake>=1.5",
+  "nbformat>=5.10",
+  "nbconvert>=7.16",
+  "ipykernel>=6.29",
+  "matplotlib>=3.9",
+  "skills-ref>=0.1",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+readback-core = { workspace = true }
+readback-render = { workspace = true }
+readback-catalog = { workspace = true }
+readback-warehouse = { workspace = true }
+readback-gate = { workspace = true }
+readback-tracing = { workspace = true }
+readback-mcp-server = { workspace = true }
+readback-providers = { workspace = true }
+readback-planner = { workspace = true }
+readback-agent = { workspace = true }
+readback-evals = { workspace = true }
+readback-api = { workspace = true }
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["web", "notebooks", "data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "N", "W"]
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = [
+  "readback_core", "readback_render", "readback_catalog", "readback_warehouse", "readback_gate",
+  "readback_tracing", "readback_mcp_server", "readback_providers", "readback_planner",
+  "readback_agent", "readback_evals", "readback_api",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+  "postgres: needs DATABASE_URL pointing at a Postgres",
+  "live: needs a provider key and calls a provider",
+  "browser: needs Playwright and a browser",
+  "loadtest: needs a running server",
+]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["packages"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = false
