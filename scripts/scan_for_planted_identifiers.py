@@ -101,6 +101,15 @@ def load_planted(root: Path) -> set[str]:
     }
 
 
+def _without_ns(value: object) -> object:
+    """The same JSON with every nanosecond timestamp (a key ending in _ns) left out, as for parquet."""
+    if isinstance(value, dict):
+        return {k: _without_ns(v) for k, v in value.items() if not str(k).endswith("_ns")}
+    if isinstance(value, list):
+        return [_without_ns(v) for v in value]
+    return value
+
+
 def text_of(path: Path) -> str:
     if path.suffix == ".parquet":
         import polars as pl
@@ -110,7 +119,9 @@ def text_of(path: Path) -> str:
         for column, dtype in zip(frame.columns, frame.dtypes, strict=True):
             if dtype == pl.Utf8:
                 parts.extend(str(v) for v in frame[column].drop_nulls().unique().to_list())
-            elif dtype in (pl.Int64, pl.UInt64):
+            elif dtype in (pl.Int64, pl.UInt64) and not column.endswith("_ns"):
+                # A column ending in _ns is nanoseconds since the epoch: nineteen digits, and about
+                # one in ten of them passes Luhn by chance. The trace spans' start_ns did.
                 # Only a 64 bit column can hold a 13 digit number; a narrower one cannot carry a card.
                 values = frame[column].drop_nulls()
                 big = values.filter(values.cast(pl.Float64).abs() >= 1e12)
@@ -118,7 +129,7 @@ def text_of(path: Path) -> str:
         return "\n".join(parts)
     if path.suffix == ".json":
         try:
-            return json.dumps(json.loads(path.read_text(encoding="utf-8")), ensure_ascii=False)
+            return json.dumps(_without_ns(json.loads(path.read_text(encoding="utf-8"))), ensure_ascii=False)
         except (json.JSONDecodeError, UnicodeDecodeError):
             return ""
     try:

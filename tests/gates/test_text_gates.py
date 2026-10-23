@@ -88,6 +88,17 @@ def test_identifier_scan_catches_a_phone_number_in_the_answer_log(tmp_path: Path
         scan_for_planted_identifiers.check(tmp_path, [f], planted=set())
 
 
+def test_identifier_scan_skips_nanosecond_timestamps_but_not_the_same_digits_elsewhere(tmp_path: Path) -> None:
+    luhn = "4111111111111111"
+    clean = tmp_path / "spans.json"
+    clean.write_text(f'{{"spans": [{{"start_ns": {luhn}, "name": "chat"}}]}}', encoding="utf-8")
+    assert scan_for_planted_identifiers.check(tmp_path, [clean], planted=set()) == 1
+    dirty = tmp_path / "rows.json"
+    dirty.write_text(f'{{"rows": [{{"account": {luhn}}}]}}', encoding="utf-8")
+    with pytest.raises(ValueError, match="card number"):
+        scan_for_planted_identifiers.check(tmp_path, [dirty], planted=set())
+
+
 def test_identifier_scan_refuses_nothing(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="no files"):
         scan_for_planted_identifiers.check(tmp_path, [], planted=set())
