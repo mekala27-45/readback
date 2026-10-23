@@ -172,9 +172,10 @@ second warehouse query per card for something the agent had in hand. The tool ev
 columns and the first ten rows of a run_sql result, with the full row count. Nothing else in the
 event changed, so the API tests stood.
 
-## 2026-10-23: the site reads its two parquet files with hyparquet, not DuckDB-WASM
+## 2026-10-23: the site reads its two parquet files with hyparquet, not DuckDB-WASM (reversal)
 
-The plan said DuckDB-WASM for every chart and the viewer. The site has two parquet files, the eval
+This reverses the locked stack's DuckDB-WASM in the browser, the way the container route reversed
+the locked host. The plan said DuckDB-WASM for every chart and the viewer. The site has two parquet files, the eval
 run's spans and the manifest index, and every read of them is a filter by trace id or key. DuckDB-WASM
 opens parquet through an extension it downloads from extensions.duckdb.org on first use, and a page
 that fetches nothing off its own origin cannot allow that; doorstep worked around it by decoding with
@@ -203,3 +204,11 @@ The first scan of the committed trace parquet reported a card number. It was a s
 nineteen digits, and about one in ten such numbers passes Luhn by chance. The scan now skips a column
 or a JSON key whose name ends in _ns, and only those; a test checks the same digits under any other
 name are still caught.
+
+## 2026-10-23: the test suite overwrote the committed red team result
+
+The red team test that disables the citation rule, to prove the marker check fails without it, ran
+through the same function the CLI uses, and that function wrote results/evals/redteam/floor.json.
+A full test run therefore left the committed result at the disabled run's count, and a notebook
+caught it by reading the file. run_redteam now writes only when asked, the tests pass write=False,
+and the disabled test checks the committed file is byte identical afterwards.
