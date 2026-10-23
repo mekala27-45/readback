@@ -1,0 +1,36 @@
+{
+ "cache_hints": true,
+ "deprecated_advertised": false,
+ "discovery": {
+  "capabilities": [
+   "prompts",
+   "resources",
+   "tools"
+  ],
+  "server": "readback",
+  "supported_versions": [
+   "2026-07-28"
+  ]
+ },
+ "lists_identical": true,
+ "output_schemas": 7,
+ "passed": true,
+ "revision": "2026-07-28",
+ "tool_count": 7,
+ "tools": [
+  "warehouses",
+  "describe",
+  "search_catalog",
+  "run_sql",
+  "published",
+  "readback",
+  "lookup"
+ ],
+ "trace_context": true,
+ "transports": {
+  "in_memory": true,
+  "stdio": true,
+  "streamable_http": true
+ },
+ "unsupported_version_error": -32022
+}

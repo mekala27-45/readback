@@ -85,7 +85,10 @@ def main() -> int:
             server.terminate()
             server.wait(timeout=20)
     ok = seen["found"] and seen["trace_id"] == answer["trace_id"] and seen["spans"] > 0 and seen["verdict"] == "verified"
-    print(json.dumps({"base_url": base, "answer_id": answer["answer_id"], "trace_id": answer["trace_id"], "read_back": seen, "passed": ok}, indent=1))
+    result = {"base_url": "a local server in its own process" if server is not None else base, "trace_id_matches": seen["trace_id"] == answer["trace_id"],
+              "spans_stored": seen["spans"], "verdict": seen["verdict"], "read_back_in": "a third process with a fresh connection", "passed": ok}
+    (ROOT / "results" / "persistence.json").write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")
+    print(json.dumps(result, indent=1))
     return 0 if ok else 1
 
 

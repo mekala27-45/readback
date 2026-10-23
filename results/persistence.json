@@ -1,0 +1,8 @@
+{
+ "base_url": "a local server in its own process",
+ "trace_id_matches": true,
+ "spans_stored": 28,
+ "verdict": "verified",
+ "read_back_in": "a third process with a fresh connection",
+ "passed": true
+}
