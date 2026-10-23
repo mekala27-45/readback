@@ -1,0 +1,65 @@
+name: ci
+
+# Every push and pull request: the warehouses fetched and checked against the lock, the gates, lint
+# and strict types, the suite with coverage (cassettes replay; no model is ever called), the claim
+# gate, the registration check, protocol conformance over three transports, and the notebooks.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    env:
+      READBACK_CASSETTES: replay
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: uv sync --frozen
+      - name: The warehouses, by digest
+        run: uv run python scripts/fetch_warehouses.py
+      - name: Gates
+        run: make gates
+      - name: Lint and types
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy
+      - name: Tests, with coverage
+        run: uv run pytest --cov --cov-report=term --cov-fail-under=80
+      - name: The claim gate
+        run: uv run python scripts/check_published_numbers.py
+      - name: The plan and prompts as registered
+        run: uv run python scripts/check_registration.py
+      - name: Protocol conformance
+        run: uv run python scripts/conformance.py
+      - name: The out of process persistence check
+        run: uv run python scripts/check_persistence.py
+      - name: The skills
+        run: uv run python scripts/check_skills.py
+      - name: The notebooks
+        run: uv run pytest --nbmake notebooks -q
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The Vercel image builds and answers /health
+        run: |
+          docker build -f Dockerfile.vercel -t readback .
+          docker run -d --name rb -p 8080:80 -e READBACK_SQLITE=/tmp/rb.sqlite readback
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8080/health && break; sleep 2; done
+          curl -fsS http://127.0.0.1:8080/health | grep -q '"status":"ok"'
