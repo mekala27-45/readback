@@ -1,0 +1,902 @@
+# Golden questions: turnaround. Written by scripts/build_golden.py (seed 20261023); every value is the
+# result of the SQL beside it over the fetched tables. Do not edit by hand: the golden-question
+# skill says how to add one.
+questions:
+- id: T-comparison-01
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Which carrier had the higher share of flights on time in 2016, United or Alaska?
+  claims:
+  - value: 0.8274940077
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'UA' and year = 2016
+    label: UA
+  - value: 0.8795770767
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AS' and year = 2016
+    label: AS
+  entity: AS
+  measure: on_time_rate
+  entities:
+  - UA
+  - AS
+  - '2016'
+  split: test
+- id: T-comparison-02
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Which carrier had the higher cancellation rate in 2021, Southwest or Delta?
+  claims:
+  - value: 0.0220778855
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_carrier_month where carrier = 'WN' and year
+      = 2021
+    label: WN
+  - value: 0.0048542911
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_carrier_month where carrier = 'DL' and year
+      = 2021
+    label: DL
+  entity: WN
+  measure: cancellation_rate
+  entities:
+  - WN
+  - DL
+  - '2021'
+  split: test
+- id: T-comparison-03
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Which carrier had the higher mean arrival delay in 2019, Spirit or Alaska?
+  claims:
+  - value: 5.1034839789
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(arr_delay_sum) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'NK' and year
+      = 2019
+    label: NK
+  - value: 1.3513935981
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(arr_delay_sum) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AS' and year
+      = 2019
+    label: AS
+  entity: NK
+  measure: mean_arrival_delay
+  entities:
+  - NK
+  - AS
+  - '2019'
+  split: test
+- id: T-comparison-04
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Which carrier had the higher number of flights flown in 2024, JetBlue or Southwest?
+  claims:
+  - value: 235683.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select sum(flown) as value from turnaround.mart_carrier_month where carrier = 'B6' and year = 2024
+    label: B6
+  - value: 1404597.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select sum(flown) as value from turnaround.mart_carrier_month where carrier = 'WN' and year = 2024
+    label: WN
+  entity: WN
+  measure: flights_flown
+  entities:
+  - B6
+  - WN
+  - '2024'
+  split: test
+- id: T-comparison-05
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Which airport had the higher cancellation rate in 2025, ORD or CLT?
+  claims:
+  - value: 0.0172951552
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_airport_day where airport = 'ORD' and year(flight_date)
+      = 2025
+    label: ORD
+  - value: 0.017085926
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_airport_day where airport = 'CLT' and year(flight_date)
+      = 2025
+    label: CLT
+  entity: ORD
+  measure: airport_cancellation_rate
+  entities:
+  - ORD
+  - CLT
+  - '2025'
+  split: dev
+- id: T-comparison-06
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Which airport had the higher mean departure delay in 2021, SFO or DFW?
+  claims:
+  - value: 6.4959908832
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(dep_delay_sum) / sum(flown) as value from turnaround.mart_airport_day where airport = 'SFO' and year(flight_date)
+      = 2021
+    label: SFO
+  - value: 13.4555257558
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(dep_delay_sum) / sum(flown) as value from turnaround.mart_airport_day where airport = 'DFW' and year(flight_date)
+      = 2021
+    label: DFW
+  entity: DFW
+  measure: airport_departure_delay
+  entities:
+  - SFO
+  - DFW
+  - '2021'
+  split: dev
+- id: T-comparison-07
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Which carrier had the higher on time rate in 2015, Frontier or American?
+  claims:
+  - value: 0.7383727384
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'F9' and year = 2015
+    label: F9
+  - value: 0.8172638459
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AA' and year = 2015
+    label: AA
+  entity: AA
+  measure: on_time_rate
+  entities:
+  - F9
+  - AA
+  - '2015'
+  split: test
+- id: T-comparison-08
+  family: comparison
+  warehouses:
+  - turnaround
+  question: Was the national on time rate higher in 2022 or in 2024?
+  claims:
+  - value: 0.789223467
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where year = 2022
+    label: '2022'
+  - value: 0.7918292837
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where year = 2024
+    label: '2024'
+  entity: '2024'
+  measure: national_on_time
+  entities:
+  - '2022'
+  - '2024'
+  split: test
+- id: T-definition-01
+  family: definition
+  warehouses:
+  - turnaround
+  question: What does turnaround mean by on time?
+  key_phrases:
+  - under 15 min
+  - arrival delay
+  split: test
+- id: T-definition-02
+  family: definition
+  warehouses:
+  - turnaround
+  question: What does turnaround mean by schedule padding?
+  key_phrases:
+  - unimpeded block time
+  - scheduled block time
+  split: test
+- id: T-definition-03
+  family: definition
+  warehouses:
+  - turnaround
+  question: How does turnaround define the inherited share?
+  key_phrases:
+  - arrival delay minutes
+  - flown legs
+  split: dev
+- id: T-definition-04
+  family: definition
+  warehouses:
+  - turnaround
+  question: What does turnaround mean by turnaround?
+  key_phrases:
+  - scheduled minutes
+  - previous leg
+  split: test
+- id: T-definition-05
+  family: definition
+  warehouses:
+  - turnaround
+  question: How does turnaround define a rotation?
+  key_phrases:
+  - tail number
+  - previous leg landed
+  split: test
+- id: T-definition-06
+  family: definition
+  warehouses:
+  - turnaround
+  question: What does turnaround mean by the completion factor?
+  key_phrases:
+  - not cancelled
+  - scheduled flights
+  split: dev
+- id: T-definition-07
+  family: definition
+  warehouses:
+  - turnaround
+  question: What does turnaround mean by a missed connection?
+  key_phrases:
+  - cancelled or diverted
+  - departure delay
+  split: test
+- id: T-definition-08
+  family: definition
+  warehouses:
+  - turnaround
+  question: How does turnaround define the reported cause fields?
+  key_phrases:
+  - fifteen minutes late
+  - five causes
+  split: dev
+- id: T-lookup-01
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was Spirit's on time rate in 2018?
+  claims:
+  - value: 0.8203343498
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'NK' and year = 2018
+    label: on time rate
+  measure: on_time_rate
+  entities:
+  - NK
+  - '2018'
+  split: dev
+- id: T-lookup-02
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was Alaska's share of flights cancelled in 2018?
+  claims:
+  - value: 0.0089802694
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_carrier_month where carrier = 'AS' and year
+      = 2018
+    label: cancellation rate
+  measure: cancellation_rate
+  entities:
+  - AS
+  - '2018'
+  split: test
+- id: T-lookup-03
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was the mean arrival delay for JetBlue in 2016?
+  claims:
+  - value: 8.052638205
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(arr_delay_sum) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'B6' and year
+      = 2016
+    label: mean arrival delay
+  measure: mean_arrival_delay
+  entities:
+  - B6
+  - '2016'
+  split: test
+- id: T-lookup-04
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was American's count of flights flown in 2015?
+  claims:
+  - value: 712935.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AA' and year = 2015
+    label: number of flights flown
+  measure: flights_flown
+  entities:
+  - AA
+  - '2015'
+  split: dev
+- id: T-lookup-05
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was the cancellation rate at DEN in 2024?
+  claims:
+  - value: 0.0112912893
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_airport_day where airport = 'DEN' and year(flight_date)
+      = 2024
+    label: cancellation rate
+  measure: airport_cancellation_rate
+  entities:
+  - DEN
+  - '2024'
+  split: test
+- id: T-lookup-06
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was the average departure delay at JFK in 2024?
+  claims:
+  - value: 12.7282603296
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(dep_delay_sum) / sum(flown) as value from turnaround.mart_airport_day where airport = 'JFK' and year(flight_date)
+      = 2024
+    label: mean departure delay
+  measure: airport_departure_delay
+  entities:
+  - JFK
+  - '2024'
+  split: test
+- id: T-lookup-07
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was the on time rate across all carriers in 2019?
+  claims:
+  - value: 0.8088596799
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where year = 2019
+    label: national on time rate
+  measure: national_on_time
+  entities:
+  - '2019'
+  split: dev
+- id: T-lookup-08
+  family: lookup
+  warehouses:
+  - turnaround
+  question: What was the on time rate for Frontier in 2015?
+  claims:
+  - value: 0.7383727384
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'F9' and year = 2015
+    label: on time rate
+  measure: on_time_rate
+  entities:
+  - F9
+  - '2015'
+  split: test
+- id: T-topk-01
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Among carriers that flew at least half a million flights in 2025, which 3 had the highest on time rate?
+  claims:
+  - value: 0.8020578274
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select carrier as entity, sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where year = 2025
+      group by carrier having sum(on_time) / sum(flown) is not null and sum(flown) >= 500000 order by value desc, entity limit
+      3
+    label: DL
+  - value: 0.7927838187
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: OO
+  - value: 0.7860494743
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: WN
+  ranking:
+  - DL
+  - OO
+  - WN
+  measure: on_time_rate
+  entities:
+  - '2025'
+  split: test
+- id: T-topk-02
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Among carriers that flew at least half a million flights in 2021, which 3 had the lowest share of flights on time?
+  claims:
+  - value: 0.7766644846
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select carrier as entity, sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where year = 2021
+      group by carrier having sum(on_time) / sum(flown) is not null and sum(flown) >= 500000 order by value asc, entity limit
+      3
+    label: WN
+  - value: 0.826171875
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: AA
+  - value: 0.8418529009
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: OO
+  ranking:
+  - WN
+  - AA
+  - OO
+  measure: on_time_rate
+  entities:
+  - '2021'
+  split: test
+- id: T-topk-03
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Among carriers that flew at least half a million flights in 2016, which 3 had the highest cancellation rate?
+  claims:
+  - value: 0.0139388348
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select carrier as entity, sum(cancelled) / sum(scheduled) as value from turnaround.mart_carrier_month where year
+      = 2016 group by carrier having sum(cancelled) / sum(scheduled) is not null and sum(flown) >= 500000 order by value desc,
+      entity limit 3
+    label: OO
+  - value: 0.0122098374
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: null
+    label: WN
+  - value: 0.0118830611
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: null
+    label: AA
+  ranking:
+  - OO
+  - WN
+  - AA
+  measure: cancellation_rate
+  entities:
+  - '2016'
+  split: test
+- id: T-topk-04
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Among carriers that flew at least half a million flights in 2024, which 3 had the highest mean arrival delay?
+  claims:
+  - value: 15.3043548916
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select carrier as entity, sum(arr_delay_sum) / sum(flown) as value from turnaround.mart_carrier_month where year
+      = 2024 group by carrier having sum(arr_delay_sum) / sum(flown) is not null and sum(flown) >= 500000 order by value desc,
+      entity limit 3
+    label: AA
+  - value: 7.3553903467
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: null
+    label: OO
+  - value: 5.742943989
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: null
+    label: UA
+  ranking:
+  - AA
+  - OO
+  - UA
+  measure: mean_arrival_delay
+  entities:
+  - '2024'
+  split: dev
+- id: T-topk-05
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Among carriers that flew at least half a million flights in 2023, which 3 had the lowest mean arrival delay?
+  claims:
+  - value: 2.4064697291
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select carrier as entity, sum(arr_delay_sum) / sum(flown) as value from turnaround.mart_carrier_month where year
+      = 2023 group by carrier having sum(arr_delay_sum) / sum(flown) is not null and sum(flown) >= 500000 order by value asc,
+      entity limit 3
+    label: DL
+  - value: 4.4703870433
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: null
+    label: OO
+  - value: 5.8049637007
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: null
+    label: WN
+  ranking:
+  - DL
+  - OO
+  - WN
+  measure: mean_arrival_delay
+  entities:
+  - '2023'
+  split: test
+- id: T-topk-06
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Of the airports ATL, ORD, DFW, DEN, LAX, JFK, SFO, SEA, CLT and BOS, which 3 had the highest cancellation rate
+    in 2018?
+  claims:
+  - value: 0.0265134265
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select airport as entity, sum(cancelled) / sum(scheduled) as value from turnaround.mart_airport_day where year(flight_date)
+      = 2018 and airport in ('ATL', 'ORD', 'DFW', 'DEN', 'LAX', 'JFK', 'SFO', 'SEA', 'CLT', 'BOS') group by airport having
+      sum(cancelled) / sum(scheduled) is not null order by value desc, entity limit 3
+    label: JFK
+  - value: 0.0259443991
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: null
+    label: BOS
+  - value: 0.0258853484
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: null
+    label: CLT
+  ranking:
+  - JFK
+  - BOS
+  - CLT
+  measure: airport_cancellation_rate
+  entities:
+  - '2018'
+  split: test
+- id: T-topk-07
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Of the airports ATL, ORD, DFW, DEN, LAX, JFK, SFO, SEA, CLT and BOS, which 3 had the highest average departure
+    delay in 2017?
+  claims:
+  - value: 15.0005540166
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select airport as entity, sum(dep_delay_sum) / sum(flown) as value from turnaround.mart_airport_day where year(flight_date)
+      = 2017 and airport in ('ATL', 'ORD', 'DFW', 'DEN', 'LAX', 'JFK', 'SFO', 'SEA', 'CLT', 'BOS') group by airport having
+      sum(dep_delay_sum) / sum(flown) is not null order by value desc, entity limit 3
+    label: JFK
+  - value: 13.6881241115
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: null
+    label: SFO
+  - value: 12.5521419759
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: null
+    label: BOS
+  ranking:
+  - JFK
+  - SFO
+  - BOS
+  measure: airport_departure_delay
+  entities:
+  - '2017'
+  split: test
+- id: T-topk-08
+  family: top_k
+  warehouses:
+  - turnaround
+  question: Among carriers that flew at least half a million flights in 2023, which 3 had the highest number of flights flown?
+  claims:
+  - value: 1421238.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select carrier as entity, sum(flown) as value from turnaround.mart_carrier_month where year = 2023 group by carrier
+      having sum(flown) is not null and sum(flown) >= 500000 order by value desc, entity limit 3
+    label: WN
+  - value: 972931.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: DL
+  - value: 928058.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: AA
+  ranking:
+  - WN
+  - DL
+  - AA
+  measure: flights_flown
+  entities:
+  - '2023'
+  split: dev
+- id: T-trend-01
+  family: trend
+  warehouses:
+  - turnaround
+  question: From 2019 to 2021, did United's share of flights on time go up or down?
+  claims:
+  - value: 0.7864320268
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'UA' and year = 2019
+    label: '2019'
+  - value: 0.8267205575
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'UA' and year = 2021
+    label: '2021'
+  direction: rose
+  measure: on_time_rate
+  entities:
+  - UA
+  - '2019'
+  - '2021'
+  split: test
+- id: T-trend-02
+  family: trend
+  warehouses:
+  - turnaround
+  question: From 2016 to 2022, did Southwest's share of flights cancelled go up or down?
+  claims:
+  - value: 0.0122098374
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_carrier_month where carrier = 'WN' and year
+      = 2016
+    label: '2016'
+  - value: 0.0326320871
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_carrier_month where carrier = 'WN' and year
+      = 2022
+    label: '2022'
+  direction: rose
+  measure: cancellation_rate
+  entities:
+  - WN
+  - '2016'
+  - '2022'
+  split: test
+- id: T-trend-03
+  family: trend
+  warehouses:
+  - turnaround
+  question: Did Alaska's mean arrival delay rise or fall from 2024 to 2025?
+  claims:
+  - value: 4.4678578413
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(arr_delay_sum) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AS' and year
+      = 2024
+    label: '2024'
+  - value: 4.8025024078
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(arr_delay_sum) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AS' and year
+      = 2025
+    label: '2025'
+  direction: rose
+  measure: mean_arrival_delay
+  entities:
+  - AS
+  - '2024'
+  - '2025'
+  split: test
+- id: T-trend-04
+  family: trend
+  warehouses:
+  - turnaround
+  question: From 2015 to 2025, did American's number of flights flown go up or down?
+  claims:
+  - value: 712935.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AA' and year = 2015
+    label: '2015'
+  - value: 952841.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AA' and year = 2025
+    label: '2025'
+  direction: rose
+  measure: flights_flown
+  entities:
+  - AA
+  - '2015'
+  - '2025'
+  split: dev
+- id: T-trend-05
+  family: trend
+  warehouses:
+  - turnaround
+  question: Did the cancellation rate at ORD rise or fall from 2018 to 2024?
+  claims:
+  - value: 0.0214338707
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_airport_day where airport = 'ORD' and year(flight_date)
+      = 2018
+    label: '2018'
+  - value: 0.0135153471
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select sum(cancelled) / sum(scheduled) as value from turnaround.mart_airport_day where airport = 'ORD' and year(flight_date)
+      = 2024
+    label: '2024'
+  direction: fell
+  measure: airport_cancellation_rate
+  entities:
+  - ORD
+  - '2018'
+  - '2024'
+  split: test
+- id: T-trend-06
+  family: trend
+  warehouses:
+  - turnaround
+  question: Did the average departure delay at DFW rise or fall from 2018 to 2019?
+  claims:
+  - value: 12.0234412742
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(dep_delay_sum) / sum(flown) as value from turnaround.mart_airport_day where airport = 'DFW' and year(flight_date)
+      = 2018
+    label: '2018'
+  - value: 12.990086083
+    unit: minutes
+    fmt: min1
+    tolerance: 0.05
+    sql: select sum(dep_delay_sum) / sum(flown) as value from turnaround.mart_airport_day where airport = 'DFW' and year(flight_date)
+      = 2019
+    label: '2019'
+  direction: rose
+  measure: airport_departure_delay
+  entities:
+  - DFW
+  - '2018'
+  - '2019'
+  split: dev
+- id: T-trend-07
+  family: trend
+  warehouses:
+  - turnaround
+  question: Did the national on time rate rise or fall from 2015 to 2016?
+  claims:
+  - value: 0.81388913
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where year = 2015
+    label: '2015'
+  - value: 0.8258913409
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where year = 2016
+    label: '2016'
+  direction: rose
+  measure: national_on_time
+  entities:
+  - '2015'
+  - '2016'
+  split: test
+- id: T-trend-08
+  family: trend
+  warehouses:
+  - turnaround
+  question: Did United's share of flights on time rise or fall from 2019 to 2023?
+  claims:
+  - value: 0.7864320268
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'UA' and year = 2019
+    label: '2019'
+  - value: 0.7939174926
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'UA' and year = 2023
+    label: '2023'
+  direction: rose
+  measure: on_time_rate
+  entities:
+  - UA
+  - '2019'
+  - '2023'
+  split: dev

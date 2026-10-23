@@ -1,0 +1,3154 @@
+# The catalog of turnaround at v0.1.0 (50c1ebe), built by
+# scripts/build_catalog.py from the fetched tables and documents. Do not edit by hand: change
+# catalog/unit_rules.yaml, catalog/definition_terms.yaml or catalog/overrides.yaml and rebuild.
+warehouse: turnaround
+repository: https://github.com/mekala27-45/turnaround
+tag: v0.1.0
+commit: 50c1ebee55b4b165524a3cca32b61e29d97af3c8
+as_of: 2026-07
+covers: every scheduled domestic flight from January 2015 to July 2026, summarized
+tables:
+- warehouse: turnaround
+  name: export_ch1_by_year
+  path: exports/csv/ch1_by_year.csv
+  grain:
+  - Year
+  grain_unique: true
+  rows: 12
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 12 rows from the CSV bundle the build exports for spreadsheet users, one row per Year.
+  columns:
+  - name: Year
+    type: BIGINT
+    role: label
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: Flights flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: On time
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: Scheduled block, route panel
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: Actual block, route panel
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch2_by_carrier
+  path: exports/csv/ch2_by_carrier.csv
+  grain:
+  - Carrier
+  grain_unique: true
+  rows: 17
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 17 rows from the CSV bundle the build exports for spreadsheet users, one row per Carrier.
+  columns:
+  - name: Carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Padding 2015
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: Padding 2025
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch2_changepoints
+  path: exports/csv/ch2_changepoints.csv
+  grain:
+  - Carrier
+  - Month
+  grain_unique: true
+  rows: 204
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 204 rows from the CSV bundle the build exports for spreadsheet users, one row per Carrier, Month.
+  columns:
+  - name: Carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: Padding before
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: Padding after
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: Step
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Step in ch2_changepoints.csv: Source: BTS Reporting Carrier On-Time Performance, model: PELT changepoints,
+      every scheduled flight, 2015 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch3_by_carrier
+  path: exports/csv/ch3_by_carrier.csv
+  grain:
+  - Carrier
+  grain_unique: true
+  rows: 15
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 15 rows from the CSV bundle the build exports for spreadsheet users, one row per Carrier.
+  columns:
+  - name: Carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: Excess below the line
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'Excess below the line in ch3_by_carrier.csv: Source: BTS Reporting Carrier On-Time Performance,
+      model: the density test with placebos, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: z against placebos
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'z against placebos in ch3_by_carrier.csv: Source: BTS Reporting Carrier On-Time Performance, model:
+      the density test with placebos, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: p
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'p in ch3_by_carrier.csv: Source: BTS Reporting Carrier On-Time Performance, model: the density
+      test with placebos, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: q (BH)
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'q (BH) in ch3_by_carrier.csv: Source: BTS Reporting Carrier On-Time Performance, model: the density
+      test with placebos, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Verdict
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Verdict in ch3_by_carrier.csv: Source: BTS Reporting Carrier On-Time Performance, model: the density
+      test with placebos, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch4_buffer_curve
+  path: exports/csv/ch4_buffer_curve.csv
+  grain:
+  - Scheduled turn
+  grain_unique: true
+  rows: 9
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 9 rows from the CSV bundle the build exports for spreadsheet users, one row per Scheduled turn.
+  columns:
+  - name: Scheduled turn
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: Turnaround is the scheduled minutes between the previous leg's scheduled arrival and this leg's
+      scheduled departure.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: Legs
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'Legs in ch4_buffer_curve.csv: Source: BTS Reporting Carrier On-Time Performance, model: the propagation
+      model, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Minutes passed on per late minute
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: The inherited share is those minutes over all arrival delay minutes of flown legs in the reporting
+      years.
+    citation:
+      file: docs/definitions.md
+      line: 37
+    definition_source: definitions
+    manifest_keys: []
+  - name: Low
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'Low in ch4_buffer_curve.csv: Source: BTS Reporting Carrier On-Time Performance, model: the propagation
+      model, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: High
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'High in ch4_buffer_curve.csv: Source: BTS Reporting Carrier On-Time Performance, model: the propagation
+      model, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch5_ranking
+  path: exports/csv/ch5_ranking.csv
+  grain:
+  - Carrier
+  grain_unique: true
+  rows: 15
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 15 rows from the CSV bundle the build exports for spreadsheet users, one row per Carrier.
+  columns:
+  - name: Carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: Raw rank
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'Raw rank in ch5_ranking.csv: Source: BTS on time files joined to the FAA aircraft registry, model:
+      fixed effects on weighted cells, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Raw effect
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Raw effect in ch5_ranking.csv: Source: BTS on time files joined to the FAA aircraft registry, model:
+      fixed effects on weighted cells, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Adjusted rank
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'Adjusted rank in ch5_ranking.csv: Source: BTS on time files joined to the FAA aircraft registry,
+      model: fixed effects on weighted cells, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Adjusted effect
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Adjusted effect in ch5_ranking.csv: Source: BTS on time files joined to the FAA aircraft registry,
+      model: fixed effects on weighted cells, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Interval
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Interval in ch5_ranking.csv: Source: BTS on time files joined to the FAA aircraft registry, model:
+      fixed effects on weighted cells, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Moved
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Moved in ch5_ranking.csv: Source: BTS on time files joined to the FAA aircraft registry, model:
+      fixed effects on weighted cells, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch6_nas_by_airport
+  path: exports/csv/ch6_nas_by_airport.csv
+  grain:
+  - Airport
+  grain_unique: true
+  rows: 10
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 10 rows from the CSV bundle the build exports for spreadsheet users, one row per Airport.
+  columns:
+  - name: Airport
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the airport, as the Bureau of Transportation Statistics spells it.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: Flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: Air traffic system share of cause minutes
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Air traffic minutes per flight
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch6_reported_by_year
+  path: exports/csv/ch6_reported_by_year.csv
+  grain:
+  - Year
+  grain_unique: true
+  rows: 12
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 12 rows from the CSV bundle the build exports for spreadsheet users, one row per Year.
+  columns:
+  - name: Year
+    type: BIGINT
+    role: label
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: Late aircraft
+    type: BIGINT
+    role: measure
+    unit: fraction
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Carrier
+    type: BIGINT
+    role: measure
+    unit: fraction
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Air traffic system
+    type: BIGINT
+    role: measure
+    unit: fraction
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Weather
+    type: BIGINT
+    role: measure
+    unit: fraction
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Security
+    type: BIGINT
+    role: measure
+    unit: fraction
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch7_events
+  path: exports/csv/ch7_events.csv
+  grain:
+  - Event
+  grain_unique: true
+  rows: 13
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 13 rows from the CSV bundle the build exports for spreadsheet users, one row per Event.
+  columns:
+  - name: Event
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Event in ch7_events.csv: Source: BTS Reporting Carrier On-Time Performance, model: the disruption
+      detector, every scheduled flight, 2015 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Onset
+    type: DATE
+    role: label
+    unit: none
+    definition: 'Onset in ch7_events.csv: Source: BTS Reporting Carrier On-Time Performance, model: the disruption
+      detector, every scheduled flight, 2015 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Window
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Window in ch7_events.csv: Source: BTS Reporting Carrier On-Time Performance, model: the disruption
+      detector, every scheduled flight, 2015 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Units
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Units in ch7_events.csv: Source: BTS Reporting Carrier On-Time Performance, model: the disruption
+      detector, every scheduled flight, 2015 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Flagged
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: 'Flagged in ch7_events.csv: Source: BTS Reporting Carrier On-Time Performance, model: the disruption
+      detector, every scheduled flight, 2015 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: First alert
+    type: DATE
+    role: label
+    unit: none
+    definition: 'First alert in ch7_events.csv: Source: BTS Reporting Carrier On-Time Performance, model: the disruption
+      detector, every scheduled flight, 2015 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Days after onset
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A disruption alert opens on a day whose score passes the threshold the cost chose and stays open
+      while the score stays above half of it; the open run is one episode, and its length is the unit's recovery
+      time.
+    citation:
+      file: docs/definitions.md
+      line: 61
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch7_recovery_by_carrier
+  path: exports/csv/ch7_recovery_by_carrier.csv
+  grain:
+  - Carrier
+  grain_unique: true
+  rows: 20
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 20 rows from the CSV bundle the build exports for spreadsheet users, one row per Carrier.
+  columns:
+  - name: Carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: Alert episodes
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A disruption alert opens on a day whose score passes the threshold the cost chose and stays open
+      while the score stays above half of it; the open run is one episode, and its length is the unit's recovery
+      time.
+    citation:
+      file: docs/definitions.md
+      line: 61
+    definition_source: definitions
+    manifest_keys: []
+  - name: Median days
+    type: DOUBLE
+    role: measure
+    unit: days
+    definition: A disruption alert opens on a day whose score passes the threshold the cost chose and stays open
+      while the score stays above half of it; the open run is one episode, and its length is the unit's recovery
+      time.
+    citation:
+      file: docs/definitions.md
+      line: 61
+    definition_source: definitions
+    manifest_keys: []
+  - name: Mean days
+    type: DOUBLE
+    role: measure
+    unit: days
+    definition: A disruption alert opens on a day whose score passes the threshold the cost chose and stays open
+      while the score stays above half of it; the open run is one episode, and its length is the unit's recovery
+      time.
+    citation:
+      file: docs/definitions.md
+      line: 61
+    definition_source: definitions
+    manifest_keys: []
+  - name: Longest
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A disruption alert opens on a day whose score passes the threshold the cost chose and stays open
+      while the score stays above half of it; the open run is one episode, and its length is the unit's recovery
+      time.
+    citation:
+      file: docs/definitions.md
+      line: 61
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch8_by_dow
+  path: exports/csv/ch8_by_dow.csv
+  grain:
+  - Day
+  grain_unique: true
+  rows: 7
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 7 rows from the CSV bundle the build exports for spreadsheet users, one row per Day.
+  columns:
+  - name: Day
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Day in ch8_by_dow.csv: Source: BTS Reporting Carrier On-Time Performance, model: the misconnect
+      curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: On time
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: Mean arrival delay
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch8_by_hour
+  path: exports/csv/ch8_by_hour.csv
+  grain:
+  - Scheduled departure hour
+  grain_unique: true
+  rows: 24
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 24 rows from the CSV bundle the build exports for spreadsheet users, one row per Scheduled departure
+    hour.
+  columns:
+  - name: Scheduled departure hour
+    type: TIME
+    role: label
+    unit: none
+    definition: 'Scheduled departure hour in ch8_by_hour.csv: Source: BTS Reporting Carrier On-Time Performance,
+      model: the misconnect curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: On time
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: Mean arrival delay
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch8_by_month
+  path: exports/csv/ch8_by_month.csv
+  grain:
+  - Month
+  grain_unique: true
+  rows: 12
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 12 rows from the CSV bundle the build exports for spreadsheet users, one row per Month.
+  columns:
+  - name: Month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: Flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: On time
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: Mean arrival delay
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch8_by_position
+  path: exports/csv/ch8_by_position.csv
+  grain:
+  - Leg of the aircraft's day
+  grain_unique: true
+  rows: 6
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 6 rows from the CSV bundle the build exports for spreadsheet users, one row per Leg of the aircraft's
+    day.
+  columns:
+  - name: Leg of the aircraft's day
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The leg index is the leg's place in its rotation; the day leg index its place in the tail's local
+      calendar day, which is what "the first flight of the aircraft's day" means.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: Flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: On time
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: Mean arrival delay
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch8_hubs
+  path: exports/csv/ch8_hubs.csv
+  grain:
+  - Hub
+  grain_unique: true
+  rows: 20
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 20 rows from the CSV bundle the build exports for spreadsheet users, one row per Hub.
+  columns:
+  - name: Hub
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of one of the twenty hubs the misconnect calculator covers.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: Days
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'Days in ch8_hubs.csv: Source: BTS Reporting Carrier On-Time Performance, model: the misconnect
+      curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Inbound flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'Inbound flights in ch8_hubs.csv: Source: BTS Reporting Carrier On-Time Performance, model: the
+      misconnect curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Buffer for under the line
+    type: BIGINT
+    role: measure
+    unit: minutes
+    definition: Turnaround is the scheduled minutes between the previous leg's scheduled arrival and this leg's
+      scheduled departure.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: Interval
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Interval in ch8_hubs.csv: Source: BTS Reporting Carrier On-Time Performance, model: the misconnect
+      curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Interior
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: 'Interior in ch8_hubs.csv: Source: BTS Reporting Carrier On-Time Performance, model: the misconnect
+      curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_ch8_trade_airports
+  path: exports/csv/ch8_trade_airports.csv
+  grain:
+  - Airport
+  grain_unique: true
+  rows: 20
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 20 rows from the CSV bundle the build exports for spreadsheet users, one row per Airport.
+  columns:
+  - name: Airport
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the airport, as the Bureau of Transportation Statistics spells it.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: Turns
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: Turnaround is the scheduled minutes between the previous leg's scheduled arrival and this leg's
+      scheduled departure.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: Turns reached by a late inbound
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Turnaround is the scheduled minutes between the previous leg's scheduled arrival and this leg's
+      scheduled departure.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: Arrival minutes saved per buffer minute
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'Arrival minutes saved per buffer minute in ch8_trade_airports.csv: Source: BTS Reporting Carrier
+      On-Time Performance, model: the misconnect curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Pays
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: 'Pays in ch8_trade_airports.csv: Source: BTS Reporting Carrier On-Time Performance, model: the misconnect
+      curve, scheduled flights 2023 to 2026-07, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_mart_inherited_month
+  path: exports/csv/mart_inherited_month.csv
+  grain:
+  - carrier
+  - year
+  - month
+  grain_unique: true
+  rows: 617
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 617 rows from the CSV bundle the build exports for spreadsheet users, one row per carrier, year,
+    month.
+  columns:
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: year
+    type: BIGINT
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: BIGINT
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: inherited_minutes_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: The inherited share is those minutes over all arrival delay minutes of flown legs in the reporting
+      years.
+    citation:
+      file: docs/definitions.md
+      line: 37
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_pos_sum
+    type: BIGINT
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: export_recovery_by_condition
+  path: exports/csv/recovery_by_condition.csv
+  grain:
+  - Condition
+  grain_unique: true
+  rows: 12
+  source_step: the CSV bundle the build exports for spreadsheet users
+  description: 12 rows from the CSV bundle the build exports for spreadsheet users, one row per Condition.
+  columns:
+  - name: Condition
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'Condition in recovery_by_condition.csv: Source: the simulated airline network with known truth,
+      the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Padding error
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: Changepoint date error
+    type: DOUBLE
+    role: measure
+    unit: days
+    definition: 'Changepoint date error in recovery_by_condition.csv: Source: the simulated airline network with
+      known truth, the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Rho bias
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'Rho bias in recovery_by_condition.csv: Source: the simulated airline network with known truth,
+      the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Rho coverage
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'Rho coverage in recovery_by_condition.csv: Source: the simulated airline network with known truth,
+      the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Inherited share error
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: The inherited share is those minutes over all arrival delay minutes of flown legs in the reporting
+      years.
+    citation:
+      file: docs/definitions.md
+      line: 37
+    definition_source: definitions
+    manifest_keys: []
+  - name: Raw rank correlation
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'Raw rank correlation in recovery_by_condition.csv: Source: the simulated airline network with known
+      truth, the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Adjusted rank correlation
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'Adjusted rank correlation in recovery_by_condition.csv: Source: the simulated airline network with
+      known truth, the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Bunching false positives
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'Bunching false positives in recovery_by_condition.csv: Source: the simulated airline network with
+      known truth, the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Bunching power
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'Bunching power in recovery_by_condition.csv: Source: the simulated airline network with known truth,
+      the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Weather share error
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'Weather share error in recovery_by_condition.csv: Source: the simulated airline network with known
+      truth, the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Weather coverage
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'Weather coverage in recovery_by_condition.csv: Source: the simulated airline network with known
+      truth, the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+  - name: Detector precision
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'Detector precision in recovery_by_condition.csv: Source: the simulated airline network with known
+      truth, the recovery study, every condition and seed, 20 seeds, as of 2026-10-01.'
+    citation:
+      file: exports/csv/dictionary.csv
+      line: 0
+    definition_source: dictionary
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_airport_day
+  path: results/marts/mart_airport_day.parquet
+  grain:
+  - airport
+  - flight_date
+  grain_unique: true
+  rows: 1381898
+  source_step: the warehouse marts
+  description: 1,381,898 rows from the warehouse marts, one row per airport, flight_date.
+  columns:
+  - name: airport
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the airport, as the Bureau of Transportation Statistics spells it.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: flight_date
+    type: DATE
+    role: time
+    unit: none
+    definition: The scheduled flight date, local to the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: cancelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: dep_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_nas_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_weather_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_carrier_day
+  path: results/marts/mart_carrier_day.parquet
+  grain:
+  - carrier
+  - flight_date
+  grain_unique: true
+  rows: 63438
+  source_step: the warehouse marts
+  description: 63,438 rows from the warehouse marts, one row per carrier, flight_date.
+  columns:
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: flight_date
+    type: DATE
+    role: time
+    unit: none
+    definition: The scheduled flight date, local to the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: cancelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: on_time
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_carrier_month
+  path: results/marts/mart_carrier_month.parquet
+  grain:
+  - carrier
+  - year
+  - month
+  grain_unique: true
+  rows: 2086
+  source_step: the warehouse marts
+  description: 2,086 rows from the warehouse marts, one row per carrier, year, month.
+  columns:
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: year
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: cancelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: diverted
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: on_time
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: late15
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_pos_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: dep_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: crs_elapsed_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: actual_elapsed_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: padding_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: padding_flights
+    type: BIGINT
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: padding_block_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_late_aircraft_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_carrier_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_nas_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_weather_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_security_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: cause_arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_delay_histogram
+  path: results/marts/mart_delay_histogram.parquet
+  grain:
+  - carrier
+  - year
+  - month
+  - minute
+  grain_unique: true
+  rows: 634827
+  source_step: the warehouse marts
+  description: 634,827 rows from the warehouse marts, one row per carrier, year, month, minute.
+  columns:
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: year
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: minute
+    type: INTEGER
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_hour_profile
+  path: results/marts/mart_hour_profile.parquet
+  grain:
+  - year
+  - month
+  - day_of_week
+  - dep_hour
+  grain_unique: true
+  rows: 23116
+  source_step: the warehouse marts
+  description: 23,116 rows from the warehouse marts, one row per year, month, day_of_week, dep_hour.
+  columns:
+  - name: year
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: day_of_week
+    type: INTEGER
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: dep_hour
+    type: INTEGER
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: cancelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: on_time
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_inherited_month
+  path: results/marts/mart_inherited_month.parquet
+  grain:
+  - carrier
+  - year
+  - month
+  grain_unique: true
+  rows: 617
+  source_step: the warehouse marts
+  description: 617 rows from the warehouse marts, one row per carrier, year, month.
+  columns:
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: year
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: inherited_minutes_sum
+    type: DECIMAL(38,16)
+    role: measure
+    unit: minutes
+    definition: The inherited share is those minutes over all arrival delay minutes of flown legs in the reporting
+      years.
+    citation:
+      file: docs/definitions.md
+      line: 37
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_pos_sum
+    type: DECIMAL(38,0)
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_leg_position
+  path: results/marts/mart_leg_position.parquet
+  grain:
+  - carrier
+  - year
+  - leg_position
+  grain_unique: true
+  rows: 1086
+  source_step: the warehouse marts
+  description: 1,086 rows from the warehouse marts, one row per carrier, year, leg_position.
+  columns:
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: year
+    type: BIGINT
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: leg_position
+    type: BIGINT
+    role: key
+    unit: none
+    definition: The leg index is the leg's place in its rotation; the day leg index its place in the tail's local
+      calendar day, which is what "the first flight of the aircraft's day" means.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: on_time
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: dep_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_quarantine
+  path: results/marts/mart_quarantine.parquet
+  grain:
+  - carrier
+  - year
+  - month
+  grain_unique: true
+  rows: 2086
+  source_step: the warehouse marts
+  description: 2,086 rows from the warehouse marts, one row per carrier, year, month.
+  columns:
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: year
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: rows
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: duplicate_key
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: actual_without_scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: impossible_time
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: elapsed_mismatch
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: status_conflict
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: missing_actual
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cause_mismatch
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: tail_missing
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: tail_format
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: revision
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: excluded
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: turnaround
+  name: mart_route_month
+  path: results/marts/mart_route_month.parquet
+  grain:
+  - route
+  - origin
+  - dest
+  - carrier
+  - year
+  - month
+  grain_unique: true
+  rows: 1206533
+  source_step: the warehouse marts
+  description: 1,206,533 rows from the warehouse marts, one row per route, origin, dest, carrier, year, month.
+  columns:
+  - name: route
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The origin and destination airport codes joined by a hyphen.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: origin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: dest
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the arrival airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: year
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: cancelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: on_time
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'A flight is on time when its arrival delay is under 15 min: the A14 convention the Bureau of Transportation
+      Statistics has used since 1987.'
+    citation:
+      file: docs/definitions.md
+      line: 9
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: crs_elapsed_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: actual_elapsed_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: padding_sum
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+  - name: padding_flights
+    type: BIGINT
+    role: measure
+    unit: minutes
+    definition: 'Block time is gate to gate: scheduled block time is the carrier''s scheduled elapsed time, actual
+      block time the actual elapsed time.'
+    citation:
+      file: docs/definitions.md
+      line: 23
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: misconnect_cells
+  path: results/marts/misconnect_cells.parquet
+  grain:
+  - hub
+  - direction
+  - month
+  - hour
+  - bin
+  grain_unique: true
+  rows: 538862
+  source_step: the misconnect calculator
+  description: 538,862 rows from the misconnect calculator, one row per hub, direction, month, hour, bin.
+  columns:
+  - name: hub
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of one of the twenty hubs the misconnect calculator covers.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: direction
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: hour
+    type: INTEGER
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: bin
+    type: INTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: flights
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: misconnect_hubs
+  path: results/marts/misconnect_hubs.parquet
+  grain:
+  - hub
+  grain_unique: false
+  rows: 740
+  source_step: the misconnect calculator
+  description: 740 rows from the misconnect calculator, one row per hub.
+  columns:
+  - name: hub
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of one of the twenty hubs the misconnect calculator covers.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: buffer
+    type: BIGINT
+    role: measure
+    unit: minutes
+    definition: Turnaround is the scheduled minutes between the previous leg's scheduled arrival and this leg's
+      scheduled departure.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: joint
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A connection is missed when the inbound flight is cancelled or diverted, or when its arrival delay,
+      less the outbound flight's own departure delay, uses up the scheduled buffer less a minimum connection time
+      of 25 min.
+    citation:
+      file: docs/definitions.md
+      line: 67
+    definition_source: definitions
+    manifest_keys: []
+  - name: pooled
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A connection is missed when the inbound flight is cancelled or diverted, or when its arrival delay,
+      less the outbound flight's own departure delay, uses up the scheduled buffer less a minimum connection time
+      of 25 min.
+    citation:
+      file: docs/definitions.md
+      line: 67
+    definition_source: definitions
+    manifest_keys: []
+  - name: ratio
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: design_effect
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: A connection is missed when the inbound flight is cancelled or diverted, or when its arrival delay,
+      less the outbound flight's own departure delay, uses up the scheduled buffer less a minimum connection time
+      of 25 min.
+    citation:
+      file: docs/definitions.md
+      line: 67
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: misconnect_lost
+  path: results/marts/misconnect_lost.parquet
+  grain:
+  - hub
+  - month
+  - hour
+  grain_unique: true
+  rows: 5337
+  source_step: the misconnect calculator
+  description: 5,337 rows from the misconnect calculator, one row per hub, month, hour.
+  columns:
+  - name: hub
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of one of the twenty hubs the misconnect calculator covers.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: hour
+    type: INTEGER
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: lost
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A connection is missed when the inbound flight is cancelled or diverted, or when its arrival delay,
+      less the outbound flight's own departure delay, uses up the scheduled buffer less a minimum connection time
+      of 25 min.
+    citation:
+      file: docs/definitions.md
+      line: 67
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: misconnect_outcomes
+  path: results/marts/misconnect_outcomes.parquet
+  grain:
+  - origin
+  - dest
+  - kind
+  - flight_date
+  - hour
+  - lost
+  grain_unique: false
+  rows: 647421
+  source_step: the misconnect calculator
+  description: 647,421 rows from the misconnect calculator, one row per origin, dest, kind, flight_date, hour, lost.
+  columns:
+  - name: origin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: dest
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the arrival airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: kind
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: flight_date
+    type: DATE
+    role: time
+    unit: none
+    definition: The scheduled flight date, local to the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: hour
+    type: INTEGER
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: delay
+    type: INTEGER
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: lost
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: A connection is missed when the inbound flight is cancelled or diverted, or when its arrival delay,
+      less the outbound flight's own departure delay, uses up the scheduled buffer less a minimum connection time
+      of 25 min.
+    citation:
+      file: docs/definitions.md
+      line: 67
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: misconnect_routes
+  path: results/marts/misconnect_routes.parquet
+  grain:
+  - origin
+  - dest
+  - direction
+  - month
+  grain_unique: true
+  rows: 53425
+  source_step: the misconnect calculator
+  description: 53,425 rows from the misconnect calculator, one row per origin, dest, direction, month.
+  columns:
+  - name: origin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: dest
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the arrival airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: direction
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: month
+    type: INTEGER
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: scheduled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: flown
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: The completion factor is the share of scheduled flights that were not cancelled; the cancellation
+      rate is its complement; the diversion rate is the share of scheduled flights diverted.
+    citation:
+      file: docs/definitions.md
+      line: 45
+    definition_source: definitions
+    manifest_keys: []
+  - name: lost
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A connection is missed when the inbound flight is cancelled or diverted, or when its arrival delay,
+      less the outbound flight's own departure delay, uses up the scheduled buffer less a minimum connection time
+      of 25 min.
+    citation:
+      file: docs/definitions.md
+      line: 67
+    definition_source: definitions
+    manifest_keys: []
+  - name: mean_delay
+    type: DOUBLE
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: turnaround
+  name: rotation_samples
+  path: results/marts/rotation_samples.parquet
+  grain:
+  - flight_date
+  - tail_number
+  - carrier
+  - rotation_id
+  - leg_index
+  grain_unique: true
+  rows: 2793
+  source_step: the rotation chapter
+  description: 2,793 rows from the rotation chapter, one row per flight_date, tail_number, carrier, rotation_id,
+    leg_index.
+  columns:
+  - name: flight_date
+    type: DATE
+    role: time
+    unit: none
+    definition: The scheduled flight date, local to the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: tail_number
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: A rotation is a sequence of flown legs by one tail number in which each leg leaves from the airport
+      the previous leg landed at, after it landed, within 6 h of its scheduled arrival.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: carrier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'For every flight at least fifteen minutes late, the carrier reports how many minutes to attribute
+      to five causes: the carrier, extreme weather, the national airspace system, security, and a late arriving
+      aircraft.'
+    citation:
+      file: docs/definitions.md
+      line: 53
+    definition_source: definitions
+    manifest_keys: []
+  - name: rotation_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: A rotation is a sequence of flown legs by one tail number in which each leg leaves from the airport
+      the previous leg landed at, after it landed, within 6 h of its scheduled arrival.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: leg_index
+    type: BIGINT
+    role: key
+    unit: none
+    definition: The leg index is the leg's place in its rotation; the day leg index its place in the tail's local
+      calendar day, which is what "the first flight of the aircraft's day" means.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: day_leg_index
+    type: BIGINT
+    role: key
+    unit: none
+    definition: The leg index is the leg's place in its rotation; the day leg index its place in the tail's local
+      calendar day, which is what "the first flight of the aircraft's day" means.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: origin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the departure airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: dest
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The three letter code of the arrival airport.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: sched_dep_utc
+    type: TIMESTAMP
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: sched_arr_utc
+    type: TIMESTAMP
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: dep_delay
+    type: INTEGER
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: arr_delay
+    type: INTEGER
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: sched_turn
+    type: BIGINT
+    role: measure
+    unit: minutes
+    definition: Turnaround is the scheduled minutes between the previous leg's scheduled arrival and this leg's
+      scheduled departure.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: link_status
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: A rotation is a sequence of flown legs by one tail number in which each leg leaves from the airport
+      the previous leg landed at, after it landed, within 6 h of its scheduled arrival.
+    citation:
+      file: docs/definitions.md
+      line: 31
+    definition_source: definitions
+    manifest_keys: []
+  - name: prev_arr_delay
+    type: INTEGER
+    role: measure
+    unit: minutes
+    definition: Minutes after the scheduled gate departure and gate arrival, negative when early, as the carrier
+      reports them.
+    citation:
+      file: docs/definitions.md
+      line: 17
+    definition_source: definitions
+    manifest_keys: []
+  - name: rank
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: turnaround
+  name: rotation_worst_days
+  path: results/marts/rotation_worst_days.parquet
+  grain:
+  - year
+  - month
+  grain_unique: true
+  rows: 43
+  source_step: the rotation chapter
+  description: 43 rows from the rotation chapter, one row per year, month.
+  columns:
+  - name: year
+    type: BIGINT
+    role: time
+    unit: none
+    definition: The calendar year of the scheduled flight date.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: BIGINT
+    role: time
+    unit: none
+    definition: The calendar month of the scheduled flight date, 1 to 12.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: worst_day
+    type: DATE
+    role: time
+    unit: none
+    definition: A baseline is a carrier's (or an airport's) median daily cancellation rate and mean arrival delay
+      over its previous four weeks, with the median absolute deviation as its spread.
+    citation:
+      file: docs/definitions.md
+      line: 61
+    definition_source: definitions
+    manifest_keys: []
+  - name: score
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: A baseline is a carrier's (or an airport's) median daily cancellation rate and mean arrival delay
+      over its previous four weeks, with the median absolute deviation as its spread.
+    citation:
+      file: docs/definitions.md
+      line: 61
+    definition_source: definitions
+    manifest_keys: []
+metrics:
+- warehouse: turnaround
+  name: scheduled flights
+  definition: scheduled flights, over the mart
+  sql: select sum(scheduled) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 2
+  parses: true
+- warehouse: turnaround
+  name: cancellation rate
+  definition: cancellation rate, over the mart
+  sql: select sum(cancelled) / sum(scheduled) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 3
+  parses: true
+- warehouse: turnaround
+  name: completion factor
+  definition: completion factor, over the mart
+  sql: select 1 - sum(cancelled) / sum(scheduled) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 4
+  parses: true
+- warehouse: turnaround
+  name: diversion rate
+  definition: diversion rate, over the mart
+  sql: select sum(diverted) / sum(scheduled) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 5
+  parses: true
+- warehouse: turnaround
+  name: on time rate
+  definition: on time rate, over the mart
+  sql: select sum(on_time) / sum(flown) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 6
+  parses: true
+- warehouse: turnaround
+  name: mean arrival delay
+  definition: mean arrival delay, over the mart
+  sql: select sum(arr_delay_sum) / sum(flown) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 7
+  parses: true
+- warehouse: turnaround
+  name: median arrival delay
+  definition: median arrival delay, over the mart
+  sql: select median_from_histogram as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 8
+  parses: false
+- warehouse: turnaround
+  name: mean scheduled block
+  definition: mean scheduled block, over the mart
+  sql: select sum(crs_elapsed_sum) / sum(flown) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 9
+  parses: true
+- warehouse: turnaround
+  name: mean actual block
+  definition: mean actual block, over the mart
+  sql: select sum(actual_elapsed_sum) / sum(flown) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 10
+  parses: true
+- warehouse: turnaround
+  name: mean padding
+  definition: mean padding, over the mart
+  sql: select sum(padding_sum) / sum(padding_flights) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 11
+  parses: true
+- warehouse: turnaround
+  name: padding share
+  definition: padding share, over the mart
+  sql: select sum(padding_sum) / sum(padding_block_sum) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 12
+  parses: true
+- warehouse: turnaround
+  name: reported late aircraft share
+  definition: reported late aircraft share, over the mart
+  sql: select sum(cause_late_aircraft_sum) / (sum(cause_late_aircraft_sum) + sum(cause_carrier_sum) + sum(cause_nas_sum)
+    + sum(cause_weather_sum) + sum(cause_security_sum)) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 13
+  parses: true
+- warehouse: turnaround
+  name: reported carrier share
+  definition: reported carrier share, over the mart
+  sql: select sum(cause_carrier_sum) / (sum(cause_late_aircraft_sum) + sum(cause_carrier_sum) + sum(cause_nas_sum)
+    + sum(cause_weather_sum) + sum(cause_security_sum)) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 14
+  parses: true
+- warehouse: turnaround
+  name: reported nas share
+  definition: reported nas share, over the mart
+  sql: select sum(cause_nas_sum) / (sum(cause_late_aircraft_sum) + sum(cause_carrier_sum) + sum(cause_nas_sum) +
+    sum(cause_weather_sum) + sum(cause_security_sum)) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 15
+  parses: true
+- warehouse: turnaround
+  name: reported weather share
+  definition: reported weather share, over the mart
+  sql: select sum(cause_weather_sum) / (sum(cause_late_aircraft_sum) + sum(cause_carrier_sum) + sum(cause_nas_sum)
+    + sum(cause_weather_sum) + sum(cause_security_sum)) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 16
+  parses: true
+- warehouse: turnaround
+  name: reported security share
+  definition: reported security share, over the mart
+  sql: select sum(cause_security_sum) / (sum(cause_late_aircraft_sum) + sum(cause_carrier_sum) + sum(cause_nas_sum)
+    + sum(cause_weather_sum) + sum(cause_security_sum)) as value from mart_carrier_month
+  table: mart_carrier_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 17
+  parses: true
+- warehouse: turnaround
+  name: inherited share
+  definition: inherited share, over the mart
+  sql: select sum(inherited_minutes_sum) / sum(arr_delay_pos_sum) as value from mart_inherited_month
+  table: mart_inherited_month
+  citation:
+    file: exports/csv/metrics_definitions.csv
+    line: 18
+  parses: true

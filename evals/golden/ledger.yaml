@@ -1,0 +1,829 @@
+# Golden questions: ledger. Written by scripts/build_golden.py (seed 20261023); every value is the
+# result of the SQL beside it over the fetched tables. Do not edit by hand: the golden-question
+# skill says how to add one.
+questions:
+- id: L-comparison-01
+  family: comparison
+  warehouses:
+  - ledger
+  question: Was the NIM at Harborline Bank higher in 2023Q4 or in 2024Q4?
+  claims:
+  - value: 0.0346092946
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(nim) as value from ledger.metrics_bank_quarter where period = '2023Q4'
+    label: 2023Q4
+  - value: 0.0455327163
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(nim) as value from ledger.metrics_bank_quarter where period = '2024Q4'
+    label: 2024Q4
+  entity: 2024Q4
+  measure: nim
+  entities:
+  - 2023Q4
+  - 2024Q4
+  split: test
+- id: L-comparison-02
+  family: comparison
+  warehouses:
+  - ledger
+  question: Was the efficiency ratio at Harborline Bank higher in 2024Q1 or in 2025Q4?
+  claims:
+  - value: 0.6918895712
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(efficiency_ratio) as value from ledger.metrics_bank_quarter where period = '2024Q1'
+    label: 2024Q1
+  - value: 0.5197163264
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(efficiency_ratio) as value from ledger.metrics_bank_quarter where period = '2025Q4'
+    label: 2025Q4
+  entity: 2024Q1
+  measure: efficiency_ratio
+  entities:
+  - 2024Q1
+  - 2025Q4
+  split: dev
+- id: L-comparison-03
+  family: comparison
+  warehouses:
+  - ledger
+  question: Was the net income at Harborline Bank higher in 2025Q2 or in 2026Q2?
+  claims:
+  - value: 947159.09
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(net_income) as value from ledger.metrics_bank_quarter where period = '2025Q2'
+    label: 2025Q2
+  - value: 4361569.56
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(net_income) as value from ledger.metrics_bank_quarter where period = '2026Q2'
+    label: 2026Q2
+  entity: 2026Q2
+  measure: net_income
+  entities:
+  - 2025Q2
+  - 2026Q2
+  split: test
+- id: L-comparison-04
+  family: comparison
+  warehouses:
+  - ledger
+  question: Was the total deposits at Harborline Bank higher in 2025Q1 or in 2026Q1?
+  claims:
+  - value: 887701423.89
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(total_deposits) as value from ledger.metrics_bank_quarter where period = '2025Q1'
+    label: 2025Q1
+  - value: 904335727.3
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(total_deposits) as value from ledger.metrics_bank_quarter where period = '2026Q1'
+    label: 2026Q1
+  entity: 2026Q1
+  measure: total_deposits
+  entities:
+  - 2025Q1
+  - 2026Q1
+  split: dev
+- id: L-comparison-05
+  family: comparison
+  warehouses:
+  - ledger
+  question: Was the capital ratio at Harborline Bank higher in 2023Q4 or in 2026Q2?
+  claims:
+  - value: 0.197287208
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(capital_ratio) as value from ledger.metrics_bank_quarter where period = '2023Q4'
+    label: 2023Q4
+  - value: 0.1935154008
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(capital_ratio) as value from ledger.metrics_bank_quarter where period = '2026Q2'
+    label: 2026Q2
+  entity: 2023Q4
+  measure: capital_ratio
+  entities:
+  - 2023Q4
+  - 2026Q2
+  split: test
+- id: L-comparison-06
+  family: comparison
+  warehouses:
+  - ledger
+  question: In ledger's New Jersey HMDA comparison, which group had the higher denial rate, White non Hispanic or Black applicants?
+  claims:
+  - value: 0.1070683564
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(rate) as value from ledger.f03_unadjusted where (dimension = 'race and ethnicity') and "group" = 'White
+      non Hispanic'
+    label: White non Hispanic
+  - value: 0.2397843666
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(rate) as value from ledger.f03_unadjusted where (dimension = 'race and ethnicity') and "group" = 'Black'
+    label: Black
+  entity: Black
+  measure: denial_rate
+  entities:
+  - White non Hispanic
+  - Black
+  split: test
+- id: L-comparison-07
+  family: comparison
+  warehouses:
+  - ledger
+  question: Which AML rule in ledger had the higher alert precision, structuring or round tripping?
+  claims:
+  - value: 0.414893617
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(precision) as value from ledger.f05_rule_scorecard where rule = 'structuring'
+    label: structuring
+  - value: 1.0
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(precision) as value from ledger.f05_rule_scorecard where rule = 'round_tripping'
+    label: round_tripping
+  entity: round_tripping
+  measure: rule_precision
+  entities:
+  - structuring
+  - round_tripping
+  split: test
+- id: L-comparison-08
+  family: comparison
+  warehouses:
+  - ledger
+  question: Which AML rule in ledger had the higher count of alerts, structuring or mule?
+  claims:
+  - value: 376.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select max(alerts) as value from ledger.f05_rule_scorecard where rule = 'structuring'
+    label: structuring
+  - value: 83.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select max(alerts) as value from ledger.f05_rule_scorecard where rule = 'mule'
+    label: mule
+  entity: structuring
+  measure: rule_alerts
+  entities:
+  - structuring
+  - mule
+  split: test
+- id: L-definition-01
+  family: definition
+  warehouses:
+  - ledger
+  question: How does ledger define a delinquency bucket?
+  key_phrases:
+  - days past due
+  - charged off
+  split: test
+- id: L-definition-02
+  family: definition
+  warehouses:
+  - ledger
+  question: How does ledger define a default?
+  key_phrases:
+  - 90 days past due
+  - charged off
+  split: test
+- id: L-definition-03
+  family: definition
+  warehouses:
+  - ledger
+  question: How does ledger define fraud?
+  key_phrases:
+  - disputes it
+  - upheld
+  split: test
+- id: L-definition-04
+  family: definition
+  warehouses:
+  - ledger
+  question: How does ledger define an alert?
+  key_phrases:
+  - rule or a model
+  - flagged
+  split: test
+- id: L-definition-05
+  family: definition
+  warehouses:
+  - ledger
+  question: How does ledger define a case?
+  key_phrases:
+  - investigator
+  - group of alerts
+  split: test
+- id: L-definition-06
+  family: definition
+  warehouses:
+  - ledger
+  question: How does ledger define a break?
+  key_phrases:
+  - to the cent
+  - must agree
+  split: dev
+- id: L-definition-07
+  family: definition
+  warehouses:
+  - ledger
+  question: What does ledger mean by an account?
+  key_phrases:
+  - deposit account
+  - credit account
+  split: dev
+- id: L-definition-08
+  family: definition
+  warehouses:
+  - ledger
+  question: How does ledger define a customer?
+  key_phrases:
+  - deposit, card or loan account
+  - customer_id
+  split: test
+- id: L-lookup-01
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the NIM in 2024Q4, at Harborline Bank?
+  claims:
+  - value: 0.0455327163
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(nim) as value from ledger.metrics_bank_quarter where period = '2024Q4'
+    label: net interest margin
+  measure: nim
+  entities:
+  - 2024Q4
+  split: test
+- id: L-lookup-02
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the efficiency ratio in 2024Q3, at Harborline Bank?
+  claims:
+  - value: 0.6246452961
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(efficiency_ratio) as value from ledger.metrics_bank_quarter where period = '2024Q3'
+    label: efficiency ratio
+  measure: efficiency_ratio
+  entities:
+  - 2024Q3
+  split: test
+- id: L-lookup-03
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the return on assets in 2024Q2, at Harborline Bank?
+  claims:
+  - value: 0.0041092623
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(roa) as value from ledger.metrics_bank_quarter where period = '2024Q2'
+    label: return on assets
+  measure: roa
+  entities:
+  - 2024Q2
+  split: test
+- id: L-lookup-04
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the net income at Harborline Bank in 2024Q2?
+  claims:
+  - value: 978280.15
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(net_income) as value from ledger.metrics_bank_quarter where period = '2024Q2'
+    label: net income
+  measure: net_income
+  entities:
+  - 2024Q2
+  split: dev
+- id: L-lookup-05
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the total deposits in 2025Q4, at Harborline Bank?
+  claims:
+  - value: 897373712.21
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(total_deposits) as value from ledger.metrics_bank_quarter where period = '2025Q4'
+    label: total deposits
+  measure: total_deposits
+  entities:
+  - 2025Q4
+  split: test
+- id: L-lookup-06
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the share of loans nonperforming at Harborline Bank in 2026Q2?
+  claims:
+  - value: 0.0049047299
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(npl_ratio) as value from ledger.metrics_bank_quarter where period = '2026Q2'
+    label: nonperforming loan ratio
+  measure: npl_ratio
+  entities:
+  - 2026Q2
+  split: dev
+- id: L-lookup-07
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the denial rate for White non Hispanic applicants in ledger's New Jersey HMDA comparison?
+  claims:
+  - value: 0.1070683564
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(rate) as value from ledger.f03_unadjusted where (dimension = 'race and ethnicity') and "group" = 'White
+      non Hispanic'
+    label: mortgage denial rate
+  measure: denial_rate
+  entities:
+  - White non Hispanic
+  split: test
+- id: L-lookup-08
+  family: lookup
+  warehouses:
+  - ledger
+  question: What was the alert precision of the round tripping rule in ledger's AML rule scorecard?
+  claims:
+  - value: 1.0
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(precision) as value from ledger.f05_rule_scorecard where rule = 'round_tripping'
+    label: alert precision
+  measure: rule_precision
+  entities:
+  - round_tripping
+  split: dev
+- id: L-topk-01
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 3 full quarters had the highest net income at Harborline Bank?
+  claims:
+  - value: 4361569.56
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select period as entity, max(net_income) as value from ledger.metrics_bank_quarter where period in ('2023Q4', '2024Q1',
+      '2024Q2', '2024Q3', '2024Q4', '2025Q1', '2025Q2', '2025Q3', '2025Q4', '2026Q1', '2026Q2') group by period order by value
+      desc, entity limit 3
+    label: 2026Q2
+  - value: 2906830.28
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: null
+    label: 2025Q3
+  - value: 2529455.56
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: null
+    label: 2026Q1
+  ranking:
+  - 2026Q2
+  - 2025Q3
+  - 2026Q1
+  measure: net_income
+  entities: []
+  split: dev
+- id: L-topk-02
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 3 full quarters had the highest NIM at Harborline Bank?
+  claims:
+  - value: 0.056029315
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select period as entity, max(nim) as value from ledger.metrics_bank_quarter where period in ('2023Q4', '2024Q1',
+      '2024Q2', '2024Q3', '2024Q4', '2025Q1', '2025Q2', '2025Q3', '2025Q4', '2026Q1', '2026Q2') group by period order by value
+      desc, entity limit 3
+    label: 2026Q2
+  - value: 0.0555648911
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: null
+    label: 2026Q1
+  - value: 0.05450693
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: null
+    label: 2025Q4
+  ranking:
+  - 2026Q2
+  - 2026Q1
+  - 2025Q4
+  measure: nim
+  entities: []
+  split: dev
+- id: L-topk-03
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 3 full quarters had the lowest efficiency ratio at Harborline Bank?
+  claims:
+  - value: 0.5094340454
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select period as entity, max(efficiency_ratio) as value from ledger.metrics_bank_quarter where period in ('2023Q4',
+      '2024Q1', '2024Q2', '2024Q3', '2024Q4', '2025Q1', '2025Q2', '2025Q3', '2025Q4', '2026Q1', '2026Q2') group by period
+      order by value asc, entity limit 3
+    label: 2026Q2
+  - value: 0.5128699117
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: 2026Q1
+  - value: 0.5197163264
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: 2025Q4
+  ranking:
+  - 2026Q2
+  - 2026Q1
+  - 2025Q4
+  measure: efficiency_ratio
+  entities: []
+  split: test
+- id: L-topk-04
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 3 full quarters had the highest total deposits at Harborline Bank?
+  claims:
+  - value: 918454841.39
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select period as entity, max(total_deposits) as value from ledger.metrics_bank_quarter where period in ('2023Q4',
+      '2024Q1', '2024Q2', '2024Q3', '2024Q4', '2025Q1', '2025Q2', '2025Q3', '2025Q4', '2026Q1', '2026Q2') group by period
+      order by value desc, entity limit 3
+    label: 2026Q2
+  - value: 904335727.3
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: null
+    label: 2026Q1
+  - value: 897373712.21
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: null
+    label: 2025Q4
+  ranking:
+  - 2026Q2
+  - 2026Q1
+  - 2025Q4
+  measure: total_deposits
+  entities: []
+  split: test
+- id: L-topk-05
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 3 applicant groups had the highest mortgage denial rate in ledger's New Jersey HMDA comparison?
+  claims:
+  - value: 0.2397843666
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select "group" as entity, max(rate) as value from ledger.f03_unadjusted where (dimension = 'race and ethnicity')
+      group by "group" having max(rate) is not null order by value desc, entity limit 3
+    label: Black
+  - value: 0.2065486172
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: Not provided
+  - value: 0.1729315522
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: Hispanic or Latino
+  ranking:
+  - Black
+  - Not provided
+  - Hispanic or Latino
+  measure: denial_rate
+  entities: []
+  split: test
+- id: L-topk-06
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 2 applicant groups had the lowest mortgage denial rate in ledger's New Jersey HMDA comparison?
+  claims:
+  - value: 0.0989388265
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select "group" as entity, max(rate) as value from ledger.f03_unadjusted where (dimension = 'race and ethnicity')
+      group by "group" having max(rate) is not null order by value asc, entity limit 2
+    label: Other or joint
+  - value: 0.1070683564
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: White non Hispanic
+  ranking:
+  - Other or joint
+  - White non Hispanic
+  measure: denial_rate
+  entities: []
+  split: test
+- id: L-topk-07
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 2 AML rules in ledger had the highest number of alerts?
+  claims:
+  - value: 376.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select rule as entity, max(alerts) as value from ledger.f05_rule_scorecard group by rule having max(alerts) is not
+      null order by value desc, entity limit 2
+    label: structuring
+  - value: 100.0
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: rapid_movement
+  ranking:
+  - structuring
+  - rapid_movement
+  measure: rule_alerts
+  entities: []
+  split: dev
+- id: L-topk-08
+  family: top_k
+  warehouses:
+  - ledger
+  question: Which 2 AML rules in ledger had the lowest alert precision?
+  claims:
+  - value: 0.414893617
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select rule as entity, max(precision) as value from ledger.f05_rule_scorecard group by rule having max(precision)
+      is not null order by value asc, entity limit 2
+    label: structuring
+  - value: 1.0
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: null
+    label: mule
+  ranking:
+  - structuring
+  - mule
+  measure: rule_precision
+  entities: []
+  split: test
+- id: L-trend-01
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's NIM rise or fall from 2024Q1 to 2024Q3?
+  claims:
+  - value: 0.0375022235
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(nim) as value from ledger.metrics_bank_quarter where period = '2024Q1'
+    label: 2024Q1
+  - value: 0.0427300319
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(nim) as value from ledger.metrics_bank_quarter where period = '2024Q3'
+    label: 2024Q3
+  direction: rose
+  measure: nim
+  entities:
+  - 2024Q1
+  - 2024Q3
+  split: test
+- id: L-trend-02
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's efficiency ratio rise or fall from 2025Q1 to 2026Q1?
+  claims:
+  - value: 0.5652490154
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(efficiency_ratio) as value from ledger.metrics_bank_quarter where period = '2025Q1'
+    label: 2025Q1
+  - value: 0.5128699117
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(efficiency_ratio) as value from ledger.metrics_bank_quarter where period = '2026Q1'
+    label: 2026Q1
+  direction: fell
+  measure: efficiency_ratio
+  entities:
+  - 2025Q1
+  - 2026Q1
+  split: test
+- id: L-trend-03
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's return on assets rise or fall from 2024Q2 to 2026Q1?
+  claims:
+  - value: 0.0041092623
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(roa) as value from ledger.metrics_bank_quarter where period = '2024Q2'
+    label: 2024Q2
+  - value: 0.0101564915
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(roa) as value from ledger.metrics_bank_quarter where period = '2026Q1'
+    label: 2026Q1
+  direction: rose
+  measure: roa
+  entities:
+  - 2024Q2
+  - 2026Q1
+  split: dev
+- id: L-trend-04
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's net income rise or fall from 2024Q1 to 2024Q3?
+  claims:
+  - value: 1318321.27
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(net_income) as value from ledger.metrics_bank_quarter where period = '2024Q1'
+    label: 2024Q1
+  - value: 1856023.37
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(net_income) as value from ledger.metrics_bank_quarter where period = '2024Q3'
+    label: 2024Q3
+  direction: rose
+  measure: net_income
+  entities:
+  - 2024Q1
+  - 2024Q3
+  split: test
+- id: L-trend-05
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's total deposits rise or fall from 2024Q4 to 2025Q3?
+  claims:
+  - value: 884556905.11
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(total_deposits) as value from ledger.metrics_bank_quarter where period = '2024Q4'
+    label: 2024Q4
+  - value: 892954287.97
+    unit: dollars
+    fmt: usd0
+    tolerance: 0.5
+    sql: select max(total_deposits) as value from ledger.metrics_bank_quarter where period = '2025Q3'
+    label: 2025Q3
+  direction: rose
+  measure: total_deposits
+  entities:
+  - 2024Q4
+  - 2025Q3
+  split: dev
+- id: L-trend-06
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's share of loans nonperforming rise or fall from 2023Q4 to 2024Q4?
+  claims:
+  - value: 0.0023895391
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(npl_ratio) as value from ledger.metrics_bank_quarter where period = '2023Q4'
+    label: 2023Q4
+  - value: 0.0032257257
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(npl_ratio) as value from ledger.metrics_bank_quarter where period = '2024Q4'
+    label: 2024Q4
+  direction: rose
+  measure: npl_ratio
+  entities:
+  - 2023Q4
+  - 2024Q4
+  split: dev
+- id: L-trend-07
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's risk based capital ratio rise or fall from 2024Q3 to 2025Q3?
+  claims:
+  - value: 0.1877386854
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(capital_ratio) as value from ledger.metrics_bank_quarter where period = '2024Q3'
+    label: 2024Q3
+  - value: 0.1849394271
+    unit: fraction
+    fmt: pct1
+    tolerance: 0.0005
+    sql: select max(capital_ratio) as value from ledger.metrics_bank_quarter where period = '2025Q3'
+    label: 2025Q3
+  direction: fell
+  measure: capital_ratio
+  entities:
+  - 2024Q3
+  - 2025Q3
+  split: test
+- id: L-trend-08
+  family: trend
+  warehouses:
+  - ledger
+  question: Did Harborline Bank's NIM rise or fall from 2024Q2 to 2025Q1?
+  claims:
+  - value: 0.040146214
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(nim) as value from ledger.metrics_bank_quarter where period = '2024Q2'
+    label: 2024Q2
+  - value: 0.0485721233
+    unit: fraction
+    fmt: pct2
+    tolerance: 5.0e-05
+    sql: select max(nim) as value from ledger.metrics_bank_quarter where period = '2025Q1'
+    label: 2025Q1
+  direction: rose
+  measure: nim
+  entities:
+  - 2024Q2
+  - 2025Q1
+  split: test

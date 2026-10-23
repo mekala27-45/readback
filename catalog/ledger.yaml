@@ -1,0 +1,6147 @@
+# The catalog of ledger at v0.1.0 (263b165), built by
+# scripts/build_catalog.py from the fetched tables and documents. Do not edit by hand: change
+# catalog/unit_rules.yaml, catalog/definition_terms.yaml or catalog/overrides.yaml and rebuild.
+warehouse: ledger
+repository: https://github.com/mekala27-45/ledger
+tag: v0.1.0
+commit: 263b1656c371119c6e1a9970bbdc5f40ede9b913
+as_of: '2026-08-31'
+covers: the fictional Harborline Bank, September 2023 to August 2026, with New Jersey HMDA
+tables:
+- warehouse: ledger
+  name: contracts_identifier_scan
+  path: results/contracts/identifier_scan.parquet
+  grain:
+  - table
+  - column
+  - kind
+  - sample
+  grain_unique: false
+  rows: 0
+  source_step: the data contracts
+  description: 0 rows from the data contracts, one row per table, column, kind, sample.
+  columns:
+  - name: table
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: column
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: kind
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: sample
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: contracts_rule_hits
+  path: results/contracts/rule_hits.parquet
+  grain:
+  - table
+  - rule
+  grain_unique: true
+  rows: 16
+  source_step: the data contracts
+  description: 16 rows from the data contracts, one row per table, rule.
+  columns:
+  - name: table
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rule
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The name of the rule that raised the alert or the check.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: severity
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: statement
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rows_checked
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rows_hit
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: truth_defect
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: truth_count
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: caught
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: extract_chargeoff_backtest
+  path: results/exports/extracts/chargeoff_backtest.csv
+  grain:
+  - origin
+  grain_unique: true
+  rows: 19
+  source_step: the extracts the build exports
+  description: 19 rows from the extracts the build exports, one row per origin.
+  columns:
+  - name: origin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: actual
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: forecast
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: forecast_unadjusted
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: naive
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: seasonal_naive
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: extract_deposits_monthly
+  path: results/exports/extracts/deposits_monthly.csv
+  grain:
+  - product
+  - month
+  grain_unique: true
+  rows: 108
+  source_step: the extracts the build exports
+  description: 108 rows from the extracts the build exports, one row per product, month.
+  columns:
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: accounts
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: balance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: opened
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: closed
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: extract_expected_loss
+  path: results/exports/extracts/expected_loss.csv
+  grain:
+  - band
+  grain_unique: true
+  rows: 4
+  source_step: the extracts the build exports
+  description: 4 rows from the extracts the build exports, one row per band.
+  columns:
+  - name: band
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ead
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: pd
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: el
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: el_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: extract_nii_positions
+  path: results/exports/extracts/nii_positions.csv
+  grain:
+  - position
+  grain_unique: true
+  rows: 8
+  source_step: the extracts the build exports
+  description: 8 rows from the extracts the build exports, one row per position.
+  columns:
+  - name: position
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: side
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: balance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: weight
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: beta
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_-200
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_-100
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_100
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_200
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: extract_recoveries
+  path: results/exports/extracts/recoveries.csv
+  grain:
+  - product
+  - months_since
+  grain_unique: true
+  rows: 75
+  source_step: the extracts the build exports
+  description: 75 rows from the extracts the build exports, one row per product, months_since.
+  columns:
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: months_since
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recovery_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: extract_stress_paths
+  path: results/exports/extracts/stress_paths.csv
+  grain:
+  - scenario
+  - step
+  grain_unique: true
+  rows: 18
+  source_step: the extracts the build exports
+  description: 18 rows from the extracts the build exports, one row per scenario, step.
+  columns:
+  - name: scenario
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: step
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: scenario_quarter
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: unemployment
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: roll_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: roll_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: roll_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: loss
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loss_low
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loss_high
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_loss
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_low
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_high
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ppnr
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: capital_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not
+      a regulatory capital ratio.
+    citation:
+      file: metrics/bank.yaml
+      line: 80
+    definition_source: metrics
+    manifest_keys: []
+  - name: capital_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: capital_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: extract_vintages
+  path: results/exports/extracts/vintages.csv
+  grain:
+  - vintage
+  - months_on_book
+  grain_unique: true
+  rows: 235
+  source_step: the extracts the build exports
+  description: 235 rows from the extracts the build exports, one row per vintage, months_on_book.
+  columns:
+  - name: vintage
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: months_on_book
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: principal
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_defaults
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: cumulative_default_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f01_peer_strips
+  path: results/f01/peer_strips.parquet
+  grain:
+  - ratio
+  - fmt
+  grain_unique: false
+  rows: 1450
+  source_step: function 1 of the bank
+  description: 1,450 rows from function 1 of the bank, one row per ratio, fmt.
+  columns:
+  - name: ratio
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: value
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: fmt
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f01_ratios_monthly
+  path: results/f01/ratios_monthly.parquet
+  grain:
+  - month
+  grain_unique: true
+  rows: 36
+  source_step: function 1 of the bank
+  description: 36 rows from function 1 of the bank, one row per month.
+  columns:
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: nim
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net interest income, annualised, over average earning assets (securities and loans).
+    citation:
+      file: metrics/bank.yaml
+      line: 35
+    definition_source: metrics
+    manifest_keys: []
+  - name: efficiency_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Noninterest expense over net interest income plus noninterest income. Lower is better.
+    citation:
+      file: metrics/bank.yaml
+      line: 42
+    definition_source: metrics
+    manifest_keys: []
+  - name: roa
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average total assets.
+    citation:
+      file: metrics/bank.yaml
+      line: 48
+    definition_source: metrics
+    manifest_keys: []
+  - name: roe
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average equity.
+    citation:
+      file: metrics/bank.yaml
+      line: 55
+    definition_source: metrics
+    manifest_keys: []
+  - name: npl_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Loans 90 or more days past due over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 62
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_to_loans
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Allowance for credit losses over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 74
+    definition_source: metrics
+    manifest_keys: []
+  - name: capital_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not
+      a regulatory capital ratio.
+    citation:
+      file: metrics/bank.yaml
+      line: 80
+    definition_source: metrics
+    manifest_keys: []
+  - name: loans_to_deposits
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Gross loans over total deposits, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 86
+    definition_source: metrics
+    manifest_keys: []
+  - name: nim_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nim_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: efficiency_ratio_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: efficiency_ratio_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: roa_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: roa_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: roe_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: roe_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: npl_ratio_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: npl_ratio_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: allowance_to_loans_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: allowance_to_loans_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: capital_ratio_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: capital_ratio_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans_to_deposits_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans_to_deposits_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f02_cecl_by_vintage
+  path: results/f02/cecl_by_vintage.parquet
+  grain:
+  - vintage
+  grain_unique: true
+  rows: 13
+  source_step: function 2 of the bank
+  description: 13 rows from function 2 of the bank, one row per vintage.
+  columns:
+  - name: vintage
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ead
+    type: DECIMAL(38,2)
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: pd12
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: lifetime_pd
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: macro_factor
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: lifetime_loss
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f02_expected_loss
+  path: results/f02/expected_loss.parquet
+  grain:
+  - band
+  grain_unique: true
+  rows: 4
+  source_step: function 2 of the bank
+  description: 4 rows from function 2 of the bank, one row per band.
+  columns:
+  - name: band
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ead
+    type: DECIMAL(38,2)
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: pd
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: el
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: el_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f02_limits
+  path: results/f02/limits.parquet
+  grain:
+  - limit
+  grain_unique: true
+  rows: 4
+  source_step: function 2 of the bank
+  description: 4 rows from function 2 of the bank, one row per limit.
+  columns:
+  - name: limit
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: measured
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: limit_value
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: status
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f02_overlay_by_vintage
+  path: results/f02/overlay_by_vintage.parquet
+  grain:
+  - vintage
+  grain_unique: true
+  rows: 9
+  source_step: function 2 of the bank
+  description: 9 rows from function 2 of the bank, one row per vintage.
+  columns:
+  - name: vintage
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: overlay
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f02_roll_rates
+  path: results/f02/roll_rates.parquet
+  grain:
+  - from_bucket
+  - to_bucket
+  grain_unique: true
+  rows: 13
+  source_step: function 2 of the bank
+  description: 13 rows from function 2 of the bank, one row per from_bucket, to_bucket.
+  columns:
+  - name: from_bucket
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: to_bucket
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: loans
+    type: DECIMAL(38,0)
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: from_order
+    type: INTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: to_order
+    type: INTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f02_survival_curves
+  path: results/f02/survival_curves.parquet
+  grain:
+  - months
+  - band
+  grain_unique: true
+  rows: 148
+  source_step: function 2 of the bank
+  description: 148 rows from function 2 of the bank, one row per months, band.
+  columns:
+  - name: months
+    type: DOUBLE
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: survival
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: band
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f02_vintages
+  path: results/f02/vintages.parquet
+  grain:
+  - vintage
+  - months_on_book
+  grain_unique: true
+  rows: 235
+  source_step: function 2 of the bank
+  description: 235 rows from function 2 of the bank, one row per vintage, months_on_book.
+  columns:
+  - name: vintage
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: months_on_book
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: principal
+    type: DECIMAL(38,2)
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_defaults
+    type: DECIMAL(38,0)
+    role: measure
+    unit: count
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: cumulative_default_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f03_adjusted
+  path: results/f03/adjusted.parquet
+  grain:
+  - dimension
+  - group
+  grain_unique: true
+  rows: 8
+  source_step: function 3 of the bank
+  description: 8 rows from function 3 of the bank, one row per dimension, group.
+  columns:
+  - name: dimension
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The applicant characteristic the comparison is made over.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: group
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The group the row compares, as named in the dimension column.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: odds_ratio
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: low
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: high
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: p_value
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: q_value
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f03_county
+  path: results/f03/county.parquet
+  grain:
+  - county_fips
+  grain_unique: true
+  rows: 21
+  source_step: function 3 of the bank
+  description: 21 rows from function 3 of the bank, one row per county_fips.
+  columns:
+  - name: county_fips
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The five digit FIPS code of the county.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: applications
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: 'For credit models, the index application is the application whose decision starts the outcome window:
+      one booked installment application, scored with what the bank knew on the application date.'
+    citation:
+      file: docs/definitions.md
+      line: 82
+    definition_source: definitions
+    manifest_keys: []
+  - name: denials
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'For credit models, the index application is the application whose decision starts the outcome window:
+      one booked installment application, scored with what the bank knew on the application date.'
+    citation:
+      file: docs/definitions.md
+      line: 82
+    definition_source: definitions
+    manifest_keys: []
+  - name: expected
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: county
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: observed_over_expected
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: adjusted_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f03_denial_reasons
+  path: results/f03/denial_reasons.parquet
+  grain:
+  - race_ethnicity_group
+  - reason
+  grain_unique: true
+  rows: 53
+  source_step: function 3 of the bank
+  description: 53 rows from function 3 of the bank, one row per race_ethnicity_group, reason.
+  columns:
+  - name: race_ethnicity_group
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: reason
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: len
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: share
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f03_forest
+  path: results/f03/forest.parquet
+  grain:
+  - dimension
+  - group
+  grain_unique: true
+  rows: 8
+  source_step: function 3 of the bank
+  description: 8 rows from function 3 of the bank, one row per dimension, group.
+  columns:
+  - name: dimension
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The applicant characteristic the comparison is made over.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: group
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The group the row compares, as named in the dimension column.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: reference
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: raw_or
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: raw_low
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: raw_high
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: adj_or
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: adj_low
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: adj_high
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: adj_q
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f03_unadjusted
+  path: results/f03/unadjusted.parquet
+  grain:
+  - group
+  - dimension
+  grain_unique: true
+  rows: 10
+  source_step: function 3 of the bank
+  description: 10 rows from function 3 of the bank, one row per group, dimension.
+  columns:
+  - name: group
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The group the row compares, as named in the dimension column.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: applications
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'For credit models, the index application is the application whose decision starts the outcome window:
+      one booked installment application, scored with what the bank knew on the application date.'
+    citation:
+      file: docs/definitions.md
+      line: 82
+    definition_source: definitions
+    manifest_keys: []
+  - name: denials
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'For credit models, the index application is the application whose decision starts the outcome window:
+      one booked installment application, scored with what the bank knew on the application date.'
+    citation:
+      file: docs/definitions.md
+      line: 82
+    definition_source: definitions
+    manifest_keys: []
+  - name: rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ratio
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: low
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: high
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: p_value
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: dimension
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The applicant characteristic the comparison is made over.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: q_value
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f04_cost_curve
+  path: results/f04/cost_curve.parquet
+  grain:
+  - threshold
+  - sample
+  grain_unique: true
+  rows: 802
+  source_step: function 4 of the bank
+  description: 802 rows from function 4 of the bank, one row per threshold, sample.
+  columns:
+  - name: threshold
+    type: DOUBLE
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: false_decline_cost
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: missed_fraud_cost
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: total_cost
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: flagged
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: sample
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f04_label_lag
+  path: results/f04/label_lag.parquet
+  grain:
+  - day
+  grain_unique: true
+  rows: 92
+  source_step: function 4 of the bank
+  description: 92 rows from function 4 of the bank, one row per day.
+  columns:
+  - name: day
+    type: DATE
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: decisions
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: labelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: unlabelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: precision_labelled
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recall_labelled
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f04_pr_curve
+  path: results/f04/pr_curve.parquet
+  grain:
+  - threshold
+  grain_unique: true
+  rows: 160
+  source_step: function 4 of the bank
+  description: 160 rows from function 4 of the bank, one row per threshold.
+  columns:
+  - name: threshold
+    type: DOUBLE
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: precision
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recall
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: flagged
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f04_score_histogram
+  path: results/f04/score_histogram.parquet
+  grain:
+  - bin
+  grain_unique: true
+  rows: 202
+  source_step: function 4 of the bank
+  description: 202 rows from function 4 of the bank, one row per bin.
+  columns:
+  - name: bin
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: lower
+    type: DOUBLE
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: n
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: frauds
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: fraud_amount
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f05_alerts_monthly
+  path: results/f05/alerts_monthly.parquet
+  grain:
+  - month
+  - rule
+  grain_unique: true
+  rows: 120
+  source_step: function 5 of the bank
+  description: 120 rows from function 5 of the bank, one row per month, rule.
+  columns:
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: rule
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The name of the rule that raised the alert or the check.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: alerts
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: true_alerts
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f05_communities
+  path: results/f05/communities.parquet
+  grain:
+  - community
+  grain_unique: true
+  rows: 9263
+  source_step: function 5 of the bank
+  description: 9,263 rows from function 5 of the bank, one row per community.
+  columns:
+  - name: community
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: accounts
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: alerts
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: share_alerted
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: injected_accounts
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rules_fired
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: internal_flow
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f05_queue
+  path: results/f05/queue.parquet
+  grain:
+  - position
+  grain_unique: true
+  rows: 30
+  source_step: function 5 of the bank
+  description: 30 rows from function 5 of the bank, one row per position.
+  columns:
+  - name: position
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: alert_id
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: rule
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The name of the rule that raised the alert or the check.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: account_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: end_at
+    type: TIMESTAMP
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: amount
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: triage
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: statement
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: true_positive
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f05_rule_scorecard
+  path: results/f05/rule_scorecard.parquet
+  grain:
+  - rule
+  grain_unique: true
+  rows: 4
+  source_step: function 5 of the bank
+  description: 4 rows from function 5 of the bank, one row per rule.
+  columns:
+  - name: rule
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The name of the rule that raised the alert or the check.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: alerts
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: true_positives
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: precision
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: episodes
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A case is an alert, or a group of alerts on the same party, that an investigator has opened.
+    citation:
+      file: docs/definitions.md
+      line: 121
+    definition_source: definitions
+    manifest_keys: []
+  - name: episodes_found
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A case is an alert, or a group of alerts on the same party, that an investigator has opened.
+    citation:
+      file: docs/definitions.md
+      line: 121
+    definition_source: definitions
+    manifest_keys: []
+  - name: partial_episodes
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A case is an alert, or a group of alerts on the same party, that an investigator has opened.
+    citation:
+      file: docs/definitions.md
+      line: 121
+    definition_source: definitions
+    manifest_keys: []
+  - name: recall
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: per_100k
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f06_deposits_monthly
+  path: results/f06/deposits_monthly.parquet
+  grain:
+  - product
+  - month
+  grain_unique: true
+  rows: 108
+  source_step: function 6 of the bank
+  description: 108 rows from function 6 of the bank, one row per product, month.
+  columns:
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: accounts
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: balance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: opened
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: closed
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f06_rates
+  path: results/f06/rates.parquet
+  grain:
+  - month
+  grain_unique: true
+  rows: 36
+  source_step: function 6 of the bank
+  description: 36 rows from function 6 of the bank, one row per month.
+  columns:
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: checking
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: savings
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: time
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: policy_rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: checking_rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: savings_rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: time_rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f06_retention_list
+  path: results/f06/retention_list.parquet
+  grain:
+  - customer_id
+  grain_unique: true
+  rows: 500
+  source_step: function 6 of the bank
+  description: 500 rows from function 6 of the bank, one row per customer_id.
+  columns:
+  - name: customer_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: probability
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: balance_total
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: expected_balance_at_risk
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: reasons
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f07_companies
+  path: results/f07/companies.parquet
+  grain:
+  - company
+  grain_unique: true
+  rows: 30
+  source_step: function 7 of the bank
+  description: 30 rows from function 7 of the bank, one row per company.
+  columns:
+  - name: company
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: complaints
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: monetary_relief
+    type: BIGINT
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: non_monetary_relief
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: explanation
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: in_progress
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: timely
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: top_product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: monetary_share
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: non_monetary_share
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: timely_share
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f07_issues
+  path: results/f07/issues.parquet
+  grain:
+  - product
+  - issue
+  grain_unique: true
+  rows: 46
+  source_step: function 7 of the bank
+  description: 46 rows from function 7 of the bank, one row per product, issue.
+  columns:
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: issue
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: complaints
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: expected_relief
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: actual_relief
+    type: BIGINT
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f07_relief_by_month
+  path: results/f07/relief_by_month.parquet
+  grain:
+  - month
+  grain_unique: true
+  rows: 23
+  source_step: function 7 of the bank
+  description: 23 rows from function 7 of the bank, one row per month.
+  columns:
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: complaints
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: relief_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f07_topic_trend
+  path: results/f07/topic_trend.parquet
+  grain:
+  - month
+  - topic
+  grain_unique: true
+  rows: 230
+  source_step: function 7 of the bank
+  description: 230 rows from function 7 of the bank, one row per month, topic.
+  columns:
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: topic
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: complaints
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: share
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: topic_label
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f07_volume_by_product
+  path: results/f07/volume_by_product.parquet
+  grain:
+  - month
+  - product
+  grain_unique: true
+  rows: 264
+  source_step: function 7 of the bank
+  description: 264 rows from function 7 of the bank, one row per month, product.
+  columns:
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: complaints
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f08_nii_positions
+  path: results/f08/nii_positions.parquet
+  grain:
+  - position
+  grain_unique: true
+  rows: 8
+  source_step: function 8 of the bank
+  description: 8 rows from function 8 of the bank, one row per position.
+  columns:
+  - name: position
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: side
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: balance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: weight
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: beta
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_-200
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_-100
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_100
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: shock_200
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f08_nii_shocks
+  path: results/f08/nii_shocks.parquet
+  grain: []
+  grain_unique: false
+  rows: 4
+  source_step: function 8 of the bank
+  description: 4 rows from function 8 of the bank, one row per row.
+  columns:
+  - name: shock_bps
+    type: BIGINT
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nii_change
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: share_of_nii
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: deposits
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f08_stress_paths
+  path: results/f08/stress_paths.parquet
+  grain:
+  - scenario
+  - step
+  grain_unique: true
+  rows: 18
+  source_step: function 8 of the bank
+  description: 18 rows from function 8 of the bank, one row per scenario, step.
+  columns:
+  - name: scenario
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: step
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: scenario_quarter
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: unemployment
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: roll_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: roll_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: roll_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: loss
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loss_low
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loss_high
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_loss
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_low
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: cumulative_high
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ppnr
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: capital_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not
+      a regulatory capital ratio.
+    citation:
+      file: metrics/bank.yaml
+      line: 80
+    definition_source: metrics
+    manifest_keys: []
+  - name: capital_low
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: capital_high
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f09_backtest
+  path: results/f09/backtest.parquet
+  grain:
+  - origin
+  grain_unique: true
+  rows: 19
+  source_step: function 9 of the bank
+  description: 19 rows from function 9 of the bank, one row per origin.
+  columns:
+  - name: origin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: actual
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: forecast
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: forecast_unadjusted
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: naive
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: seasonal_naive
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f09_forecast
+  path: results/f09/forecast.parquet
+  grain:
+  - month
+  grain_unique: true
+  rows: 6
+  source_step: function 9 of the bank
+  description: 6 rows from function 9 of the bank, one row per month.
+  columns:
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: b_current
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: b_30
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: b_60
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: b_90+
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: charge_offs
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f09_queue
+  path: results/f09/queue.parquet
+  grain:
+  - loan_id
+  grain_unique: true
+  rows: 300
+  source_step: function 9 of the bank
+  description: 300 rows from function 9 of the bank, one row per loan_id.
+  columns:
+  - name: loan_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: bucket
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: balance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: probability_cure
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: expected_loss_exposure
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: reasons
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f09_recoveries
+  path: results/f09/recoveries.parquet
+  grain:
+  - product
+  - months_since
+  grain_unique: true
+  rows: 75
+  source_step: function 9 of the bank
+  description: 75 rows from function 9 of the bank, one row per product, months_since.
+  columns:
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: months_since
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recovery_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f10_fraud_weekly
+  path: results/f10/fraud_weekly.parquet
+  grain:
+  - week
+  grain_unique: true
+  rows: 14
+  source_step: function 10 of the bank
+  description: 14 rows from function 10 of the bank, one row per week.
+  columns:
+  - name: week
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: transactions
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: psi
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: labelled_test
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: auroc_labelled
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f10_inventory
+  path: results/f10/inventory.parquet
+  grain:
+  - model
+  grain_unique: true
+  rows: 8
+  source_step: function 10 of the bank
+  description: 8 rows from function 10 of the bank, one row per model.
+  columns:
+  - name: model
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: title
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: function
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: tier
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: role
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: status
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+  - name: last_validated
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: conclusion
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: auroc_test
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f10_pd_csi
+  path: results/f10/pd_csi.parquet
+  grain:
+  - characteristic
+  grain_unique: true
+  rows: 8
+  source_step: function 10 of the bank
+  description: 8 rows from function 10 of the bank, one row per characteristic.
+  columns:
+  - name: characteristic
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: csi
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f10_pd_psi_by_quarter
+  path: results/f10/pd_psi_by_quarter.parquet
+  grain:
+  - quarter
+  grain_unique: true
+  rows: 13
+  source_step: function 10 of the bank
+  description: 13 rows from function 10 of the bank, one row per quarter.
+  columns:
+  - name: quarter
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: applications
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'For credit models, the index application is the application whose decision starts the outcome window:
+      one booked installment application, scored with what the bank knew on the application date.'
+    citation:
+      file: docs/definitions.md
+      line: 82
+    definition_source: definitions
+    manifest_keys: []
+  - name: psi
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f11_data_quality
+  path: results/f11/data_quality.parquet
+  grain:
+  - table
+  - rule
+  grain_unique: true
+  rows: 16
+  source_step: function 11 of the bank
+  description: 16 rows from function 11 of the bank, one row per table, rule.
+  columns:
+  - name: table
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rule
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The name of the rule that raised the alert or the check.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: severity
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: statement
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rows_checked
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rows_hit
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: truth_defect
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: truth_count
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: caught
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: f11_reconciliation
+  path: results/f11/reconciliation.parquet
+  grain:
+  - gl_account
+  - month
+  grain_unique: true
+  rows: 792
+  source_step: function 11 of the bank
+  description: 792 rows from function 11 of the bank, one row per gl_account, month.
+  columns:
+  - name: gl_account
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: balance_from_postings
+    type: DECIMAL(18,2)
+    role: measure
+    unit: dollars
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+  - name: reported_balance
+    type: DECIMAL(18,2)
+    role: measure
+    unit: dollars
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+  - name: difference
+    type: DECIMAL(18,2)
+    role: measure
+    unit: dollars
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+  - name: status
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f11_subledger_tie
+  path: results/f11/subledger_tie.parquet
+  grain:
+  - gl_account
+  - month
+  grain_unique: true
+  rows: 216
+  source_step: function 11 of the bank
+  description: 216 rows from function 11 of the bank, one row per gl_account, month.
+  columns:
+  - name: gl_account
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: ledger
+    type: DECIMAL(18,2)
+    role: measure
+    unit: dollars
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+  - name: subledger
+    type: DECIMAL(18,2)
+    role: measure
+    unit: dollars
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+  - name: difference
+    type: DECIMAL(18,2)
+    role: measure
+    unit: dollars
+    definition: 'A break is a difference, to the cent, between two figures that must agree: a ledger account''s
+      reported balance and the running sum of its postings, or a control account''s balance and the total of its
+      sub ledger.'
+    citation:
+      file: docs/definitions.md
+      line: 129
+    definition_source: definitions
+    manifest_keys: []
+  - name: accounts
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: f12_cutoff_options
+  path: results/f12/cutoff_options.parquet
+  grain:
+  - cutoff
+  grain_unique: true
+  rows: 5
+  source_step: function 12 of the bank
+  description: 5 rows from function 12 of the bank, one row per cutoff.
+  columns:
+  - name: cutoff
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: loans_changed
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: defaults_changed
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: loss_avoided
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: margin_forgone
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_benefit
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: metrics_bank_month
+  path: results/metrics/bank_month.parquet
+  grain:
+  - period
+  grain_unique: true
+  rows: 36
+  source_step: the metric layer
+  description: 36 rows from the metric layer, one row per period.
+  columns:
+  - name: period
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The reporting period of the row: a month, a quarter, a year or the whole window, named as the grain
+      column says.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: months
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: first_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: last_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: provision
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: tax
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_deposits
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: allowance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nonperforming_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: risk_weighted_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_earning_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nim
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net interest income, annualised, over average earning assets (securities and loans).
+    citation:
+      file: metrics/bank.yaml
+      line: 35
+    definition_source: metrics
+    manifest_keys: []
+  - name: efficiency_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Noninterest expense over net interest income plus noninterest income. Lower is better.
+    citation:
+      file: metrics/bank.yaml
+      line: 42
+    definition_source: metrics
+    manifest_keys: []
+  - name: roa
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average total assets.
+    citation:
+      file: metrics/bank.yaml
+      line: 48
+    definition_source: metrics
+    manifest_keys: []
+  - name: roe
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average equity.
+    citation:
+      file: metrics/bank.yaml
+      line: 55
+    definition_source: metrics
+    manifest_keys: []
+  - name: npl_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Loans 90 or more days past due over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 62
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_coverage
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: Allowance for credit losses over nonperforming loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 68
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_to_loans
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Allowance for credit losses over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 74
+    definition_source: metrics
+    manifest_keys: []
+  - name: capital_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not
+      a regulatory capital ratio.
+    citation:
+      file: metrics/bank.yaml
+      line: 80
+    definition_source: metrics
+    manifest_keys: []
+  - name: loans_to_deposits
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Gross loans over total deposits, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 86
+    definition_source: metrics
+    manifest_keys: []
+  - name: grain
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The grain of the row: month, quarter, year or window.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+- warehouse: ledger
+  name: metrics_bank_quarter
+  path: results/metrics/bank_quarter.parquet
+  grain:
+  - period
+  grain_unique: true
+  rows: 13
+  source_step: the metric layer
+  description: 13 rows from the metric layer, one row per period.
+  columns:
+  - name: period
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The reporting period of the row: a month, a quarter, a year or the whole window, named as the grain
+      column says.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: months
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: first_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: last_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: provision
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: tax
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_deposits
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: allowance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nonperforming_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: risk_weighted_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_earning_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nim
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net interest income, annualised, over average earning assets (securities and loans).
+    citation:
+      file: metrics/bank.yaml
+      line: 35
+    definition_source: metrics
+    manifest_keys: []
+  - name: efficiency_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Noninterest expense over net interest income plus noninterest income. Lower is better.
+    citation:
+      file: metrics/bank.yaml
+      line: 42
+    definition_source: metrics
+    manifest_keys: []
+  - name: roa
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average total assets.
+    citation:
+      file: metrics/bank.yaml
+      line: 48
+    definition_source: metrics
+    manifest_keys: []
+  - name: roe
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average equity.
+    citation:
+      file: metrics/bank.yaml
+      line: 55
+    definition_source: metrics
+    manifest_keys: []
+  - name: npl_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Loans 90 or more days past due over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 62
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_coverage
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: Allowance for credit losses over nonperforming loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 68
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_to_loans
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Allowance for credit losses over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 74
+    definition_source: metrics
+    manifest_keys: []
+  - name: capital_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not
+      a regulatory capital ratio.
+    citation:
+      file: metrics/bank.yaml
+      line: 80
+    definition_source: metrics
+    manifest_keys: []
+  - name: loans_to_deposits
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Gross loans over total deposits, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 86
+    definition_source: metrics
+    manifest_keys: []
+  - name: grain
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The grain of the row: month, quarter, year or window.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+- warehouse: ledger
+  name: metrics_bank_window
+  path: results/metrics/bank_window.parquet
+  grain:
+  - period
+  grain_unique: true
+  rows: 1
+  source_step: the metric layer
+  description: 1 rows from the metric layer, one row per period.
+  columns:
+  - name: period
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The reporting period of the row: a month, a quarter, a year or the whole window, named as the grain
+      column says.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: months
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: first_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: last_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: provision
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: tax
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_deposits
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: allowance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nonperforming_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: risk_weighted_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_earning_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nim
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net interest income, annualised, over average earning assets (securities and loans).
+    citation:
+      file: metrics/bank.yaml
+      line: 35
+    definition_source: metrics
+    manifest_keys: []
+  - name: efficiency_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Noninterest expense over net interest income plus noninterest income. Lower is better.
+    citation:
+      file: metrics/bank.yaml
+      line: 42
+    definition_source: metrics
+    manifest_keys: []
+  - name: roa
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average total assets.
+    citation:
+      file: metrics/bank.yaml
+      line: 48
+    definition_source: metrics
+    manifest_keys: []
+  - name: roe
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average equity.
+    citation:
+      file: metrics/bank.yaml
+      line: 55
+    definition_source: metrics
+    manifest_keys: []
+  - name: npl_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Loans 90 or more days past due over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 62
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_coverage
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: Allowance for credit losses over nonperforming loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 68
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_to_loans
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Allowance for credit losses over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 74
+    definition_source: metrics
+    manifest_keys: []
+  - name: capital_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not
+      a regulatory capital ratio.
+    citation:
+      file: metrics/bank.yaml
+      line: 80
+    definition_source: metrics
+    manifest_keys: []
+  - name: loans_to_deposits
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Gross loans over total deposits, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 86
+    definition_source: metrics
+    manifest_keys: []
+  - name: grain
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The grain of the row: month, quarter, year or window.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+- warehouse: ledger
+  name: metrics_bank_year
+  path: results/metrics/bank_year.parquet
+  grain:
+  - period
+  grain_unique: true
+  rows: 4
+  source_step: the metric layer
+  description: 4 rows from the metric layer, one row per period.
+  columns:
+  - name: period
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The reporting period of the row: a month, a quarter, a year or the whole window, named as the grain
+      column says.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: months
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: first_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: last_month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_interest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: noninterest_expense
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: provision
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: tax
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: net_income
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_deposits
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: total_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: allowance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nonperforming_loans
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: risk_weighted_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_earning_assets
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: average_equity
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: nim
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net interest income, annualised, over average earning assets (securities and loans).
+    citation:
+      file: metrics/bank.yaml
+      line: 35
+    definition_source: metrics
+    manifest_keys: []
+  - name: efficiency_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Noninterest expense over net interest income plus noninterest income. Lower is better.
+    citation:
+      file: metrics/bank.yaml
+      line: 42
+    definition_source: metrics
+    manifest_keys: []
+  - name: roa
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average total assets.
+    citation:
+      file: metrics/bank.yaml
+      line: 48
+    definition_source: metrics
+    manifest_keys: []
+  - name: roe
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Net income, annualised, over average equity.
+    citation:
+      file: metrics/bank.yaml
+      line: 55
+    definition_source: metrics
+    manifest_keys: []
+  - name: npl_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Loans 90 or more days past due over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 62
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_coverage
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: Allowance for credit losses over nonperforming loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 68
+    definition_source: metrics
+    manifest_keys: []
+  - name: allowance_to_loans
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Allowance for credit losses over gross loans, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 74
+    definition_source: metrics
+    manifest_keys: []
+  - name: capital_ratio
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not
+      a regulatory capital ratio.
+    citation:
+      file: metrics/bank.yaml
+      line: 80
+    definition_source: metrics
+    manifest_keys: []
+  - name: loans_to_deposits
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: Gross loans over total deposits, at the period end.
+    citation:
+      file: metrics/bank.yaml
+      line: 86
+    definition_source: metrics
+    manifest_keys: []
+  - name: grain
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The grain of the row: month, quarter, year or window.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+- warehouse: ledger
+  name: metrics_reconciliation
+  path: results/metrics/reconciliation.parquet
+  grain:
+  - name
+  - grain
+  grain_unique: true
+  rows: 94
+  source_step: the metric layer
+  description: 94 rows from the metric layer, one row per name, grain.
+  columns:
+  - name: name
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: grain
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'The grain of the row: month, quarter, year or window.'
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: worst
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: passed
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_aml_triage_alerts_scored
+  path: results/models/aml_triage/alerts_scored.parquet
+  grain:
+  - alert_id
+  grain_unique: true
+  rows: 649
+  source_step: the model registry
+  description: 649 rows from the model registry, one row per alert_id.
+  columns:
+  - name: alert_id
+    type: UINTEGER
+    role: key
+    unit: none
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: rule
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The name of the rule that raised the alert or the check.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: account_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: customer_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: start_at
+    type: TIMESTAMP
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: end_at
+    type: TIMESTAMP
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: amount
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: entries
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: counterparties
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: branches
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: statement
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ring
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: episode_id
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: true_positive
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: prior_cash_90d
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: prior_inflow_90d
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: prior_alerts
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: log_amount
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: log_tenure_days
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: log_prior_inflow_90d
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: amount_vs_monthly_inflow
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rule_mule
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rule_rapid_movement
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rule_round_tripping
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rule_structuring
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: split
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: triage
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+- warehouse: ledger
+  name: models_aml_triage_rule_scorecard
+  path: results/models/aml_triage/rule_scorecard.parquet
+  grain:
+  - rule
+  grain_unique: true
+  rows: 4
+  source_step: the model registry
+  description: 4 rows from the model registry, one row per rule.
+  columns:
+  - name: rule
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The name of the rule that raised the alert or the check.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: alerts
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: true_positives
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: 'An alert is a record that a rule or a model flagged something for a person to look at: a card transaction
+      the desk declined or sent to review, or an account whose activity matched a financial crime rule.'
+    citation:
+      file: docs/definitions.md
+      line: 114
+    definition_source: definitions
+    manifest_keys: []
+  - name: precision
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: episodes
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A case is an alert, or a group of alerts on the same party, that an investigator has opened.
+    citation:
+      file: docs/definitions.md
+      line: 121
+    definition_source: definitions
+    manifest_keys: []
+  - name: episodes_found
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A case is an alert, or a group of alerts on the same party, that an investigator has opened.
+    citation:
+      file: docs/definitions.md
+      line: 121
+    definition_source: definitions
+    manifest_keys: []
+  - name: partial_episodes
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: A case is an alert, or a group of alerts on the same party, that an investigator has opened.
+    citation:
+      file: docs/definitions.md
+      line: 121
+    definition_source: definitions
+    manifest_keys: []
+  - name: recall
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: per_100k
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_attrition_retention_list
+  path: results/models/attrition/retention_list.parquet
+  grain:
+  - customer_id
+  grain_unique: true
+  rows: 500
+  source_step: the model registry
+  description: 500 rows from the model registry, one row per customer_id.
+  columns:
+  - name: customer_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: probability
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: balance_total
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: expected_balance_at_risk
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: reasons
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_attrition_scores_as_of
+  path: results/models/attrition/scores_as_of.parquet
+  grain:
+  - customer_id
+  grain_unique: true
+  rows: 39200
+  source_step: the model registry
+  description: 39,200 rows from the model registry, one row per customer_id.
+  columns:
+  - name: customer_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: month
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The month end the row reports, inside the window 2023-09-01 to 2026-08-31.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: probability
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: balance_total
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: expected_balance_at_risk
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_cure_queue
+  path: results/models/cure/queue.parquet
+  grain:
+  - loan_id
+  grain_unique: true
+  rows: 300
+  source_step: the model registry
+  description: 300 rows from the model registry, one row per loan_id.
+  columns:
+  - name: loan_id
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: bucket
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: 'A loan''s bucket at a month end is its days past due, in the buckets servicing uses: current, 30,
+      60 and 90+, plus the two exits, charged off and paid off.'
+    citation:
+      file: docs/definitions.md
+      line: 39
+    definition_source: definitions
+    manifest_keys: []
+  - name: balance
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: An account is a deposit account (checking, savings or time) or a credit account (installment loan,
+      card, mortgage).
+    citation:
+      file: docs/definitions.md
+      line: 30
+    definition_source: definitions
+    manifest_keys: []
+  - name: probability_cure
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: expected_loss_exposure
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: reasons
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_fraud_account_age_bands
+  path: results/models/fraud_account/age_bands.parquet
+  grain:
+  - group
+  grain_unique: true
+  rows: 5
+  source_step: the model registry
+  description: 5 rows from the model registry, one row per group.
+  columns:
+  - name: group
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The group the row compares, as named in the dimension column.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: n
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: event_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: mean_score
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: auroc
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: calibration_gap
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: flag_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: fpr
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recall
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_fraud_account_alternatives
+  path: results/models/fraud_account/alternatives.parquet
+  grain:
+  - variant
+  - removed
+  grain_unique: true
+  rows: 8
+  source_step: the model registry
+  description: 8 rows from the model registry, one row per variant, removed.
+  columns:
+  - name: variant
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: removed
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: auroc
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recall
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: fpr_older
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: fpr_younger
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: ratio
+    type: DOUBLE
+    role: measure
+    unit: ratio
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_fraud_account_variants
+  path: results/models/fraud_account/variants.parquet
+  grain:
+  - measure
+  grain_unique: true
+  rows: 14
+  source_step: the model registry
+  description: 14 rows from the model registry, one row per measure.
+  columns:
+  - name: measure
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: format
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: Base
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: Variant II
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_fraud_card_cost_curve
+  path: results/models/fraud_card/cost_curve.parquet
+  grain:
+  - threshold
+  - sample
+  grain_unique: true
+  rows: 802
+  source_step: the model registry
+  description: 802 rows from the model registry, one row per threshold, sample.
+  columns:
+  - name: threshold
+    type: DOUBLE
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: false_decline_cost
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: missed_fraud_cost
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: total_cost
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: flagged
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: sample
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_fraud_card_label_lag_daily
+  path: results/models/fraud_card/label_lag_daily.parquet
+  grain:
+  - day
+  grain_unique: true
+  rows: 92
+  source_step: the model registry
+  description: 92 rows from the model registry, one row per day.
+  columns:
+  - name: day
+    type: DATE
+    role: time
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: decisions
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: labelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: unlabelled
+    type: BIGINT
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: precision_labelled
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recall_labelled
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_fraud_card_pr_curve
+  path: results/models/fraud_card/pr_curve.parquet
+  grain:
+  - threshold
+  grain_unique: true
+  rows: 160
+  source_step: the model registry
+  description: 160 rows from the model registry, one row per threshold.
+  columns:
+  - name: threshold
+    type: DOUBLE
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: precision
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: recall
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: flagged
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_fraud_card_score_histogram
+  path: results/models/fraud_card/score_histogram.parquet
+  grain:
+  - bin
+  grain_unique: true
+  rows: 121
+  source_step: the model registry
+  description: 121 rows from the model registry, one row per bin.
+  columns:
+  - name: bin
+    type: BIGINT
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: n
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: frauds
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: fraud_amount
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: A card transaction is fraud when the card network or the customer disputes it and the dispute is
+      upheld.
+    citation:
+      file: docs/definitions.md
+      line: 95
+    definition_source: definitions
+    manifest_keys: []
+  - name: lower
+    type: DOUBLE
+    role: key
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_known_parameters
+  path: results/models/known_parameters.parquet
+  grain:
+  - parameter
+  grain_unique: true
+  rows: 8
+  source_step: the model registry
+  description: 8 rows from the model registry, one row per parameter.
+  columns:
+  - name: parameter
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: stated
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: estimate
+    type: DOUBLE
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interval_low
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: interval_high
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: tolerance
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: within
+    type: BOOLEAN
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: method
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_pd_scorecard_scorecard_generated
+  path: results/models/pd_scorecard/scorecard_generated.parquet
+  grain:
+  - characteristic
+  - bin
+  grain_unique: true
+  rows: 46
+  source_step: the model registry
+  description: 46 rows from the model registry, one row per characteristic, bin.
+  columns:
+  - name: characteristic
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: bin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: share
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: bad_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: woe
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: points
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: iv
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_pd_scorecard_scorecard_uci
+  path: results/models/pd_scorecard/scorecard_uci.parquet
+  grain:
+  - characteristic
+  - bin
+  grain_unique: true
+  rows: 46
+  source_step: the model registry
+  description: 46 rows from the model registry, one row per characteristic, bin.
+  columns:
+  - name: characteristic
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: bin
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: share
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: bad_rate
+    type: DOUBLE
+    role: measure
+    unit: fraction
+    definition: A loan defaults when it first reaches 90 days past due or is charged off, whichever comes first.
+    citation:
+      file: docs/definitions.md
+      line: 57
+    definition_source: definitions
+    manifest_keys: []
+  - name: woe
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: points
+    type: DOUBLE
+    role: measure
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+- warehouse: ledger
+  name: models_relief_issues
+  path: results/models/relief/issues.parquet
+  grain:
+  - product
+  - issue
+  grain_unique: true
+  rows: 46
+  source_step: the model registry
+  description: 46 rows from the model registry, one row per product, issue.
+  columns:
+  - name: product
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: The deposit or credit product the row reports.
+    citation: null
+    definition_source: hand edit
+    manifest_keys: []
+  - name: issue
+    type: VARCHAR
+    role: label
+    unit: none
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: complaints
+    type: UINTEGER
+    role: measure
+    unit: count
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: expected_relief
+    type: DOUBLE
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: actual_relief
+    type: BIGINT
+    role: measure
+    unit: dollars
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+  - name: rate
+    type: DOUBLE
+    role: measure
+    unit: percent
+    definition: null
+    citation: null
+    definition_source: null
+    manifest_keys: []
+metrics:
+- warehouse: ledger
+  name: allowance_coverage
+  definition: Allowance for credit losses over nonperforming loans, at the period end.
+  sql: select period, allowance_coverage as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 68
+  parses: true
+- warehouse: ledger
+  name: allowance_to_loans
+  definition: Allowance for credit losses over gross loans, at the period end.
+  sql: select period, allowance_to_loans as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 74
+  parses: true
+- warehouse: ledger
+  name: capital_ratio
+  definition: Equity over risk weighted assets under the simplified weights in config, at the period end. Not a
+    regulatory capital ratio.
+  sql: select period, capital_ratio as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 80
+  parses: true
+- warehouse: ledger
+  name: efficiency_ratio
+  definition: Noninterest expense over net interest income plus noninterest income. Lower is better.
+  sql: select period, efficiency_ratio as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 42
+  parses: true
+- warehouse: ledger
+  name: loans_to_deposits
+  definition: Gross loans over total deposits, at the period end.
+  sql: select period, loans_to_deposits as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 86
+  parses: true
+- warehouse: ledger
+  name: nim
+  definition: Net interest income, annualised, over average earning assets (securities and loans).
+  sql: select period, nim as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 35
+  parses: true
+- warehouse: ledger
+  name: npl_ratio
+  definition: Loans 90 or more days past due over gross loans, at the period end.
+  sql: select period, npl_ratio as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 62
+  parses: true
+- warehouse: ledger
+  name: roa
+  definition: Net income, annualised, over average total assets.
+  sql: select period, roa as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 48
+  parses: true
+- warehouse: ledger
+  name: roe
+  definition: Net income, annualised, over average equity.
+  sql: select period, roe as value from metrics_bank_quarter order by period
+  table: metrics_bank_quarter
+  citation:
+    file: metrics/bank.yaml
+    line: 55
+  parses: true

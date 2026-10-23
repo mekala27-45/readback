@@ -1,0 +1,112 @@
+[
+ {
+  "id": "D-comparison-08",
+  "question": "Was the national share of renters who are cost burdened higher in 2006 or in 2013?",
+  "known": 0.4977326607,
+  "hand": 0.49773266066205385,
+  "difference": 3.794614622520953e-11,
+  "tolerance": 0.0005,
+  "agrees": true,
+  "sql": "select renter_burdened_share from doorstep.ch3_national_bands where year = 2006",
+  "checks": "the national burden from chapter 3's table, not the national mart"
+ },
+ {
+  "id": "D-lookup-04",
+  "question": "What was the price to income ratio in Minneapolis in 2016?",
+  "known": 3.3037311634,
+  "hand": 3.3037311634182327,
+  "difference": 1.823252659960417e-11,
+  "tolerance": 0.05,
+  "agrees": true,
+  "sql": "select value_anchored / median_income from doorstep.fct_metro_year where cbsa_code = '33460' and year = 2016",
+  "checks": "price to income recomputed from its two components, in the fact table rather than the mart"
+ },
+ {
+  "id": "D-lookup-06",
+  "question": "What was the number of renter households in Austin-Round Rock-San Marcos, TX in 2009?",
+  "known": 253849.0,
+  "hand": 253849.0,
+  "difference": 0.0,
+  "tolerance": 0.5,
+  "agrees": true,
+  "sql": "select renter_households from doorstep.fct_metro_year where cbsa_code = '12420' and year = 2009",
+  "checks": "the count by CBSA code in the fact table"
+ },
+ {
+  "id": "D-trend-03",
+  "question": "Did the median income in Sacramento rise or fall from 2013 to 2018?",
+  "known": 57027.0,
+  "hand": 57027.0,
+  "difference": 0.0,
+  "tolerance": 0.5,
+  "agrees": true,
+  "sql": "select median_income from doorstep.fct_metro_year where cbsa_code = '40900' and year = 2013",
+  "checks": "the income by CBSA code in the fact table"
+ },
+ {
+  "id": "L-lookup-04",
+  "question": "What was the net income at Harborline Bank in 2024Q2?",
+  "known": 978280.15,
+  "hand": 978280.15,
+  "difference": 0.0,
+  "tolerance": 0.5,
+  "agrees": true,
+  "sql": "select sum(net_income) from ledger.metrics_bank_month where period in ('2024-04', '2024-05', '2024-06')",
+  "checks": "quarterly net income summed from the three months"
+ },
+ {
+  "id": "L-lookup-06",
+  "question": "What was the share of loans nonperforming at Harborline Bank in 2026Q2?",
+  "known": 0.0049047299,
+  "hand": 0.004904729883238073,
+  "difference": 1.6761926915909164e-11,
+  "tolerance": 5e-05,
+  "agrees": true,
+  "sql": "select nonperforming_loans / total_loans from ledger.metrics_bank_quarter where period = '2026Q2'",
+  "checks": "the nonperforming ratio recomputed from its components"
+ },
+ {
+  "id": "L-topk-07",
+  "question": "Which 2 AML rules in ledger had the highest number of alerts?",
+  "known": 376.0,
+  "hand": 376.0,
+  "difference": 0.0,
+  "tolerance": 0.5,
+  "agrees": true,
+  "sql": "select alerts from ledger.models_aml_triage_rule_scorecard where rule = 'structuring'",
+  "checks": "the alert count from the model registry's copy of the scorecard"
+ },
+ {
+  "id": "T-lookup-01",
+  "question": "What was Spirit's on time rate in 2018?",
+  "known": 0.8203343498,
+  "hand": 0.8203343498211096,
+  "difference": 2.1109669567920264e-11,
+  "tolerance": 0.0005,
+  "agrees": true,
+  "sql": "select sum(on_time) / sum(flown) from turnaround.mart_carrier_day where carrier = 'NK' and year(flight_date) = 2018",
+  "checks": "the on time rate from the daily mart rather than the monthly one"
+ },
+ {
+  "id": "T-lookup-04",
+  "question": "What was American's count of flights flown in 2015?",
+  "known": 712935.0,
+  "hand": 712935.0,
+  "difference": 0.0,
+  "tolerance": 0.5,
+  "agrees": true,
+  "sql": "select sum(flown) from turnaround.mart_carrier_day where carrier = 'AA' and year(flight_date) = 2015",
+  "checks": "flights flown from the daily mart"
+ },
+ {
+  "id": "T-lookup-07",
+  "question": "What was the on time rate across all carriers in 2019?",
+  "known": 0.8088596799,
+  "hand": 0.8088596799,
+  "difference": 0.0,
+  "tolerance": 0.0005,
+  "agrees": true,
+  "sql": "select \"On time\" from turnaround.export_ch1_by_year where \"Year\" = 2019",
+  "checks": "the national on time rate as chapter 1 published it"
+ }
+]

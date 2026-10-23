@@ -1,0 +1,303 @@
+# Golden questions: multi. Written by scripts/build_golden.py (seed 20261023); every value is the
+# result of the SQL beside it over the fetched tables. Do not edit by hand: the golden-question
+# skill says how to add one.
+questions:
+- id: M-multi-01
+  family: multi
+  warehouses:
+  - doorstep
+  - turnaround
+  question: Which warehouse publishes more tables, doorstep or turnaround?
+  entity: doorstep
+  claims:
+  - value: 54
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: doorstep
+  - value: 34
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: turnaround
+  split: test
+- id: M-multi-02
+  family: multi
+  warehouses:
+  - doorstep
+  - ledger
+  question: Which warehouse publishes more tables, doorstep or ledger?
+  entity: ledger
+  claims:
+  - value: 54
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: doorstep
+  - value: 75
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: ledger
+  split: test
+- id: M-multi-03
+  family: multi
+  warehouses:
+  - turnaround
+  - ledger
+  question: Which warehouse publishes more tables, turnaround or ledger?
+  entity: ledger
+  claims:
+  - value: 34
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: turnaround
+  - value: 75
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: ledger
+  split: test
+- id: M-multi-04
+  family: multi
+  warehouses:
+  - doorstep
+  - turnaround
+  - ledger
+  question: How many published tables do doorstep, turnaround and ledger have in total?
+  claims:
+  - value: 163
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: total
+  split: test
+- id: M-multi-05
+  family: multi
+  warehouses:
+  - doorstep
+  - turnaround
+  question: Which has more rows, doorstep's mart_metro_year or turnaround's mart_carrier_month?
+  entity: doorstep.mart_metro_year
+  claims:
+  - value: 25245
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from doorstep.mart_metro_year
+    label: doorstep.mart_metro_year
+  - value: 2086
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from turnaround.mart_carrier_month
+    label: turnaround.mart_carrier_month
+  split: test
+- id: M-multi-06
+  family: multi
+  warehouses:
+  - doorstep
+  - ledger
+  question: Which has more rows, doorstep's ch5_ranking or ledger's f11_reconciliation?
+  entity: ledger.f11_reconciliation
+  claims:
+  - value: 382
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from doorstep.ch5_ranking
+    label: doorstep.ch5_ranking
+  - value: 792
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from ledger.f11_reconciliation
+    label: ledger.f11_reconciliation
+  split: dev
+- id: M-multi-07
+  family: multi
+  warehouses:
+  - turnaround
+  - ledger
+  question: Which has more rows, turnaround's misconnect_hubs or ledger's f05_communities?
+  entity: ledger.f05_communities
+  claims:
+  - value: 740
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from turnaround.misconnect_hubs
+    label: turnaround.misconnect_hubs
+  - value: 9263
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from ledger.f05_communities
+    label: ledger.f05_communities
+  split: test
+- id: M-multi-08
+  family: multi
+  warehouses:
+  - doorstep
+  - turnaround
+  question: Which has more rows, doorstep's calc_metros or turnaround's rotation_samples?
+  entity: turnaround.rotation_samples
+  claims:
+  - value: 382
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from doorstep.calc_metros
+    label: doorstep.calc_metros
+  - value: 2793
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from turnaround.rotation_samples
+    label: turnaround.rotation_samples
+  split: dev
+- id: M-multi-09
+  family: multi
+  warehouses:
+  - ledger
+  - doorstep
+  question: Which has more rows, ledger's metrics_bank_month or doorstep's ch1_national_series?
+  entity: ledger.metrics_bank_month
+  claims:
+  - value: 36
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from ledger.metrics_bank_month
+    label: ledger.metrics_bank_month
+  - value: 19
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from doorstep.ch1_national_series
+    label: doorstep.ch1_national_series
+  split: test
+- id: M-multi-10
+  family: multi
+  warehouses:
+  - turnaround
+  - ledger
+  question: Which has more rows, turnaround's mart_leg_position or ledger's f06_retention_list?
+  entity: turnaround.mart_leg_position
+  claims:
+  - value: 1086
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from turnaround.mart_leg_position
+    label: turnaround.mart_leg_position
+  - value: 500
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from ledger.f06_retention_list
+    label: ledger.f06_retention_list
+  split: dev
+- id: M-multi-11
+  family: multi
+  warehouses:
+  - doorstep
+  - ledger
+  question: Which years appear in both the census years in doorstep's metro year mart and the years in ledger's yearly bank
+    metrics?
+  ranking:
+  - '2023'
+  - '2024'
+  claims:
+  - value: 2
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from ((select distinct year from doorstep.mart_metro_year where median_income is not null) intersect
+      (select distinct cast(period as integer) from ledger.metrics_bank_year))
+    label: years in both
+  split: test
+- id: M-multi-12
+  family: multi
+  warehouses:
+  - turnaround
+  - ledger
+  question: Which years appear in both the years in turnaround's carrier month mart and the years in ledger's yearly bank
+    metrics?
+  ranking:
+  - '2023'
+  - '2024'
+  - '2025'
+  - '2026'
+  claims:
+  - value: 4
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from ((select distinct year from turnaround.mart_carrier_month) intersect (select distinct cast(period
+      as integer) from ledger.metrics_bank_year))
+    label: years in both
+  split: test
+- id: M-multi-13
+  family: multi
+  warehouses:
+  - doorstep
+  - turnaround
+  question: Which years appear in both the years in doorstep's national series and the years in turnaround's carrier month
+    mart?
+  ranking:
+  - '2015'
+  - '2016'
+  - '2017'
+  - '2018'
+  - '2019'
+  - '2021'
+  - '2022'
+  - '2023'
+  - '2024'
+  claims:
+  - value: 9
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: select count(*) from ((select distinct year from doorstep.ch1_national_series) intersect (select distinct year from
+      turnaround.mart_carrier_month))
+    label: years in both
+  split: test
+- id: M-multi-14
+  family: multi
+  warehouses:
+  - doorstep
+  - turnaround
+  question: How many metrics do doorstep and turnaround define between them in their metric layers?
+  claims:
+  - value: 38
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: metrics
+  split: dev
+- id: M-multi-15
+  family: multi
+  warehouses:
+  - doorstep
+  - turnaround
+  - ledger
+  question: How many values do the manifests of doorstep, turnaround and ledger publish in total?
+  claims:
+  - value: 2510
+    unit: count
+    fmt: int
+    tolerance: 0.5
+    sql: null
+    label: manifest values
+  split: dev

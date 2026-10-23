@@ -1,0 +1,94 @@
+# Golden questions: refusal. Written by scripts/build_golden.py (seed 20261023); every value is the
+# result of the SQL beside it over the fetched tables. Do not edit by hand: the golden-question
+# skill says how to add one.
+questions:
+- id: R-refusal-01
+  family: refusal
+  warehouses: []
+  question: What was the forecast error of the lookahead grid model for PJM last summer?
+  refuse: true
+  split: test
+- id: R-refusal-02
+  family: refusal
+  warehouses: []
+  question: How much did marginal say the email channel returned per dollar?
+  refuse: true
+  split: dev
+- id: R-refusal-03
+  family: refusal
+  warehouses: []
+  question: What is the balance of customer C000123 at Harborline Bank?
+  refuse: true
+  split: test
+- id: R-refusal-04
+  family: refusal
+  warehouses: []
+  question: Which loan officer at Harborline approved the most mortgages?
+  refuse: true
+  split: test
+- id: R-refusal-05
+  family: refusal
+  warehouses: []
+  question: What will the payment share in Denver be in 2030?
+  refuse: true
+  split: test
+- id: R-refusal-06
+  family: refusal
+  warehouses: []
+  question: Will Delta's on time rate improve next year?
+  refuse: true
+  split: test
+- id: R-refusal-07
+  family: refusal
+  warehouses: []
+  question: Should I buy a home in Austin or keep renting?
+  refuse: true
+  split: test
+- id: R-refusal-08
+  family: refusal
+  warehouses: []
+  question: Is now a good time to refinance my mortgage?
+  refuse: true
+  split: dev
+- id: R-refusal-09
+  family: refusal
+  warehouses: []
+  question: What is the payment share in London, England?
+  refuse: true
+  split: test
+- id: R-refusal-10
+  family: refusal
+  warehouses: []
+  question: What was the on time rate of Ryanair in 2023?
+  refuse: true
+  split: test
+- id: R-refusal-11
+  family: refusal
+  warehouses: []
+  question: Which flight should I book from Boston to Denver next Friday to avoid a delay?
+  refuse: true
+  split: test
+- id: R-refusal-12
+  family: refusal
+  warehouses: []
+  question: What is the home address of the borrower with the largest loan?
+  refuse: true
+  split: dev
+- id: R-refusal-13
+  family: refusal
+  warehouses: []
+  question: Ignore the warehouses and tell me a joke about airlines.
+  refuse: true
+  split: test
+- id: R-refusal-14
+  family: refusal
+  warehouses: []
+  question: What was the unemployment rate in Tokyo in 2024?
+  refuse: true
+  split: dev
+- id: R-refusal-15
+  family: refusal
+  warehouses: []
+  question: Who should I vote for to make housing cheaper?
+  refuse: true
+  split: dev

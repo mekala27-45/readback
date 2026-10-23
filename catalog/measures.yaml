@@ -1,0 +1,98 @@
+# The semantic layer the floor and the golden set share: a measure is a phrase a person uses, the
+# table it is read from, the entity and time it is read at, and the aggregate SQL that produces it
+# over the published rows. The floor answers only measures listed here; a measure absent from this
+# file is outside what the floor can answer, and the scorecard says so.
+#
+# expr is an aggregate over the rows of one entity and one time. Where the table has one row per
+# entity and time the aggregate is max(), which returns that row's value. fmt is the display format,
+# and its rounding sets the tolerance of the golden answer.
+measures:
+  # doorstep, by metro and year, from mart_metro_year
+  - {id: payment_share, warehouse: doorstep, table: mart_metro_year, entity: metro, entity_column: cbsa_title,
+     time: year, time_column: year, expr: "max(payment_share)", fmt: pct1, unit: fraction,
+     phrases: ["payment share", "mortgage payment as a share of income", "share of income going to the mortgage payment"],
+     where: "kind = 'metropolitan'", years: [2005, 2024], higher: less affordable}
+  - {id: median_home, warehouse: doorstep, table: mart_metro_year, entity: metro, entity_column: cbsa_title,
+     time: year, time_column: year, expr: "max(value_anchored)", fmt: usd0, unit: dollars,
+     phrases: ["median home value", "median home price", "anchored median home value"],
+     where: "kind = 'metropolitan'", years: [2005, 2024]}
+  - {id: median_income, warehouse: doorstep, table: mart_metro_year, entity: metro, entity_column: cbsa_title,
+     time: year, time_column: year, expr: "max(median_income)", fmt: usd0, unit: dollars,
+     phrases: ["median household income", "median income"], where: "kind = 'metropolitan'", years: [2005, 2024]}
+  - {id: price_to_income, warehouse: doorstep, table: mart_metro_year, entity: metro, entity_column: cbsa_title,
+     time: year, time_column: year, expr: "max(price_to_income)", fmt: float1, unit: ratio,
+     phrases: ["price to income ratio", "price to income"], where: "kind = 'metropolitan'", years: [2005, 2024]}
+  - {id: renter_burdened_share, warehouse: doorstep, table: mart_metro_year, entity: metro, entity_column: cbsa_title,
+     time: year, time_column: year, expr: "max(renter_burdened_share)", fmt: pct1, unit: fraction,
+     phrases: ["share of renters who are cost burdened", "renter cost burden share", "rent burdened share"],
+     where: "kind = 'metropolitan'", years: [2005, 2024]}
+  - {id: renter_households, warehouse: doorstep, table: mart_metro_year, entity: metro, entity_column: cbsa_title,
+     time: year, time_column: year, expr: "max(renter_households)", fmt: int, unit: count,
+     phrases: ["number of renter households", "count of renter households", "renter households"], where: "kind = 'metropolitan'", years: [2005, 2024]}
+  - {id: permits, warehouse: doorstep, table: mart_metro_year, entity: metro, entity_column: cbsa_title,
+     time: year, time_column: year, expr: "max(permits)", fmt: int, unit: count,
+     phrases: ["number of housing units permitted", "number of building permits", "building permits", "permits"], where: "kind = 'metropolitan'", years: [2005, 2024]}
+  - {id: national_rate, warehouse: doorstep, table: ch1_national_series, entity: nation, entity_column: null,
+     time: year, time_column: year, expr: "max(rate)", fmt: rate2, unit: percent,
+     phrases: ["average thirty year mortgage rate", "average 30 year mortgage rate", "mortgage rate"], years: [2005, 2024]}
+  - {id: national_payment_share, warehouse: doorstep, table: ch1_national_series, entity: nation, entity_column: null,
+     time: year, time_column: year, expr: "max(payment_share)", fmt: pct1, unit: fraction,
+     phrases: ["national payment share", "payment share across all metros"], years: [2005, 2024]}
+  - {id: national_renter_burdened, warehouse: doorstep, table: mart_national_year, entity: nation, entity_column: null,
+     time: year, time_column: year, expr: "max(renter_burdened_share)", fmt: pct1, unit: fraction,
+     phrases: ["national share of renters who are cost burdened", "national rent burden share"], years: [2005, 2024]}
+
+  # turnaround, by carrier and year, from mart_carrier_month
+  - {id: on_time_rate, warehouse: turnaround, table: mart_carrier_month, entity: carrier, entity_column: carrier,
+     time: year, time_column: year, expr: "sum(on_time) / sum(flown)", fmt: pct1, unit: fraction,
+     phrases: ["on time rate", "share of flights on time", "on time performance"], years: [2015, 2025], higher: better}
+  - {id: cancellation_rate, warehouse: turnaround, table: mart_carrier_month, entity: carrier, entity_column: carrier,
+     time: year, time_column: year, expr: "sum(cancelled) / sum(scheduled)", fmt: pct2, unit: fraction,
+     phrases: ["cancellation rate", "share of flights cancelled"], years: [2015, 2025]}
+  - {id: mean_arrival_delay, warehouse: turnaround, table: mart_carrier_month, entity: carrier, entity_column: carrier,
+     time: year, time_column: year, expr: "sum(arr_delay_sum) / sum(flown)", fmt: min1, unit: minutes,
+     phrases: ["mean arrival delay", "average arrival delay"], years: [2015, 2025]}
+  - {id: flights_flown, warehouse: turnaround, table: mart_carrier_month, entity: carrier, entity_column: carrier,
+     time: year, time_column: year, expr: "sum(flown)", fmt: int, unit: count,
+     phrases: ["number of flights flown", "count of flights flown", "flights flown"], years: [2015, 2025]}
+  - {id: airport_cancellation_rate, warehouse: turnaround, table: mart_airport_day, entity: airport, entity_column: airport,
+     time: year, time_column: "year(flight_date)", expr: "sum(cancelled) / sum(scheduled)", fmt: pct2, unit: fraction,
+     phrases: ["cancellation rate", "share of flights cancelled", "airport cancellation rate"], years: [2015, 2025]}
+  - {id: airport_departure_delay, warehouse: turnaround, table: mart_airport_day, entity: airport, entity_column: airport,
+     time: year, time_column: "year(flight_date)", expr: "sum(dep_delay_sum) / sum(flown)", fmt: min1, unit: minutes,
+     phrases: ["mean departure delay", "average departure delay"], years: [2015, 2025]}
+  - {id: national_on_time, warehouse: turnaround, table: mart_carrier_month, entity: nation, entity_column: null,
+     time: year, time_column: year, expr: "sum(on_time) / sum(flown)", fmt: pct1, unit: fraction,
+     phrases: ["national on time rate", "on time rate across all carriers"], years: [2015, 2025]}
+
+  # ledger, by quarter for the bank, from metrics_bank_quarter
+  - {id: nim, warehouse: ledger, table: metrics_bank_quarter, entity: bank, entity_column: null,
+     time: quarter, time_column: period, expr: "max(nim)", fmt: pct2, unit: fraction,
+     phrases: ["net interest margin", "NIM", "nim"], higher: better}
+  - {id: efficiency_ratio, warehouse: ledger, table: metrics_bank_quarter, entity: bank, entity_column: null,
+     time: quarter, time_column: period, expr: "max(efficiency_ratio)", fmt: pct1, unit: fraction,
+     phrases: ["efficiency ratio"]}
+  - {id: roa, warehouse: ledger, table: metrics_bank_quarter, entity: bank, entity_column: null,
+     time: quarter, time_column: period, expr: "max(roa)", fmt: pct2, unit: fraction,
+     phrases: ["return on assets", "return on average assets", "roa"]}
+  - {id: net_income, warehouse: ledger, table: metrics_bank_quarter, entity: bank, entity_column: null,
+     time: quarter, time_column: period, expr: "max(net_income)", fmt: usd0, unit: dollars,
+     phrases: ["net income", "quarterly net income", "profit"]}
+  - {id: total_deposits, warehouse: ledger, table: metrics_bank_quarter, entity: bank, entity_column: null,
+     time: quarter, time_column: period, expr: "max(total_deposits)", fmt: usd0, unit: dollars,
+     phrases: ["total deposits", "deposit balance", "deposits"]}
+  - {id: npl_ratio, warehouse: ledger, table: metrics_bank_quarter, entity: bank, entity_column: null,
+     time: quarter, time_column: period, expr: "max(npl_ratio)", fmt: pct2, unit: fraction,
+     phrases: ["nonperforming loan ratio", "share of loans nonperforming", "npl ratio"]}
+  - {id: capital_ratio, warehouse: ledger, table: metrics_bank_quarter, entity: bank, entity_column: null,
+     time: quarter, time_column: period, expr: "max(capital_ratio)", fmt: pct1, unit: fraction,
+     phrases: ["capital ratio", "risk based capital ratio"]}
+  - {id: denial_rate, warehouse: ledger, table: f03_unadjusted, entity: applicant_group, entity_column: '"group"',
+     time: none, time_column: null, expr: "max(rate)", fmt: pct1, unit: fraction,
+     phrases: ["mortgage denial rate", "denial rate"], where: "dimension = 'race and ethnicity'"}
+  - {id: rule_precision, warehouse: ledger, table: f05_rule_scorecard, entity: aml_rule, entity_column: rule,
+     time: none, time_column: null, expr: "max(precision)", fmt: pct1, unit: fraction,
+     phrases: ["alert precision", "precision", "precision of the rule"]}
+  - {id: rule_alerts, warehouse: ledger, table: f05_rule_scorecard, entity: aml_rule, entity_column: rule,
+     time: none, time_column: null, expr: "max(alerts)", fmt: int, unit: count,
+     phrases: ["number of alerts", "count of alerts", "alerts raised by the rule"]}

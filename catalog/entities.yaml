@@ -1,0 +1,67 @@
+# The names a person uses for an entity, mapped to the way the warehouse spells it. Metros come from
+# the catalog itself (every cbsa_title in mart_metro_year); carriers are the public names of the
+# reporting carriers in turnaround, a hand edit recorded in DECISIONS.md; applicant groups and rules
+# are the values in ledger's tables. lookup reads this file and the catalog, nothing else.
+carriers:
+  WN: [Southwest, Southwest Airlines]
+  DL: [Delta, Delta Air Lines]
+  AA: [American, American Airlines]
+  OO: [SkyWest, SkyWest Airlines]
+  UA: [United, United Airlines]
+  B6: [JetBlue, JetBlue Airways]
+  YX: [Republic, Republic Airways]
+  MQ: [Envoy, Envoy Air]
+  AS: [Alaska, Alaska Airlines]
+  NK: [Spirit, Spirit Airlines]
+  OH: [PSA, PSA Airlines]
+  EV: [ExpressJet]
+  F9: [Frontier, Frontier Airlines]
+  9E: [Endeavor, Endeavor Air]
+  G4: [Allegiant, Allegiant Air]
+  YV: [Mesa, Mesa Airlines]
+  HA: [Hawaiian, Hawaiian Airlines]
+  VX: [Virgin America]
+  QX: [Horizon, Horizon Air]
+  US: [US Airways]
+airports:
+  ATL: [Atlanta, Hartsfield-Jackson]
+  ORD: [Chicago O'Hare, O'Hare]
+  DFW: [Dallas/Fort Worth, DFW]
+  DEN: [Denver]
+  LAX: [Los Angeles International, LAX]
+  JFK: [John F. Kennedy, JFK]
+  LGA: [LaGuardia]
+  EWR: [Newark]
+  SFO: [San Francisco International, SFO]
+  SEA: [Seattle-Tacoma, Sea-Tac]
+  CLT: [Charlotte]
+  PHX: [Phoenix Sky Harbor]
+  MCO: [Orlando International]
+  BOS: [Boston Logan, Logan]
+  MSP: [Minneapolis-St. Paul International]
+  DTW: [Detroit Metropolitan]
+  IAH: [Houston Bush, George Bush Intercontinental]
+  LAS: [Las Vegas Harry Reid, Harry Reid]
+  MIA: [Miami International]
+  PDX: [Portland International]
+  PWM: [Portland International Jetport]
+applicant_groups:
+  "Asian": [Asian]
+  "Black": [Black, African American]
+  "Hispanic or Latino": [Hispanic, Latino, Hispanic or Latino]
+  "White non Hispanic": [White, White non Hispanic]
+  "Other or joint": [Other or joint]
+  "Not provided": [Not provided]
+aml_rules:
+  mule: [mule, money mule]
+  rapid_movement: [rapid movement]
+  round_tripping: [round tripping, round trip]
+  structuring: [structuring]
+# Names that match more than one entity: lookup asks which one rather than guessing.
+ambiguous:
+  Portland: {kind: metro, candidates: ["Portland-Vancouver-Hillsboro, OR-WA", "Portland-South Portland, ME"]}
+  Kansas City: {kind: metro, candidates: ["Kansas City, MO-KS"]}
+  Washington: {kind: metro, candidates: ["Washington-Arlington-Alexandria, DC-VA-MD-WV"]}
+  Springfield: {kind: metro, candidates: ["Springfield, MA", "Springfield, MO", "Springfield, IL", "Springfield, OH"]}
+  Columbus: {kind: metro, candidates: ["Columbus, OH", "Columbus, GA-AL", "Columbus, IN"]}
+  Portland airport: {kind: airport, candidates: [PDX, PWM]}

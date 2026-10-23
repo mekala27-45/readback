@@ -1,0 +1,46 @@
+# Which definition in each build's docs/definitions.md defines which columns. The definition text is
+# lifted verbatim from the document, with the file and line cited; this table only says which entry
+# a column takes. It is a hand edit, recorded in DECISIONS.md on 2026-10-23. Column patterns are
+# matched lowercased with spaces turned into underscores, first match wins, across every table of
+# the warehouse.
+doorstep:
+  - {term: "The payment share.", columns: ["payment_share", "payment_share_.*", "latest_payment_share", "2006_payment_share"]}
+  - {term: "The payment.", columns: ["payment", "base_payment", "price_part", "rate_part"]}
+  - {term: "The median home (the anchored value).", columns: ["value_anchored", "value_anchored_.*", "median_home", "anchor_value", "anchor_value_moe", "value_latest"]}
+  - {term: "The index.", columns: ["index_nsa", "index_at", "index_po", "index_rolled_up", "rolled_up", "appreciation"]}
+  - {term: "Price to income.", columns: ["price_to_income", "price_to_income_.*", "value_to_income"]}
+  - {term: "The affordable share.", columns: ["affordable_share", "affordable_rank", "never_share"]}
+  - {term: "The affordable price.", columns: ["affordable_price", "affordable_gap", "income_needed", "median_can_afford", "can_afford"]}
+  - {term: "Cost burdened, severely burdened.", columns: ["renters_burdened", "renters_severe", "renter_burdened_share", "renter_severe_share", "burdened_share", "severe_share", "burdened_moe", "severe_moe", "burdened", "severely_burdened", "renters_with_share", "under_30.*", "from_30_to_50", "over_50", "30_to_50_percent", "50_percent_and_over", "owner_mortgage_burdened_share", "owners_mortgage_.*"]}
+  - {term: "The fair market rent and the area median income.", columns: ["fmr_2", "hud_.*"]}
+  - {term: "The extract.", columns: ["loans", "originations", "purchase_loans", "refinance_loans", "cash_out_loans", "purchase_median_.*", "purchase_p90_rate_spread", "purchase_lenders", "lenders", "interest_rate", "spread_p\\d+", "spread_bin"]}
+  - {term: "The lock in intensity.", columns: ["lock_in_per_100", "low_rate_originations", "thirty_year_originations", "under_3_.*originations"]}
+  - {term: "Turnover.", columns: ["turnover_per_100_owners"]}
+  - {term: "The borrower income ratio.", columns: ["borrower_income_ratio", "ratio", "ratio_.*", "income_ratio", "over_2x", "under_35.*", "purchase_under_35.*", "vti", "vti_bin", "above_twice_the_median"]}
+  - {term: "Permits per hundred households.", columns: ["permits", "permits_.*", "permit_value", "permits_rate"]}
+  - {term: "Domestic migration per hundred residents.", columns: ["domestic_migration", "domestic_migration_per_100", "migration_.*", "international_migration"]}
+  - {term: "The down payment years.", columns: ["down_payment_years", "down_payment", "median_down_payment_years"]}
+  - {term: "The breakeven horizon.", columns: ["breakeven_years", "breakeven_low", "breakeven_high", "breakeven", "median_breakeven", "owner_equity", "renter_wealth", "difference"]}
+turnaround:
+  - {term: "On time", columns: ["on_time", "late15", "on_time_.*"]}
+  - {term: "Departure delay and arrival delay", columns: [".*arr_delay.*", ".*dep_delay.*", "delay", "mean_delay", "mean_arrival_delay"]}
+  - {term: "Block time, unimpeded block time and padding", columns: ["padding.*", ".*elapsed.*", "scheduled_block.*", "actual_block.*"]}
+  - {term: "Turnaround", columns: ["sched_turn", "scheduled_turn", "turns", "turns_.*", "buffer", "buffer_for_under_the_line"]}
+  - {term: "rotation", columns: ["rotation_id", "tail_number", "link_status"]}
+  - {term: "leg index", columns: ["leg_index", "leg_position", "leg_of_the_aircraft_s_day"]}
+  - {term: "day leg index", columns: ["day_leg_index"]}
+  - {term: "inherited share", columns: ["inherited_.*", "minutes_passed_on_per_late_minute"]}
+  - {term: "Completion factor, cancellation rate and diversion rate", columns: ["scheduled", "cancelled", "diverted", "flown", "flights", "flights_flown"]}
+  - {term: "The reported cause fields, and why they are not cause", columns: ["cause_.*", "late_aircraft", "carrier", "air_traffic_system", "weather", "security", "air_traffic_.*"]}
+  - {term: "baseline", columns: ["worst_day", "score"]}
+  - {term: "recovery time", columns: ["median_days", "mean_days", "longest", "alert_episodes", "days_after_onset"]}
+  - {term: "missed", columns: ["lost", "joint", "pooled", "design_effect"]}
+ledger:
+  - {term: "Delinquency bucket", columns: ["bucket", "from_bucket", "to_bucket", "b_current", "b_30", "b_60", "b_90_", "roll_rate", "roll_low", "roll_high"]}
+  - {term: "Default", columns: ["cumulative_defaults", "cumulative_default_rate", "survival", "pd", "pd12", "lifetime_pd", "bad_rate", "defaults_changed", "charge_offs"]}
+  - {term: "Index application", columns: ["applications", "denials"]}
+  - {term: "Fraud loss", columns: ["frauds", "fraud_amount", "false_decline_cost", "missed_fraud_cost", "total_cost"]}
+  - {term: "Alert", columns: ["alerts", "true_alerts", "true_positives", "alert_id", "triage"]}
+  - {term: "Case", columns: ["episodes", "episodes_found", "partial_episodes"]}
+  - {term: "Break", columns: ["difference", "balance_from_postings", "reported_balance", "ledger", "subledger", "status"]}
+  - {term: "Account", columns: ["accounts", "opened", "closed", "balance"]}

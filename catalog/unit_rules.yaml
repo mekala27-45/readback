@@ -1,0 +1,48 @@
+# Units for numeric columns, by name, first match wins. The CSV bundles of doorstep and turnaround
+# carry a format per column in their data dictionaries and those formats win over every rule here.
+# A rule here is a hand edit: the dictionaries are silent on the marts. DECISIONS.md, 2026-10-23,
+# "the marts take their units from a committed rule table". After the rules run, the build checks
+# every fraction column against its values: a fraction outside -1.5 to 1.5 goes to the quarantine.
+#
+# Names are matched lowercased, with spaces and punctuation turned into underscores.
+#
+# A rule may name a table (a regex over the table name) when a column name means different things in
+# different tables. The first run of the range check caught each of these, listed in DECISIONS.md.
+rules:
+  # Table specific rules, caught by the range check on the first build.
+  - {table: "f06_rates", pattern: "checking|savings|time|.*_rate", role: measure, unit: percent}
+  - {table: "mart_borrowers_income", pattern: "under_35|over_2x", role: measure, unit: count}
+  - {table: "ch4_cells", pattern: "permits_rate|migration_rate", role: measure, unit: ratio}
+  - {table: "ch7_cross_section", pattern: "migration_.*", role: measure, unit: ratio}
+  - {table: "f01_peer_strips", pattern: "value", role: measure, unit: none}
+  - {table: "models_fraud_account_variants", pattern: "base|variant_ii", role: measure, unit: none}
+  - {table: "f07_topic_trend", pattern: "topic", role: key, unit: none}
+  # Counts whose names end in share or carry the word share: the denominators of a share.
+  - {pattern: "renters_with_share|renters_with_share_moe|owners_mortgage_with_share|purchase_ltv_over_95|purchase_under_35|quarters_at|rate_quarters|explanation|non_monetary_relief", role: measure, unit: count}
+  - {pattern: "burdened_moe|severe_moe|under_35_latest", role: measure, unit: fraction}
+  - {pattern: "purchase_median_ltv", role: measure, unit: percent}
+  - {pattern: "allowance_coverage|overlay", role: measure, unit: ratio}
+  - {pattern: "triage|rule_mule|rule_rapid_movement|rule_round_tripping|rule_structuring", role: measure, unit: none}
+  # Keys and calendar positions: numbers that name a thing or a time, never a measure.
+  - {pattern: "cbsa_code|county_fips|alert_id|loan_id|customer_id|account_id|episode_id|community|rotation_id|ring|tail_number", role: key, unit: none}
+  - {pattern: "year|.*_year|anchor_year|vintage|quarter|month|day|week|dep_hour|hour|day_of_week|minute|scheduled_departure_hour|first_year|last_year|income_year|ratio_2019_year", role: time, unit: none}
+  - {pattern: "leg_index|day_leg_index|leg_position|group_order|from_order|to_order|position|step|scenario_quarter|window_id|loan_purpose|bin|.*_bin|bracket|brackets|decile_\\d_p|lower|cutoff|threshold|months|months_since|months_on_book|seeds|donors_searched|clusters|len|window_years|scheduled_turn|origin", role: key, unit: none}
+  - {pattern: "rank|.*_rank|.*_rank_low|.*_rank_high|raw_rank|adjusted_rank|rank_change|moves|moved", role: measure, unit: count}
+  # doorstep mortgage rates are stored in percent (6.72 means 6.72 percent).
+  - {pattern: "rate|rate_latest|rate_default|interest_rate|purchase_median_rate|refinance_median_rate|policy_rate", role: measure, unit: percent}
+  - {pattern: "purchase_median_rate_spread|purchase_p90_rate_spread|spread_p\\d+", role: measure, unit: percent}
+  # Shares, rates and ratios of a whole, stored as a fraction of one.
+  - {pattern: ".*_share|share|.*_share_low|.*_share_high|.*_share_moe|.*_rate|.*_rate_low|.*_rate_high|el_rate|bad_rate|event_rate|flag_rate|fpr|fpr_.*|recall|recall_.*|precision|precision_.*|coverage|.*_coverage|auroc|auroc_.*|nim|nim_.*|efficiency_ratio|efficiency_ratio_.*|roa|roa_.*|roe|roe_.*|npl_ratio|npl_ratio_.*|allowance_to_loans|allowance_to_loans_.*|allowance_coverage|capital_ratio|capital_ratio_.*|capital_low|capital_high|loans_to_deposits|loans_to_deposits_.*|pd|pd12|lifetime_pd|probability|probability_cure|survival|cumulative_default_rate|recovery_rate|relief_rate|monetary_share|non_monetary_share|timely_share|share_alerted|share_of_nii|payment_share|payment_share_.*|affordable_share|never_share|under_30|from_30_to_50|over_50|under_35|under_35_low|under_35_high|over_2x|renter_burdened_share|renter_severe_share|appreciation|rent_growth|annual_growth|growth|placebo_growth|migration_.*|weight|beta|roll_rate|roll_low|roll_high|q_value|p_value|p|adj_q|csi|psi|iv|calibration_gap|joint|pooled|purchase_under_35_share|purchase_ltv_over_95|rent_share_of_median_income|rent_to_price|median_rent_share|checking_rate|savings_rate|time_rate|padding_share|on_time_share|severe_share|burdened_share|lock_in_per_100_share|reported_over_transaction|unscored_share|macro_factor|overlay", role: measure, unit: fraction}
+  # Dollars.
+  - {pattern: "median_income|median_income_moe|.*_income|.*_income_moe|median_home|median_rent|median_rent_moe|annual_rent|median_value_reported|median_value_reported_moe|purchase_median_value|purchase_median_loan|value_anchored|value_anchored_.*|value_latest|value_reported|anchor_value|anchor_value_moe|payment|base_payment|price_part|rate_part|affordable_price|affordable_gap|income_needed|decile_\\d_income|decile_\\d_price|fmr_2|hud_.*|permit_value|median_real_estate_tax_mortgaged|owner_equity|renter_wealth|difference|balance|balance_.*|expected_balance_at_risk|expected_loss_exposure|amount|fraud_amount|ead|el|lifetime_loss|loss|loss_low|loss_high|cumulative_loss|cumulative_low|cumulative_high|ppnr|interest_income|interest_expense|net_interest_income|noninterest_income|noninterest_expense|provision|tax|net_income|total_assets|total_loans|total_deposits|total_equity|allowance|nonperforming_loans|risk_weighted_assets|average_assets|average_earning_assets|average_equity|principal|deposits|assets|nii_change|reported_balance|ledger|subledger|monetary_relief|false_decline_cost|missed_fraud_cost|total_cost|loss_avoided|margin_forgone|net_benefit|checking|savings|time|limit_value|measured|charge_offs|b_current|b_30|b_60|b_90|actual|forecast|forecast_unadjusted|naive|seasonal_naive|expected_relief|actual_relief|gap|synthetic|band_low|band_high", role: measure, unit: dollars}
+  # Minutes, the unit of every delay and block time in turnaround.
+  - {pattern: ".*delay.*|.*_elapsed_sum|padding_sum|padding_block_sum|padding_.*|inherited_minutes_sum|cause_.*_sum|sched_turn|buffer|mean_delay|delay|prev_arr_delay|dep_delay|arr_delay", role: measure, unit: minutes}
+  # Years as a duration.
+  - {pattern: "down_payment_years|breakeven_years|breakeven_low|breakeven_high", role: measure, unit: years}
+  # Index points: the FHFA house price index.
+  - {pattern: "index_nsa|index_at|index_po|index_rolled_up", role: measure, unit: index points}
+  # Ratios that are not shares of a whole.
+  - {pattern: "price_to_income|price_to_income_.*|ratio|ratio_.*|vti|odds_ratio|raw_or|raw_low|raw_high|adj_or|adj_low|adj_high|observed_over_expected|design_effect|reported_over_transaction|borrower_income_ratio|purchase_median_value_to_income|amount_vs_monthly_inflow|.*_per_100|.*_per_1000_residents|lock_in_per_100|per_100k|turnover_per_100_owners|odds", role: measure, unit: ratio}
+  # Counts of things: households, loans, flights, rows.
+  - {pattern: "households|.*_households|.*_households_moe|households_moe|housing_units|vacant_.*|renters_.*|owners_.*|units_.*|permits|permits_.*|population|births|deaths|international_migration|domestic_migration|counties_mapped|metros|draws|loans|.*_loans|originations|.*_originations|purchase_with_.*|purchase_lenders|lenders|rows|flagged|scheduled|cancelled|diverted|flown|on_time|late15|cause_flights|padding_flights|flights|.*_flights|legs|turns|.*_turns|turns_reached_by_a_late_inbound|accounts|opened|closed|alerts|true_alerts|true_positives|episodes|episodes_found|partial_episodes|n|frauds|decisions|labelled|unlabelled|labelled_test|applications|denials|expected|complaints|total|in_progress|timely|entries|counterparties|branches|injected_accounts|internal_flow|rules_fired|cumulative_defaults|loans_changed|defaults_changed|rows_checked|rows_hit|truth_count|transactions|lost|days|alert_episodes|longest|median_days|mean_days|days_after_onset|units|duplicate_key|actual_without_scheduled|impossible_time|elapsed_mismatch|status_conflict|missing_actual|cause_mismatch|tail_missing|tail_format|revision|excluded|estimate|moe|grain|worst|passed|prior_alerts|.*_count|count|inbound_flights|metros_above|metros_above_2006|renters|burdened|severely_burdened|estimate", role: measure, unit: count}
+  - {pattern: "log_.*|mean_score|score|woe|points|stated|interval_low|interval_high|tolerance|unemployment|prior_cash_90d|prior_inflow_90d|bias|rmse|.*_error|.*_correlation|rho_.*|coefficient|placebo|controlled|uncontrolled|power|.*_power|.*_positives|excess_below_the_line|z_against_placebos|raw_effect|adjusted_effect|change|change_low|change_high|before|after|low|high|spread|shock_.*|shock_bps", role: measure, unit: none}
