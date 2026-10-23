@@ -7,6 +7,7 @@ license = "Apache-2.0"
 dependencies = [
   "readback-core",
   "readback-catalog",
+  "readback-gate",
 ]
 
 [build-system]

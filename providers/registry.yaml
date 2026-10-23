@@ -1,0 +1,63 @@
+# The providers, in the order the router prefers them. Every entry names the environment variable
+# that holds its key, the model (from the environment for Gemini, whose free tier list moves), the
+# structured output mode, the daily request budget, the per minute cap, and whether its terms allow
+# what readback sends: public aggregates and redacted questions only, for every entry. The floor is
+# last and always available. A scorecard row is one provider, one model, one prompt registry hash.
+providers:
+  - name: gemini
+    key_env: GEMINI_API_KEY
+    model_env: READBACK_GEMINI_MODEL
+    fallback_env: READBACK_GEMINI_FALLBACK
+    model: gemini-flash-lite-latest
+    structured: schema
+    daily_budget: 200
+    per_minute: 10
+    terms_allow_public_aggregates: true
+    integration: langchain-google-genai
+  - name: groq
+    key_env: GROQ_API_KEY
+    model_env: READBACK_GROQ_MODEL
+    model: openai/gpt-oss-120b
+    structured: schema
+    daily_budget: 1000
+    per_minute: 30
+    terms_allow_public_aggregates: true
+    integration: langchain-groq
+  - name: openrouter
+    key_env: OPENROUTER_API_KEY
+    model_env: READBACK_OPENROUTER_MODEL
+    model: openai/gpt-oss-20b:free
+    base_url: https://openrouter.ai/api/v1
+    structured: tools
+    daily_budget: 50
+    per_minute: 20
+    terms_allow_public_aggregates: true
+    integration: langchain-openai
+  - name: sambanova
+    key_env: SAMBANOVA_API_KEY
+    model_env: READBACK_SAMBANOVA_MODEL
+    model: Meta-Llama-3.3-70B-Instruct
+    base_url: https://api.sambanova.ai/v1
+    structured: tools
+    daily_budget: 100
+    per_minute: 10
+    terms_allow_public_aggregates: true
+    integration: langchain-openai
+  - name: ollama
+    key_env: READBACK_OLLAMA_URL
+    model_env: READBACK_OLLAMA_MODEL
+    model: qwen2.5:7b
+    structured: schema
+    daily_budget: 100000
+    per_minute: 600
+    terms_allow_public_aggregates: true
+    integration: langchain-ollama
+    local_only: true
+  - name: floor
+    key_env: null
+    model: no model
+    structured: none
+    daily_budget: null
+    per_minute: null
+    terms_allow_public_aggregates: true
+    integration: none

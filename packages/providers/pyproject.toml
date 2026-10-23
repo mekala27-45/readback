@@ -7,6 +7,9 @@ license = "Apache-2.0"
 dependencies = [
   "readback-core",
   "readback-tracing",
+  "langchain-core>=1.0",
+  "sqlalchemy>=2.0",
+  "pyyaml>=6.0",
 ]
 
 [build-system]
