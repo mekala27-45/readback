@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -80,7 +81,7 @@ class Agent:
             tools.records.clear()  # the warm up is not part of any turn's count
         return self._identifiers
 
-    async def ask(
+    async def stream(
         self,
         client: Client,
         question: str,
@@ -89,7 +90,8 @@ class Agent:
         provider: str | None = None,
         resume: str | None = None,
         fail_gate_once: bool = False,
-    ) -> Turn:
+    ) -> AsyncIterator[dict[str, Any]]:
+        """Run one turn and yield its events: classified, tool, gate, then interrupt or answer."""
         thread = thread_id or uuid.uuid4().hex
         config = {"configurable": {"thread_id": thread}}
         cleaned = redact(question)
@@ -119,7 +121,7 @@ class Agent:
                           identifiers=identifiers, ceiling=self.ceiling, summarize_after=self.summarize_after,
                           fail_gate_once=[True] if fail_gate_once else [])
             if resume is not None:
-                result = await self.app.ainvoke(Command(resume=resume), config, context=ctx)
+                start: Any = Command(resume=resume)
             else:
                 previous = await self.app.aget_state(config)
                 history = list(previous.values.get("history") or []) if previous and previous.values else []
@@ -132,18 +134,42 @@ class Agent:
                     "gate": None, "needs_choice": None, "choice": None, "refusal": None, "caught": [], "answer": None,
                     "unsupported_before": 0, "started": time.perf_counter(), "traceparent": carrier(),
                 }
-                try:
-                    result = await self.app.ainvoke(start, config, context=ctx)
-                except RuntimeError as err:
-                    if fail_gate_once and "between act and gate" in str(err):
-                        raise
-                    raise
-            if "__interrupt__" in result:
-                value = result["__interrupt__"][0].value
-                return Turn(thread, None, dict(value), trace_id, cleaned.removed, choice.reason)
-            answer = Answer.model_validate(result["answer"])
-            span.set_attribute("readback.verdict", answer.verdict)
-            return Turn(thread, answer, None, trace_id, cleaned.removed, choice.reason)
+            sent = 0
+            meta = {"thread_id": thread, "trace_id": trace_id, "redactions": cleaned.removed}
+            async for update in self.app.astream(start, config, context=ctx, stream_mode="updates"):
+                for node, values in update.items():
+                    while sent < len(tools.records):
+                        r = tools.records[sent]
+                        sent += 1
+                        yield {"event": "tool", **meta, "id": r.id, "tool": r.tool, "ok": r.ok,
+                               "result_id": (r.result or {}).get("result_id"), "error": r.error}
+                    if node == "classify" and values:
+                        yield {"event": "classified", **meta, "family": values.get("family"), "rule": values.get("rule"),
+                               "provider": choice.provider.name, "reason": choice.reason}
+                    elif node == "gate" and values:
+                        gate = values.get("gate") or {}
+                        yield {"event": "gate", **meta, "passed": gate.get("passed"), "claims": gate.get("claims", []),
+                               "unsupported": gate.get("unsupported", 0)}
+                    elif node == "__interrupt__":
+                        value = values[0].value if isinstance(values, (list, tuple)) else values
+                        yield {"event": "interrupt", **meta, **dict(value)}
+                        return
+                    elif node in {"answer", "refuse"} and values:
+                        answer = Answer.model_validate(values["answer"])
+                        span.set_attribute("readback.verdict", answer.verdict)
+                        yield {"event": "answer", **meta, "answer": answer.model_dump()}
+
+    async def ask(self, client: Client, question: str, **kwargs: Any) -> Turn:
+        answer: Answer | None = None
+        interrupt_value: dict[str, Any] | None = None
+        meta: dict[str, Any] = {}
+        async for event in self.stream(client, question, **kwargs):
+            meta = event
+            if event["event"] == "answer":
+                answer = Answer.model_validate(event["answer"])
+            elif event["event"] == "interrupt":
+                interrupt_value = {k: v for k, v in event.items() if k not in {"event", "thread_id", "trace_id", "redactions"}}
+        return Turn(meta.get("thread_id", ""), answer, interrupt_value, meta.get("trace_id", ""), meta.get("redactions", {}))
 
     async def resume_after_crash(self, client: Client, thread_id: str, provider: str | None = None) -> Turn:
         """Continue a turn whose process stopped mid graph, from its last checkpoint."""

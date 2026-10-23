@@ -73,7 +73,8 @@ class Cassette:
 
 class Store:
     def __init__(self, root: Path | None = None) -> None:
-        self.root = root or paths.evals_dir() / "cassettes"
+        env = os.environ.get("READBACK_CASSETTE_DIR")
+        self.root = root or (Path(env) if env else paths.evals_dir() / "cassettes")
         self.hits = 0
         self.misses = 0
 

@@ -1,0 +1,202 @@
+[
+ {
+  "id": "D-comparison-01",
+  "question": "Which had the higher mortgage payment as a share of income in 2006, Philadelphia or New York?"
+ },
+ {
+  "id": "D-comparison-03",
+  "question": "In 2014, was the share of renters who are cost burdened higher in San Jose or Los Angeles?"
+ },
+ {
+  "id": "D-comparison-08",
+  "question": "Was the national share of renters who are cost burdened higher in 2006 or in 2013?"
+ },
+ {
+  "id": "D-definition-04",
+  "question": "How does doorstep define price to income?"
+ },
+ {
+  "id": "D-definition-05",
+  "question": "What does doorstep mean by cost burdened?"
+ },
+ {
+  "id": "D-definition-06",
+  "question": "How does doorstep define the lock in intensity?"
+ },
+ {
+  "id": "D-lookup-04",
+  "question": "What was the price to income ratio in Minneapolis in 2016?"
+ },
+ {
+  "id": "D-lookup-05",
+  "question": "What was the renter cost burden share in St. Louis in 2016?"
+ },
+ {
+  "id": "D-lookup-06",
+  "question": "What was the number of renter households in Austin-Round Rock-San Marcos, TX in 2009?"
+ },
+ {
+  "id": "D-topk-02",
+  "question": "Among metros with at least a million households in 2008, which 3 had the lowest mortgage payment as a share of income?"
+ },
+ {
+  "id": "D-topk-03",
+  "question": "Among metros with at least a million households in 2013, which 3 had the highest median home price?"
+ },
+ {
+  "id": "D-trend-02",
+  "question": "Did the median home price in Tampa rise or fall from 2010 to 2015?"
+ },
+ {
+  "id": "D-trend-03",
+  "question": "Did the median income in Sacramento rise or fall from 2013 to 2018?"
+ },
+ {
+  "id": "D-trend-05",
+  "question": "From 2005 to 2012, did the price to income in Miami-Fort Lauderdale-West Palm Beach, FL go up or down?"
+ },
+ {
+  "id": "L-comparison-02",
+  "question": "Was the efficiency ratio at Harborline Bank higher in 2024Q1 or in 2025Q4?"
+ },
+ {
+  "id": "L-comparison-04",
+  "question": "Was the total deposits at Harborline Bank higher in 2025Q1 or in 2026Q1?"
+ },
+ {
+  "id": "L-definition-06",
+  "question": "How does ledger define a break?"
+ },
+ {
+  "id": "L-definition-07",
+  "question": "What does ledger mean by an account?"
+ },
+ {
+  "id": "L-lookup-04",
+  "question": "What was the net income at Harborline Bank in 2024Q2?"
+ },
+ {
+  "id": "L-lookup-06",
+  "question": "What was the share of loans nonperforming at Harborline Bank in 2026Q2?"
+ },
+ {
+  "id": "L-lookup-08",
+  "question": "What was the alert precision of the round tripping rule in ledger's AML rule scorecard?"
+ },
+ {
+  "id": "L-topk-01",
+  "question": "Which 3 full quarters had the highest net income at Harborline Bank?"
+ },
+ {
+  "id": "L-topk-02",
+  "question": "Which 3 full quarters had the highest NIM at Harborline Bank?"
+ },
+ {
+  "id": "L-topk-07",
+  "question": "Which 2 AML rules in ledger had the highest number of alerts?"
+ },
+ {
+  "id": "L-trend-03",
+  "question": "Did Harborline Bank's return on assets rise or fall from 2024Q2 to 2026Q1?"
+ },
+ {
+  "id": "L-trend-05",
+  "question": "Did Harborline Bank's total deposits rise or fall from 2024Q4 to 2025Q3?"
+ },
+ {
+  "id": "L-trend-06",
+  "question": "Did Harborline Bank's share of loans nonperforming rise or fall from 2023Q4 to 2024Q4?"
+ },
+ {
+  "id": "M-multi-06",
+  "question": "Which has more rows, doorstep's ch5_ranking or ledger's f11_reconciliation?"
+ },
+ {
+  "id": "M-multi-08",
+  "question": "Which has more rows, doorstep's calc_metros or turnaround's rotation_samples?"
+ },
+ {
+  "id": "M-multi-10",
+  "question": "Which has more rows, turnaround's mart_leg_position or ledger's f06_retention_list?"
+ },
+ {
+  "id": "M-multi-14",
+  "question": "How many metrics do doorstep and turnaround define between them in their metric layers?"
+ },
+ {
+  "id": "M-multi-15",
+  "question": "How many values do the manifests of doorstep, turnaround and ledger publish in total?"
+ },
+ {
+  "id": "R-refusal-02",
+  "question": "How much did marginal say the email channel returned per dollar?"
+ },
+ {
+  "id": "R-refusal-08",
+  "question": "Is now a good time to refinance my mortgage?"
+ },
+ {
+  "id": "R-refusal-12",
+  "question": "What is the home address of the borrower with the largest loan?"
+ },
+ {
+  "id": "R-refusal-14",
+  "question": "What was the unemployment rate in Tokyo in 2024?"
+ },
+ {
+  "id": "R-refusal-15",
+  "question": "Who should I vote for to make housing cheaper?"
+ },
+ {
+  "id": "T-comparison-05",
+  "question": "Which airport had the higher cancellation rate in 2025, ORD or CLT?"
+ },
+ {
+  "id": "T-comparison-06",
+  "question": "Which airport had the higher mean departure delay in 2021, SFO or DFW?"
+ },
+ {
+  "id": "T-definition-03",
+  "question": "How does turnaround define the inherited share?"
+ },
+ {
+  "id": "T-definition-06",
+  "question": "What does turnaround mean by the completion factor?"
+ },
+ {
+  "id": "T-definition-08",
+  "question": "How does turnaround define the reported cause fields?"
+ },
+ {
+  "id": "T-lookup-01",
+  "question": "What was Spirit's on time rate in 2018?"
+ },
+ {
+  "id": "T-lookup-04",
+  "question": "What was American's count of flights flown in 2015?"
+ },
+ {
+  "id": "T-lookup-07",
+  "question": "What was the on time rate across all carriers in 2019?"
+ },
+ {
+  "id": "T-topk-04",
+  "question": "Among carriers that flew at least half a million flights in 2024, which 3 had the highest mean arrival delay?"
+ },
+ {
+  "id": "T-topk-08",
+  "question": "Among carriers that flew at least half a million flights in 2023, which 3 had the highest number of flights flown?"
+ },
+ {
+  "id": "T-trend-04",
+  "question": "From 2015 to 2025, did American's number of flights flown go up or down?"
+ },
+ {
+  "id": "T-trend-06",
+  "question": "Did the average departure delay at DFW rise or fall from 2018 to 2019?"
+ },
+ {
+  "id": "T-trend-08",
+  "question": "Did United's share of flights on time rise or fall from 2019 to 2023?"
+ }
+]

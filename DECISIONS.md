@@ -123,3 +123,31 @@ resumed span is opened under it.
 evals/registration.json holds the plan hash and the prompt registry hash, written once by
 scripts/check_registration.py --register before the first live model call. The gate fails a changed
 plan or prompt unless this file has a dated entry naming the new hash.
+
+## 2026-10-23: the deploy is a Vercel container function, the doorstep route (reversal)
+
+The prompt planned a Vercel Python function with the entrypoint declared in pyproject. The server
+needs the warehouses on disk, 85 MB fetched and checked against the lock, plus DuckDB, LangGraph and
+the provider integrations, which is past what a Python function bundle should carry. Doorstep proved
+the container route on the same Hobby account the same day, so the image is built from
+Dockerfile.vercel, the warehouses are fetched at build time, the migrations run at start, and the
+app serves on the port Vercel routes to. Render free stays as the fallback in render.yaml.
+
+## 2026-10-23: the agent reaches its own server over loopback HTTP in production
+
+In tests and in the eval the agent's MCP client is in memory. In production it opens a Client to
+http://127.0.0.1:$PORT/mcp, the same streamable HTTP endpoint any host uses, so a protocol bug
+cannot hide behind a private path. The loopback address is exempt from the client budget.
+
+## 2026-10-23: the MCP endpoint checks the Host header (revision 2026-07-28)
+
+DNS rebinding protection is on with an allow list: the loopback names and READBACK_PUBLIC_HOSTS
+(readback-mcp.vercel.app by default). A request naming another host is refused by the SDK before
+it reaches a tool.
+
+## 2026-10-23: the separate client that verifies the live server is not the SDK
+
+deploy/verify.ps1 speaks the revision as plain JSON-RPC from PowerShell on another machine: the
+envelope in params._meta, and the mcp-protocol-version, mcp-method and mcp-name headers the
+revision requires to match the body. If the SDK and the server agreed on something the
+specification does not say, an SDK client would not notice; this one would.

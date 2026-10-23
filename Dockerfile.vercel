@@ -1,0 +1,21 @@
+# The server and the API as a Vercel container function (Hobby, no card). The warehouses are fetched
+# at build time from the three repositories at their pinned tags, and every file is checked against
+# the lock, so the image holds exactly what the lock names. Migrations run at start, then the app.
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_LINK_MODE=copy UV_COMPILE_BYTECODE=1 \
+    PORT=80 READBACK_ROOT=/app READBACK_CACHE=/tmp READBACK_CASSETTE_DIR=/tmp/cassettes READBACK_CASSETTES=record
+RUN pip install --no-cache-dir "uv>=0.9,<0.10"
+WORKDIR /app
+COPY pyproject.toml uv.lock README.md LICENSE alembic.ini ./
+COPY packages ./packages
+COPY scripts ./scripts
+RUN uv sync --frozen --no-dev --extra live
+COPY alembic ./alembic
+COPY data/warehouses.lock.json data/PROVENANCE.md ./data/
+COPY catalog ./catalog
+COPY prompts ./prompts
+COPY providers ./providers
+COPY evals/plan.yaml evals/registration.json ./evals/
+RUN uv run --no-dev python scripts/fetch_warehouses.py --quiet
+EXPOSE 80
+CMD ["sh", "-c", "uv run --no-dev alembic upgrade head && exec uv run --no-dev uvicorn readback_api.main:app --host 0.0.0.0 --port ${PORT:-80} --proxy-headers --forwarded-allow-ips='*'"]

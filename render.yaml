@@ -1,0 +1,22 @@
+# The fallback host: a Render free web service from the Dockerfile, created only if the hosting
+# probe says Vercel cannot serve the container. The same environment variables as the Vercel project.
+services:
+  - type: web
+    name: readback-mcp
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: READBACK_DB_SCHEMA
+        value: readback
+      - key: READBACK_PUBLIC_HOSTS
+        value: readback-mcp.onrender.com
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: READBACK_GEMINI_MODEL
+        sync: false
+      - key: OTEL_SERVICE_NAME
+        value: readback
