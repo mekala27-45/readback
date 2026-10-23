@@ -1,0 +1,68 @@
+name: live-eval
+
+# The incremental live eval. Once a day, after the free quotas reset at midnight Pacific, each
+# provider with a key in the repository secrets grades its next slice of the golden set inside its
+# budget (scripts/record_cassettes.py). The new cassettes and rows go into a pull request with the
+# rebuilt scorecard and documents, so a person reads the change before it lands. A provider with no
+# key is skipped and says so. CI on that pull request replays the new cassettes.
+on:
+  schedule:
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: questions per provider, at most
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: live-eval
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      READBACK_GEMINI_MODEL: ${{ vars.READBACK_GEMINI_MODEL }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      SAMBANOVA_API_KEY: ${{ secrets.SAMBANOVA_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen --extra live
+      - run: uv run python scripts/fetch_warehouses.py
+      - name: Each provider's next slice, inside its budget
+        run: |
+          for p in gemini groq openrouter sambanova; do
+            uv run python scripts/record_cassettes.py --provider "$p" ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }} || echo "$p skipped"
+          done
+      - name: The scorecard, the manifest, the documents and the site data
+        run: |
+          uv run readback scorecard
+          uv run readback manifest
+          uv run python scripts/check_published_numbers.py --write
+          uv run python scripts/export_site.py
+      - name: The gates on what was recorded
+        run: |
+          uv run python scripts/scan_for_planted_identifiers.py
+          uv run python scripts/check_no_em_dash.py
+      - name: Open the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then echo "nothing new"; exit 0; fi
+          branch="live-eval/$(date -u +%Y-%m-%d)"
+          git config user.name "readback live eval"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add -A evals/cassettes results README.md RESULTS.md docs report web/public/data
+          git commit -m "chore(evals): live eval for $(date -u +%Y-%m-%d)"
+          git push origin "$branch"
+          gh pr create --title "Live eval, $(date -u +%Y-%m-%d)" --body "The next slice of the golden set for each provider with a key, recorded inside its budget. Read the scorecard diff and the gate catches before merging; CI replays the new cassettes."
