@@ -1,0 +1,97 @@
+{
+ "conformance": {
+  "cache_hints": true,
+  "deprecated_advertised": false,
+  "discovery": {
+   "capabilities": [
+    "prompts",
+    "resources",
+    "tools"
+   ],
+   "server": "readback",
+   "supported_versions": [
+    "2026-07-28"
+   ]
+  },
+  "lists_identical": true,
+  "output_schemas": 7,
+  "passed": true,
+  "revision": "2026-07-28",
+  "tool_count": 7,
+  "tools": [
+   "warehouses",
+   "describe",
+   "search_catalog",
+   "run_sql",
+   "published",
+   "readback",
+   "lookup"
+  ],
+  "trace_context": true,
+  "transports": {
+   "in_memory": true,
+   "stdio": true,
+   "streamable_http": true
+  },
+  "unsupported_version_error": -32022
+ },
+ "server": {
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "description": "Read only analyst tools over three published warehouses (housing, flights, a fictional bank), with a readback tool that re-verifies any number against the warehouse.",
+  "name": "io.github.mekala27-45/readback",
+  "remotes": [
+   {
+    "type": "streamable-http",
+    "url": "https://readback-mcp.vercel.app/mcp"
+   }
+  ],
+  "repository": {
+   "source": "github",
+   "url": "https://github.com/mekala27-45/readback"
+  },
+  "title": "readback",
+  "version": "0.1.0",
+  "websiteUrl": "https://mekala27-45.github.io/readback/connect/"
+ },
+ "source": {
+  "hosts": [
+   {
+    "config": "Name: readback\nURL: https://readback-mcp.vercel.app/mcp\n",
+    "language": "text",
+    "name": "Claude Desktop, remote",
+    "where": "Settings, Connectors, Add custom connector"
+   },
+   {
+    "config": "{\n  \"mcpServers\": {\n    \"readback\": {\n      \"command\": \"uv\",\n      \"args\": [\"run\", \"--directory\", \"/path/to/readback\", \"readback-mcp\"]\n    }\n  }\n}\n",
+    "language": "json",
+    "name": "Claude Desktop, local over stdio",
+    "where": "claude_desktop_config.json"
+   },
+   {
+    "config": "Name: readback\nURL: https://readback-mcp.vercel.app/mcp\n",
+    "language": "text",
+    "name": "claude.ai",
+    "where": "Settings, Connectors, Add custom connector"
+   },
+   {
+    "config": "{\n  \"mcpServers\": {\n    \"readback\": { \"url\": \"https://readback-mcp.vercel.app/mcp\" }\n  }\n}\n",
+    "language": "json",
+    "name": "Cursor",
+    "where": "~/.cursor/mcp.json"
+   },
+   {
+    "config": "{\n  \"servers\": {\n    \"readback\": { \"type\": \"http\", \"url\": \"https://readback-mcp.vercel.app/mcp\" }\n  }\n}\n",
+    "language": "json",
+    "name": "VS Code",
+    "where": ".vscode/mcp.json"
+   },
+   {
+    "config": "[mcp_servers.readback]\ncommand = \"uv\"\nargs = [\"run\", \"--directory\", \"/path/to/readback\", \"readback-mcp\"]\n",
+    "language": "toml",
+    "name": "Codex",
+    "where": "~/.codex/config.toml"
+   }
+  ],
+  "url": "https://readback-mcp.vercel.app/mcp"
+ }
+}

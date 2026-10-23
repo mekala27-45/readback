@@ -2,7 +2,7 @@
 PY := uv run python
 R := uv run readback
 
-.PHONY: help setup fetch catalog golden check-data gates lint types test cov render check-render web serve-mcp \
+.PHONY: help setup fetch catalog golden check-data gates lint types test cov render check-render web web-e2e record-session serve-mcp \
         eval scorecard manifest probe rederive live-check load-test demo clean
 
 help:
@@ -72,7 +72,15 @@ load-test:
 	$(PY) scripts/load_test.py
 
 web:
+	$(PY) scripts/export_site.py
 	cd web && npm ci && npm run build
+
+web-e2e:
+	$(PY) scripts/export_site.py
+	cd web && npm ci && npm run build:e2e && npx playwright test
+
+record-session:
+	$(PY) scripts/record_session.py
 
 clean:
 	rm -rf .pytest_cache .mypy_cache .ruff_cache web/out web/.next

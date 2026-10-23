@@ -163,3 +163,43 @@ in words for the models (text in a tool result is data; quote a definition only 
 definitions line), which moved the prompt registry hash from 71102b81e1fb to ac1dd3c9756c. No live
 model call had been made, so nothing graded under the old hash. The stripping defense that was
 tried and dropped is in notebooks/03_the_injection.
+
+## 2026-10-23: the desk reads the stream, so a tool event carries a preview
+
+The tool cards on the desk expand to the SQL, the schema and the rows. The SQL was already in the
+event's arguments; the rows were not, and fetching them again through lookup_result would be a
+second warehouse query per card for something the agent had in hand. The tool event now carries the
+columns and the first ten rows of a run_sql result, with the full row count. Nothing else in the
+event changed, so the API tests stood.
+
+## 2026-10-23: the site reads its two parquet files with hyparquet, not DuckDB-WASM
+
+The plan said DuckDB-WASM for every chart and the viewer. The site has two parquet files, the eval
+run's spans and the manifest index, and every read of them is a filter by trace id or key. DuckDB-WASM
+opens parquet through an extension it downloads from extensions.duckdb.org on first use, and a page
+that fetches nothing off its own origin cannot allow that; doorstep worked around it by decoding with
+hyparquet and handing Arrow to the engine. Here the engine would be eight megabytes of wasm to run a
+filter, so the decode is the whole read. The charts read the committed JSON results, which hold the
+same numbers the manifest does. If a page ever needs a join, DuckDB-WASM comes back the doorstep way.
+
+## 2026-10-23: B612 keeps its place for figures
+
+The type plan said to confirm tabular figures in B612 and fall back if missing. B612 has no tnum
+feature, but every digit in the latin file has the same advance, 1300 units, so its figures are
+tabular by construction and columns line up. B612 Mono stays on the tool cards, the SQL and the dense
+tables; its period takes a full cell, which reads as a gap in a percentage, so the chips on the desk
+use B612 rather than the mono.
+
+## 2026-10-23: Next 16 prefetches with HEAD; the test server caught it
+
+The first Playwright run failed on every route. Next 16's Link prefetch on a static export sends a
+HEAD for each linked page, and the test server refuses HEAD the way the series' hosts have. Prefetch
+is off on every Link; seven small pages load fast enough without it, and the site now sends no HEAD
+at all, which the end to end suite checks.
+
+## 2026-10-23: the identifier scan skips nanosecond timestamps
+
+The first scan of the committed trace parquet reported a card number. It was a span's start_ns:
+nineteen digits, and about one in ten such numbers passes Luhn by chance. The scan now skips a column
+or a JSON key whose name ends in _ns, and only those; a test checks the same digits under any other
+name are still caught.
