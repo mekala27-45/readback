@@ -13,6 +13,8 @@ dependencies = [
   "readback-mcp-server",
   "langgraph>=1.0",
   "langchain-core>=1.0",
+  "langgraph-checkpoint-postgres>=3.0",
+  "psycopg[binary]>=3.2",
 ]
 
 [build-system]

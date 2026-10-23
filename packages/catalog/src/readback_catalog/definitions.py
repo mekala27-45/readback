@@ -22,6 +22,7 @@ class Entry:
     term: str
     text: str
     line: int
+    paragraph: str = ""
 
 
 def _clean(text: str) -> str:
@@ -63,14 +64,15 @@ def parse(text: str) -> list[Entry]:
                 while not bullet and k < len(lines) and lines[k].strip() and not lines[k].lstrip().startswith("-"):
                     body += " " + lines[k]
                     k += 1
-                out.append(Entry(heading.group("term"), first_sentence(body), j + 1))
+                out.append(Entry(heading.group("term"), first_sentence(body), j + 1, _clean(body)))
             i += 1
             continue
         bullet = _BULLET.match(line)
         if bullet:
-            out.append(Entry(bullet.group("term").strip(), first_sentence(bullet.group("rest")), i + 1))
-            for bold in _BOLD.finditer(bullet.group("rest")):
-                out.append(Entry(bold.group("term").strip(), _sentence_with(bullet.group("rest"), bold.group("term")), i + 1))
+            rest = bullet.group("rest")
+            out.append(Entry(bullet.group("term").strip(), first_sentence(rest), i + 1, _clean(rest)))
+            for bold in _BOLD.finditer(rest):
+                out.append(Entry(bold.group("term").strip(), _sentence_with(rest, bold.group("term")), i + 1, _clean(rest)))
         else:
             for bold in _BOLD.finditer(line):
                 term = bold.group("term").strip()
@@ -82,7 +84,7 @@ def parse(text: str) -> list[Entry]:
                 while end + 1 < len(lines) and lines[end + 1].strip():
                     end += 1
                 paragraph = " ".join(lines[start : end + 1])
-                out.append(Entry(term, _sentence_with(paragraph, term), i + 1))
+                out.append(Entry(term, _sentence_with(paragraph, term), i + 1, _clean(paragraph)))
         i += 1
     return out
 

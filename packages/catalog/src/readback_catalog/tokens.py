@@ -19,6 +19,13 @@ def stem(word: str) -> str:
     return word
 
 
+# Phrases whose small words carry the meaning: "on time" is not "time".
+JOINED = {"on time": "ontime", "on_time": "ontime", "late aircraft": "lateaircraft"}
+
+
 def tokens(text: str) -> list[str]:
-    lowered = text.lower().replace("_", " ").replace(".", " ")
+    lowered = text.lower()
+    for phrase, joined in JOINED.items():
+        lowered = lowered.replace(phrase, joined)
+    lowered = lowered.replace("_", " ").replace(".", " ")
     return [stem(w) for w in _WORD.findall(lowered) if w not in STOP]

@@ -367,8 +367,25 @@ def humanize(name: str) -> str:
     return norm(name).replace("_", " ")
 
 
-def docs_for(catalogs: list[WarehouseCatalog], manifest: list[ManifestRow]) -> list[Doc]:
+def definition_docs(root: Path) -> list[Doc]:
+    """Each entry of each build's definitions document, whole paragraph, cited by line."""
     docs: list[Doc] = []
+    for warehouse in ("doorstep", "turnaround", "ledger"):
+        text = (root / "data/warehouses" / warehouse / "docs/definitions.md").read_text(encoding="utf-8")
+        seen: set[str] = set()
+        for e in parse(text):
+            if e.term in seen or not e.paragraph or e.term.endswith(".") and len(e.paragraph) < 12:
+                continue
+            seen.add(e.term)
+            term = e.term.rstrip(".")
+            docs.append(Doc(id=f"{warehouse}.definition.{norm(term)}", kind="definition", warehouse=warehouse,
+                            name=f"{term} (docs/definitions.md:{e.line})", text=f"{term} {term} {term} {e.paragraph}",
+                            unit=None, definition=e.paragraph))
+    return docs
+
+
+def docs_for(catalogs: list[WarehouseCatalog], manifest: list[ManifestRow], root: Path | None = None) -> list[Doc]:
+    docs: list[Doc] = definition_docs(root) if root is not None else []
     for c in catalogs:
         for t in c.tables:
             docs.append(Doc(id=f"{c.warehouse}.{t.name}", kind="table", warehouse=c.warehouse, name=t.name,
@@ -434,7 +451,7 @@ def build(root: Path) -> dict[str, Any]:
             # The three manifests record the step that produced a value, not the table it was read from.
             quarantine.append(QuarantineRow(warehouse=r.warehouse, rule="manifest key with no table behind it",
                                             subject=r.key, detail=f"recorded origin only: {r.source or 'none'}"))
-    docs = docs_for(catalogs, manifest)
+    docs = docs_for(catalogs, manifest, root)
     index = Index(docs)
     syn_raw = yaml.safe_load((root / "catalog/synonyms.yaml").read_text(encoding="utf-8"))["synonyms"]
     synonyms = Synonyms(syn_raw)

@@ -77,6 +77,9 @@ def compare(
         source = "the published rounding"
     else:
         step = display_step(display, claim)
+        # A share held as a fraction but shown in percent rounds in percent: 26.5% is a step of 0.001.
+        if claim_unit in FRACTIONAL and display and ("%" in display or "pts" in display or "percent" in display):
+            step /= 100.0
         source = "the display rounding of the claim"
     tolerance = step * scale
     difference = abs(claim - in_claim_unit)

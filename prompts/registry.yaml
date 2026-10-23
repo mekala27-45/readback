@@ -1,0 +1,12 @@
+# Every prompt the agent and the server send. The registry hash is the hash of these hashes.
+prompts:
+  - {name: system, file: system/analyst.md}
+  - {name: repair, file: system/repair.md}
+  - {name: submit_answer, file: system/submit_answer.md}
+  - {name: tool.warehouses, file: tools/warehouses.md}
+  - {name: tool.describe, file: tools/describe.md}
+  - {name: tool.search_catalog, file: tools/search_catalog.md}
+  - {name: tool.run_sql, file: tools/run_sql.md}
+  - {name: tool.published, file: tools/published.md}
+  - {name: tool.readback, file: tools/readback.md}
+  - {name: tool.lookup, file: tools/lookup.md}

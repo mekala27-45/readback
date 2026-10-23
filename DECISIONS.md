@@ -95,3 +95,31 @@ changes). The capabilities test asserts logging is absent.
 The first readback through the server returned price_to_income in dollars: the dollar rule's
 .*_income pattern matched it before the ratio rule did. A ratio rule for income ratios now runs
 first, and purchase_with_income moved to the counts. Recorded as the second fix to the unit rules.
+
+## 2026-10-23: the floor and the golden set share one measures table, and the scorecard says so
+
+The floor answers from catalog/measures.yaml and the golden truth is computed from the same file, so
+the floor's row is a ceiling for the families it was written for, not a fair competitor: it scored
+50 of 50 on the development split the first time it ran. Its job is to be the answer when no key is
+present and the bar a model must clear, and the scorecard prints that sentence beside its row. A
+question phrased outside the grammar, or about a measure the table does not list, the floor refuses.
+
+## 2026-10-23: model visible tool results use short aliases for result ids
+
+A result id carries the trace id of its request chain, which changes every run. Sent to a model
+whole, it would change the digest of every later request and no cassette would ever replay. The
+agent shows the model r1, r2 and so on, keeps the map, and translates a claim's alias back before
+the readback. Timings and digests are also left out of what the model sees.
+
+## 2026-10-23: a resumed turn continues the trace it started in
+
+The crash test (kill the graph between act and gate, resume from the checkpoint) first failed: the
+resumed turn opened a new trace, so the result handles minted before the crash belonged to another
+chain and readback refused them. The turn now stores its traceparent in the checkpoint and the
+resumed span is opened under it.
+
+## 2026-10-23: the eval plan and the prompt registry are registered before any live call
+
+evals/registration.json holds the plan hash and the prompt registry hash, written once by
+scripts/check_registration.py --register before the first live model call. The gate fails a changed
+plan or prompt unless this file has a dated entry naming the new hash.

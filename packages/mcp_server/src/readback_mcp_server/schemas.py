@@ -26,6 +26,8 @@ class WarehouseInfo(BaseModel):
     commit: str
     tables: int
     rows: int
+    metrics: int
+    manifest_values: int
     as_of: str
     covers: str
 
@@ -57,7 +59,7 @@ class DescribeOut(Out):
 
 class SearchHit(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    kind: Literal["table", "column", "metric", "manifest"]
+    kind: Literal["table", "column", "metric", "manifest", "definition"]
     warehouse: WarehouseName
     name: str
     unit: str | None
@@ -123,6 +125,14 @@ class Claim(BaseModel):
     result_id: str | None = Field(default=None, description="from an earlier run_sql in the same chain")
     sql: str | None = Field(default=None, description="a statement to run instead of a result id")
     manifest_key: str | None = None
+    catalog_key: str | None = Field(
+        default=None,
+        description="a fact of the catalog: <warehouse>.tables, .rows, .metrics, .manifest_values, or "
+        "<warehouse>.<table>.rows; warehouses joined by + are summed, as doorstep+ledger.tables",
+    )
+    definition_id: str | None = Field(
+        default=None, description="a definition document from search_catalog, for a number the build's definition prints"
+    )
     column: str | None = Field(default=None, description="the result column the value is read from")
     row: int = Field(default=0, ge=0)
     evidence_unit: str | None = Field(

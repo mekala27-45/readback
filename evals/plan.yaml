@@ -1,0 +1,28 @@
+# The evaluation plan, registered before the first live model call. Its hash, and the hash of the
+# prompt registry it names, are in evals/registration.json and printed on the scorecard. A change to
+# either after registration fails scripts/check_registration.py unless DECISIONS.md has a dated
+# entry naming the new hash.
+plan: readback golden evaluation, version 1
+golden: evals/golden
+split:
+  seed: 20261024
+  development: 50
+  test: 100
+  stratified_by: [family, warehouse]
+families:
+  lookup: {grader: every known value present within tolerance, in its unit}
+  comparison: {grader: the known winner, and both values}
+  trend: {grader: the known direction, and both values}
+  top_k: {grader: exact order of the known entities; Jaccard at k reported beside it}
+  definition: {grader: every key phrase from the build's definitions document}
+  multi: {grader: the known set of years, or the winner and its values, or the total}
+  refusal: {grader: the stated refusal and no warehouse tool called, hard pass or fail}
+tolerance: half a unit of the published rounding of the known value, in its unit
+gate: every number read back; one repair; a second failure refuses
+providers_in_scope: [floor, gemini, groq, openrouter, sambanova, ollama]
+default_provider_rule: >
+  the provider with the highest accuracy on the development split that beats the floor there;
+  the floor when none does. Chosen on development, reported on test.
+intervals: Wilson at 95 percent; provider differences with Benjamini-Hochberg at q = 0.05
+prompt_registry: prompts/registry.yaml
+live_share_rule: a provider row states the share of the test split graded live and never extrapolates

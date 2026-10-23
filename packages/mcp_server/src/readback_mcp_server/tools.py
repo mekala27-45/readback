@@ -60,6 +60,8 @@ def warehouses(state: State) -> WarehousesOut:
                 commit=c.commit,
                 tables=len(c.tables),
                 rows=sum(t.rows for t in c.tables),
+                metrics=len(c.metrics),
+                manifest_values=len(state.manifest[name]),
                 as_of=c.as_of,
                 covers=c.covers,
             )
@@ -102,12 +104,12 @@ def describe(state: State, warehouse: str, table: str) -> DescribeOut:
     )
 
 
-def search_catalog(state: State, query: str, k: int = 8, warehouse: str | None = None) -> SearchOut:
+def search_catalog(state: State, query: str, k: int = 8, warehouse: str | None = None, kind: str | None = None) -> SearchOut:
     if warehouse is not None:
         _check_warehouse(state, warehouse)
     k = max(1, min(int(k), SEARCH_CEILING))
     expanded = state.synonyms.expand(query)
-    hits = state.index.search(expanded, k, warehouse=warehouse)
+    hits = state.index.search(expanded, k, warehouse=warehouse, kinds=(kind,) if kind else ())
     return SearchOut(
         query=query,
         expanded=expanded,
@@ -117,12 +119,49 @@ def search_catalog(state: State, query: str, k: int = 8, warehouse: str | None =
                 warehouse=h.doc.warehouse,  # type: ignore[arg-type]
                 name=h.doc.name,
                 unit=h.doc.unit,
-                definition=(h.doc.definition or "").split(". ")[0][:240] or None,
+                definition=_one_definition(h.doc.kind, h.doc.definition),
                 score=h.score,
             )
             for h in hits
         ],
     )
+
+
+def _one_definition(kind: str, text: str | None) -> str | None:
+    """One definition sentence for a column or a table; a definitions entry is kept whole, up to 600 characters."""
+    if not text:
+        return None
+    if kind == "definition":
+        return text[:600]
+    return text.split(". ")[0][:240]
+
+
+def catalog_fact(state: State, key: str) -> float:
+    """A count the catalog knows: tables, rows, metrics or manifest values, summed over warehouses joined by +."""
+    parts = key.split(".")
+    if len(parts) not in (2, 3):
+        raise ToolRefusal(f"{key!r} is not a catalog key")
+    names = parts[0].split("+")
+    total = 0
+    for name in names:
+        _check_warehouse(state, name)
+        c = state.catalogs[name]
+        if len(parts) == 3:
+            table = c.table(parts[1])
+            if table is None or parts[2] != "rows":
+                raise ToolRefusal(f"{key!r} names no table row count")
+            total += table.rows
+        elif parts[1] == "tables":
+            total += len(c.tables)
+        elif parts[1] == "rows":
+            total += sum(t.rows for t in c.tables)
+        elif parts[1] == "metrics":
+            total += len(c.metrics)
+        elif parts[1] == "manifest_values":
+            total += len(state.manifest[name])
+        else:
+            raise ToolRefusal(f"the catalog knows tables, rows, metrics and manifest_values, not {parts[1]!r}")
+    return float(total)
 
 
 def run_sql(state: State, warehouse: str, sql: str, limit: int | None, chain: str) -> RunSqlOut:
@@ -203,6 +242,23 @@ def _refused(claim: Claim, reason: str) -> ReadbackOut:
     )
 
 
+def _readback_definition(state: State, claim: Claim) -> ReadbackOut:
+    """A number the build's own definitions document prints: agree when the document prints it."""
+    from readback_gate.gate import tokens
+
+    doc = next((d for d in state.index.docs if d.id == claim.definition_id and d.kind == "definition"), None)
+    if doc is None:
+        return _refused(claim, f"there is no definition {claim.definition_id!r}")
+    printed = [t.value for t in tokens(doc.definition or "")]
+    match = [v for v in printed if abs(v - claim.value) <= 1e-9 * max(1.0, abs(v))]
+    verdict = "agree" if match else "disagree"
+    reason = (f"{doc.name} prints {claim.display or claim.value}" if match
+              else f"{doc.name} does not print {claim.display or claim.value}")
+    return ReadbackOut(verdict=verdict, claim=claim.value, claim_unit=claim.unit, evidence=match[0] if match else None,
+                       evidence_unit=claim.unit, unit_source="catalog", difference=0.0 if match else None,
+                       tolerance=0.0, reason=reason, evidence_ref=doc.id)
+
+
 def _cell(columns: list[str], rows: list[list[Any]], column: str | None, row: int) -> tuple[str, Any]:
     if not rows:
         raise ToolRefusal("the result has no rows to read a value from")
@@ -221,10 +277,18 @@ def _cell(columns: list[str], rows: list[list[Any]], column: str | None, row: in
 
 def readback(state: State, claim: Claim, chain: str) -> ReadbackOut:
     """Re-run or look up the evidence for one claim and compare it in the claim's unit."""
-    sources = [s for s in (claim.result_id, claim.sql, claim.manifest_key) if s]
+    sources = [s for s in (claim.result_id, claim.sql, claim.manifest_key, claim.catalog_key, claim.definition_id) if s]
     if len(sources) != 1:
-        return _refused(claim, "a claim needs exactly one of result_id, sql or manifest_key")
+        return _refused(claim, "a claim needs exactly one of result_id, sql, manifest_key, catalog_key or definition_id")
     try:
+        if claim.definition_id:
+            return _readback_definition(state, claim)
+        if claim.catalog_key:
+            fact = catalog_fact(state, claim.catalog_key)
+            c = compare(claim.value, claim.unit, fact, "count", published_step=1.0)
+            return ReadbackOut(verdict=c.verdict, claim=claim.value, claim_unit=claim.unit, evidence=c.evidence,
+                               evidence_unit="count", unit_source="catalog", difference=c.difference,
+                               tolerance=c.tolerance, reason=c.reason, evidence_ref=f"catalog:{claim.catalog_key}")
         if claim.manifest_key:
             if claim.warehouse is None:
                 return _refused(claim, "a manifest key needs its warehouse")

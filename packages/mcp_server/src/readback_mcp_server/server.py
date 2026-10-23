@@ -123,9 +123,14 @@ def build_server(state: State | None = None) -> MCPServer:
         except t.ToolRefusal as err:
             raise refuse(err) from err
 
-    def search_catalog(query: str, k: int = 8, warehouse: WarehouseName | None = None) -> SearchOut:
+    def search_catalog(
+        query: str,
+        k: int = 8,
+        warehouse: WarehouseName | None = None,
+        kind: Literal["table", "column", "metric", "manifest", "definition"] | None = None,
+    ) -> SearchOut:
         try:
-            return t.search_catalog(st, query, k, warehouse)
+            return t.search_catalog(st, query, k, warehouse, kind)
         except t.ToolRefusal as err:
             raise refuse(err) from err
 
