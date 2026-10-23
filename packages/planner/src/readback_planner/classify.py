@@ -17,34 +17,86 @@ from readback_catalog.measures import Measure
 
 Family = Literal["lookup", "comparison", "trend", "top_k", "definition", "multi", "refusal", "unknown"]
 
-OTHER_BUILDS = ("trajectory", "pricepoint", "cityflow", "frontdesk", "groundwork", "readout", "northstar", "rounds",
-                "stacks", "docket", "marginal", "lookahead", "shortlist", "legwork")
+OTHER_BUILDS = (
+    "trajectory",
+    "pricepoint",
+    "cityflow",
+    "frontdesk",
+    "groundwork",
+    "readout",
+    "northstar",
+    "rounds",
+    "stacks",
+    "docket",
+    "marginal",
+    "lookahead",
+    "shortlist",
+    "legwork",
+)
 REFUSALS: tuple[tuple[str, re.Pattern[str]], ...] = (
-    ("it asks about another build in the series, not doorstep, turnaround or ledger",
-     re.compile(r"\b(" + "|".join(OTHER_BUILDS) + r")\b", re.I)),
-    ("it asks about one person, customer, account or loan",
-     re.compile(r"\b(customer|account|borrower|applicant|loan)\s+(?:id\s+)?[A-Z]{0,3}\d{3,}\b|\bloan officer\b|\bhome address\b|"
-                r"\bwho (?:is|was) the (?:borrower|customer)\b|\bnamed?\b.*\b(?:customer|borrower)\b|\bC\d{5,}\b", re.I)),
-    ("it asks for a forecast, and the warehouses hold only what was published",
-     re.compile(r"\bwill\b|\bnext (?:year|month|week|quarter|friday|monday|summer|winter)\b|\bforecast(?:s|ed)?\b(?!\s+error)|"
-                r"\bpredict|\btomorrow\b|\bin 20(?:2[7-9]|[3-9]\d)\b", re.I)),
-    ("it asks for advice, which readback does not give",
-     re.compile(r"\bshould i\b|\bgood time to\b|\brecommend|\bvote\b|\bbook\b.*\bflight|\bwhich flight should\b|\bworth it\b", re.I)),
-    ("it is not a question about the three warehouses",
-     re.compile(r"\bignore (?:the|all|your)\b|\btell me a joke\b|\bsystem prompt\b|\bpretend\b", re.I)),
+    (
+        "it asks about another build in the series, not doorstep, turnaround or ledger",
+        re.compile(r"\b(" + "|".join(OTHER_BUILDS) + r")\b", re.I),
+    ),
+    (
+        "it asks about one person, customer, account or loan",
+        re.compile(
+            r"\b(customer|account|borrower|applicant|loan)\s+(?:id\s+)?[A-Z]{0,3}\d{3,}\b"
+            r"|\bloan officer\b|\bhome address\b|"
+            r"\bwho (?:is|was) the (?:borrower|customer)\b|\bnamed?\b.*\b(?:customer|borrower)\b|\bC\d{5,}\b",
+            re.I,
+        ),
+    ),
+    (
+        "it asks for a forecast, and the warehouses hold only what was published",
+        re.compile(
+            r"\bwill\b|\bnext (?:year|month|week|quarter|friday|monday|summer|winter)\b"
+            r"|\bforecast(?:s|ed)?\b(?!\s+error)|"
+            r"\bpredict|\btomorrow\b|\bin 20(?:2[7-9]|[3-9]\d)\b",
+            re.I,
+        ),
+    ),
+    (
+        "it asks for advice, which readback does not give",
+        re.compile(
+            r"\bshould i\b|\bgood time to\b|\brecommend|\bvote\b|\bbook\b.*\bflight"
+            r"|\bwhich flight should\b|\bworth it\b",
+            re.I,
+        ),
+    ),
+    (
+        "it is not a question about the three warehouses",
+        re.compile(r"\bignore (?:the|all|your)\b|\btell me a joke\b|\bsystem prompt\b|\bpretend\b", re.I),
+    ),
 )
 FAMILY_RULES: tuple[tuple[Family, re.Pattern[str]], ...] = (
-    ("multi", re.compile(r"publishes more tables|has more rows|appear in both|\bin total\b|between them", re.I)),
+    (
+        "multi",
+        re.compile(r"publishes more tables|has more rows|appear in both|\bin total\b|between them", re.I),
+    ),
     ("definition", re.compile(r"\bmean by\b|\bdefine[sd]?\b|\bdefinition of\b", re.I)),
     ("trend", re.compile(r"rise or fall|go up or down|increase or decrease|rose or fell", re.I)),
     ("top_k", re.compile(r"\bwhich (\d+)\b.*\b(highest|lowest)\b|\b(top|bottom) (\d+)\b", re.I)),
-    ("comparison", re.compile(r"\bhigher\b.*\bor\b|\blower\b.*\bor\b|\bwhich (?:carrier|airport|group|rule|metro)? ?had the (?:higher|lower)\b", re.I)),
+    (
+        "comparison",
+        re.compile(
+            r"\bhigher\b.*\bor\b|\blower\b.*\bor\b"
+            r"|\bwhich (?:carrier|airport|group|rule|metro)? ?had the (?:higher|lower)\b",
+            re.I,
+        ),
+    ),
     ("lookup", re.compile(r"^\s*(?:in [^,]+,\s*)?what (?:was|is|were)\b", re.I)),
 )
 WAREHOUSE_HINTS: dict[str, re.Pattern[str]] = {
-    "ledger": re.compile(r"\bledger\b|\bharborline\b|\bbank\b|\bhmda\b|\baml\b|\bquarters?\b|\b20\d\dQ[1-4]\b", re.I),
-    "turnaround": re.compile(r"\bturnaround\b|\bcarriers?\b|\bairlines?\b|\bairports?\b|\bflights?\b|\bon time\b", re.I),
-    "doorstep": re.compile(r"\bdoorstep\b|\bmetros?\b|\bhouseholds\b|\bhome\b|\brent(?:ers?)?\b|\bmortgage\b|\bpermits?\b", re.I),
+    "ledger": re.compile(
+        r"\bledger\b|\bharborline\b|\bbank\b|\bhmda\b|\baml\b|\bquarters?\b|\b20\d\dQ[1-4]\b", re.I
+    ),
+    "turnaround": re.compile(
+        r"\bturnaround\b|\bcarriers?\b|\bairlines?\b|\bairports?\b|\bflights?\b|\bon time\b", re.I
+    ),
+    "doorstep": re.compile(
+        r"\bdoorstep\b|\bmetros?\b|\bhouseholds\b|\bhome\b|\brent(?:ers?)?\b|\bmortgage\b|\bpermits?\b", re.I
+    ),
 }
 
 
@@ -95,7 +147,9 @@ def match_measure(question: str, measures: list[Measure], airport_named: bool) -
             bonus += 3 if airport_named else -5
         if m.entity == "carrier" and airport_named and "carrier" not in q:
             bonus -= 3
-        if m.entity == "nation" and not re.search(r"\bnational\b|\bacross all\b|\bthirty year\b|\b30 year\b", q):
+        if m.entity == "nation" and not re.search(
+            r"\bnational\b|\bacross all\b|\bthirty year\b|\b30 year\b", q
+        ):
             bonus -= 4
         if m.entity == "bank" and "ledger" not in hints:
             bonus -= 4

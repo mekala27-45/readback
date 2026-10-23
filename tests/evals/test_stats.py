@@ -6,7 +6,6 @@ import json
 
 from hypothesis import given
 from hypothesis import strategies as st
-
 from readback_core import paths
 from readback_evals.scorecard import build
 from readback_evals.stats import benjamini_hochberg, difference_interval, kappa, wilson

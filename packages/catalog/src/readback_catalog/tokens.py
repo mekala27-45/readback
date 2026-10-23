@@ -6,8 +6,49 @@ import re
 
 _WORD = re.compile(r"[a-z0-9]+")
 STOP = frozenset(
-    "a an and are as at be by did do does for from had has have how in is it its of on or per "
-    "than that the their there this to was were what when where which who why with".split()
+    [
+        "a",
+        "an",
+        "and",
+        "are",
+        "as",
+        "at",
+        "be",
+        "by",
+        "did",
+        "do",
+        "does",
+        "for",
+        "from",
+        "had",
+        "has",
+        "have",
+        "how",
+        "in",
+        "is",
+        "it",
+        "its",
+        "of",
+        "on",
+        "or",
+        "per",
+        "than",
+        "that",
+        "the",
+        "their",
+        "there",
+        "this",
+        "to",
+        "was",
+        "were",
+        "what",
+        "when",
+        "where",
+        "which",
+        "who",
+        "why",
+        "with",
+    ]
 )
 
 

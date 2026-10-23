@@ -1,7 +1,7 @@
 """The statement on every surface: the documents and every page of the built site.
 
-API response bodies are covered by tests/api/test_statement.py, and MCP results by tests/mcp/test_statement.py, which walks
-the route table rather than a hand kept list.
+API response bodies are covered by tests/api/test_statement.py, and MCP results by
+tests/mcp/test_statement.py, which walks the route table rather than a hand kept list.
 """
 
 from __future__ import annotations

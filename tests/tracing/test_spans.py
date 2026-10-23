@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pyarrow.parquet as pq
-
 from mcp import Client
 from readback_agent.run import Agent
 from readback_tracing import CONTENT_ATTRIBUTES
@@ -49,4 +48,12 @@ async def test_the_parquet_row_count_equals_the_span_count(client: Client, expor
     n = exporter.write(path, t.trace_id)
     table = pq.read_table(path)
     assert table.num_rows == n == len(exporter.rows(t.trace_id))
-    assert set(table.column_names) >= {"trace_id", "span_id", "parent_id", "name", "start_ns", "end_ns", "attributes"}
+    assert set(table.column_names) >= {
+        "trace_id",
+        "span_id",
+        "parent_id",
+        "name",
+        "start_ns",
+        "end_ns",
+        "attributes",
+    }

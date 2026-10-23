@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 
 import pytest
-
 from mcp import Client
 from readback_mcp_server.server import build_server
 

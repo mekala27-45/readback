@@ -133,7 +133,9 @@ class ManifestBuilder:
             raise ValueError(f"{key} is not a finite number")
         if key in self._values:
             raise KeyError(f"{key} was written twice")
-        self._values[key] = Value(value=value, fmt=fmt, provenance=self._prov(origin, population, source, note))
+        self._values[key] = Value(
+            value=value, fmt=fmt, provenance=self._prov(origin, population, source, note)
+        )
 
     def table(
         self,
@@ -203,7 +205,8 @@ class ManifestBuilder:
         )
 
     def dump(self) -> dict[str, Any]:
-        return json.loads(self.build().model_dump_json())
+        data: dict[str, Any] = json.loads(self.build().model_dump_json())
+        return data
 
 
 def load(path: Path) -> Manifest:

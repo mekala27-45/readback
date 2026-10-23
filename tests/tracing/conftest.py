@@ -4,7 +4,6 @@ from collections.abc import AsyncIterator
 from pathlib import Path
 
 import pytest
-
 from mcp import Client
 from readback_agent.run import Agent
 from readback_mcp_server.server import build_server

@@ -98,6 +98,8 @@ def grade(q: Question, answer: Answer) -> Grade:
         if q.entity is not None:
             g.checks["entity"] = entity_matches(q.entity, answer)
         if q.direction is not None:
-            g.checks["direction"] = answer.direction == q.direction or (answer.direction is None and re.search(rf"\b{q.direction}\b", answer.text) is not None)
+            g.checks["direction"] = answer.direction == q.direction or (
+                answer.direction is None and re.search(rf"\b{q.direction}\b", answer.text) is not None
+            )
     g.passed = bool(g.checks) and all(g.checks.values())
     return g

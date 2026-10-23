@@ -76,9 +76,14 @@ async def checkpointer() -> Any:
         from psycopg.rows import dict_row
 
         conn_url = url.replace("postgresql+psycopg://", "postgresql://")
-        conn = await AsyncConnection.connect(conn_url, autocommit=True, prepare_threshold=0, row_factory=dict_row,
-                                             options=f"-csearch_path={db.SCHEMA}")
-        saver = AsyncPostgresSaver(conn)  # type: ignore[arg-type]
+        conn = await AsyncConnection.connect(
+            conn_url,
+            autocommit=True,
+            prepare_threshold=0,
+            row_factory=dict_row,
+            options=f"-csearch_path={db.SCHEMA}",
+        )
+        saver = AsyncPostgresSaver(conn)
         await saver.setup()
         return saver
     from langgraph.checkpoint.memory import InMemorySaver
@@ -89,9 +94,14 @@ async def checkpointer() -> Any:
 def create_app(*, agent_transport: str | None = None) -> FastAPI:
     exporter = install()
     server = build_server()
-    security = TransportSecuritySettings(enable_dns_rebinding_protection=True, allowed_hosts=allowed_hosts(),
-                                         allowed_origins=["https://mekala27-45.github.io", "http://localhost:*", "http://127.0.0.1:*"])
-    mcp_app = server.streamable_http_app(streamable_http_path="/mcp", stateless_http=True, json_response=True, transport_security=security)
+    security = TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=allowed_hosts(),
+        allowed_origins=["https://mekala27-45.github.io", "http://localhost:*", "http://127.0.0.1:*"],
+    )
+    mcp_app = server.streamable_http_app(
+        streamable_http_path="/mcp", stateless_http=True, json_response=True, transport_security=security
+    )
     engine = db.engine()
     if engine.dialect.name != "postgresql":
         db.create_local(engine)
@@ -108,8 +118,12 @@ def create_app(*, agent_transport: str | None = None) -> FastAPI:
             yield
 
     app = FastAPI(title="readback", version=VERSION, docs_url=None, redoc_url=None, lifespan=lifespan)
-    app.add_middleware(CORSMiddleware, allow_origins=["https://mekala27-45.github.io", "http://localhost:3000", "http://127.0.0.1:3000"],
-                       allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["content-type", "mcp-protocol-version", "mcp-method", "mcp-name"])
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["https://mekala27-45.github.io", "http://localhost:3000", "http://127.0.0.1:3000"],
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["content-type", "mcp-protocol-version", "mcp-method", "mcp-name"],
+    )
 
     @app.middleware("http")
     async def protect(request: Request, call_next: Any) -> Any:
@@ -125,11 +139,15 @@ def create_app(*, agent_transport: str | None = None) -> FastAPI:
             return Client(server)
         return Client(f"http://127.0.0.1:{PORT}/mcp")
 
-    async def events(question: str, thread_id: str | None, provider: str | None, resume: str | None) -> AsyncIterator[bytes]:
+    async def events(
+        question: str, thread_id: str | None, provider: str | None, resume: str | None
+    ) -> AsyncIterator[bytes]:
         agent: Agent = state["agent"]
         traces: set[str] = set()
         async with mcp_client() as client:
-            async for event in agent.stream(client, question, thread_id=thread_id, provider=provider, resume=resume):
+            async for event in agent.stream(
+                client, question, thread_id=thread_id, provider=provider, resume=resume
+            ):
                 traces.add(event["trace_id"])
                 if event["event"] == "answer":
                     answer_id = uuid.uuid4().hex
@@ -145,13 +163,19 @@ def create_app(*, agent_transport: str | None = None) -> FastAPI:
 
     @app.post("/v1/chat")
     async def chat(body: ChatIn) -> StreamingResponse:
-        return StreamingResponse(events(body.question, body.thread_id, body.provider, None), media_type="text/event-stream",
-                                 headers={"cache-control": "no-store", "x-accel-buffering": "no"})
+        return StreamingResponse(
+            events(body.question, body.thread_id, body.provider, None),
+            media_type="text/event-stream",
+            headers={"cache-control": "no-store", "x-accel-buffering": "no"},
+        )
 
     @app.post("/v1/chat/{thread_id}/resume")
     async def resume(thread_id: str, body: ResumeIn) -> StreamingResponse:
-        return StreamingResponse(events("", thread_id, body.provider, body.choice), media_type="text/event-stream",
-                                 headers={"cache-control": "no-store"})
+        return StreamingResponse(
+            events("", thread_id, body.provider, body.choice),
+            media_type="text/event-stream",
+            headers={"cache-control": "no-store"},
+        )
 
     @app.get("/v1/answers/{answer_id}")
     async def get_answer(answer_id: str) -> dict[str, Any]:

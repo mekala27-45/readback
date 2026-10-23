@@ -9,11 +9,21 @@ from readback_evals.graders import grade
 
 
 def answer(text: str, claims: list[tuple[float, str, str]] = (), **kw) -> Answer:  # type: ignore[assignment,no-untyped-def]
-    return Answer(question="q", family="x", text=text, verdict=kw.pop("verdict", "verified"), provider="floor", model="no model",
-                  claims=[ShippedClaim(value=v, unit=u, display=d) for v, u, d in claims], **kw)
+    return Answer(
+        question="q",
+        family="x",
+        text=text,
+        verdict=kw.pop("verdict", "verified"),
+        provider="floor",
+        model="no model",
+        claims=[ShippedClaim(value=v, unit=u, display=d) for v, u, d in claims],
+        **kw,
+    )
 
 
-def known(value: float, unit: str = "fraction", fmt: str = "pct1", tol: float = 0.0005, label: str = "a") -> KnownClaim:
+def known(
+    value: float, unit: str = "fraction", fmt: str = "pct1", tol: float = 0.0005, label: str = "a"
+) -> KnownClaim:
     return KnownClaim(value=value, unit=unit, fmt=fmt, tolerance=tol, label=label)
 
 
@@ -24,7 +34,9 @@ def q(family: str, **kw) -> Question:  # type: ignore[no-untyped-def]
 def test_lookup_passes_within_tolerance_in_another_unit_and_fails_outside() -> None:
     g = grade(q("lookup", claims=[known(0.40409)]), answer("40.4%", [(40.4, "percent", "40.4%")]))
     assert g.passed
-    assert not grade(q("lookup", claims=[known(0.40409)]), answer("40.5%", [(40.5, "percent", "40.5%")])).passed
+    assert not grade(
+        q("lookup", claims=[known(0.40409)]), answer("40.5%", [(40.5, "percent", "40.5%")])
+    ).passed
 
 
 def test_a_coarser_rounding_than_published_does_not_pass() -> None:
@@ -40,8 +52,14 @@ def test_comparison_needs_the_winner_and_both_values() -> None:
 
 def test_trend_needs_the_direction() -> None:
     question = q("trend", claims=[known(0.199), known(0.193)], direction="fell")
-    assert grade(question, answer("It fell.", [(19.9, "percent", "19.9%"), (19.3, "percent", "19.3%")], direction="fell")).passed
-    assert not grade(question, answer("It rose.", [(19.9, "percent", "19.9%"), (19.3, "percent", "19.3%")], direction="rose")).passed
+    assert grade(
+        question,
+        answer("It fell.", [(19.9, "percent", "19.9%"), (19.3, "percent", "19.3%")], direction="fell"),
+    ).passed
+    assert not grade(
+        question,
+        answer("It rose.", [(19.9, "percent", "19.9%"), (19.3, "percent", "19.3%")], direction="rose"),
+    ).passed
 
 
 def test_top_k_is_exact_order_with_jaccard_beside_it() -> None:

@@ -185,7 +185,10 @@ def fmt_years0(value: float | int | str | None) -> str:
 
 
 def _beyond(decimals: int) -> FormatFn:
-    """A breakeven in years, where one past the horizon is the engine's sentinel for owning never catching up."""
+    """A breakeven in years.
+
+    One past the horizon is the engine's sentinel for owning never catching up.
+    """
 
     def fmt(value: float | int | str | None) -> str:
         v = _num(value)
@@ -223,7 +226,7 @@ def fmt_year(value: float | int | str | None) -> str:
     """A calendar year: four digits, no separator."""
     if value is None:
         return "not available"
-    return str(int(round(_num(value))))
+    return str(round(_num(value)))
 
 
 FORMATS: dict[str, FormatFn] = {

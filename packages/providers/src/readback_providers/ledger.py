@@ -15,6 +15,7 @@ from collections.abc import Callable
 from zoneinfo import ZoneInfo
 
 import sqlalchemy as sa
+from sqlalchemy.sql.dml import ReturningInsert
 
 PACIFIC = ZoneInfo("America/Los_Angeles")
 metadata = sa.MetaData()
@@ -60,7 +61,9 @@ class Ledger:
     def used(self, provider: str) -> int:
         day = pacific_day(self.clock())
         with self.engine.connect() as conn:
-            value = conn.execute(sa.select(budget.c.used).where(budget.c.provider == provider, budget.c.day == day)).scalar()
+            value = conn.execute(
+                sa.select(budget.c.used).where(budget.c.provider == provider, budget.c.day == day)
+            ).scalar()
         return int(value or 0)
 
     def remaining(self, provider: str, cap: int | None) -> int | None:
@@ -69,28 +72,58 @@ class Ledger:
     def last_minute(self, provider: str) -> int:
         since = self.clock() - dt.timedelta(minutes=1)
         with self.engine.connect() as conn:
-            value = conn.execute(sa.select(sa.func.count()).select_from(calls).where(calls.c.provider == provider, calls.c.at > since)).scalar()
+            value = conn.execute(
+                sa.select(sa.func.count())
+                .select_from(calls)
+                .where(calls.c.provider == provider, calls.c.at > since)
+            ).scalar()
         return int(value or 0)
 
-    def reserve(self, provider: str, model: str, cap: int, digest: str, trace_id: str,
-                fail_between: Callable[[], None] | None = None) -> int:
+    def reserve(
+        self,
+        provider: str,
+        model: str,
+        cap: int,
+        digest: str,
+        trace_id: str,
+        fail_between: Callable[[], None] | None = None,
+    ) -> int:
         """Count the call and write its audit row together; refuse past the cap. Returns the new count."""
         now = self.clock()
         day = pacific_day(now)
         with self.engine.begin() as conn:
             # One upsert that returns the new count, so two calls at once cannot both pass the cap.
+            keys = ["provider", "day"]
+            bump = {"used": budget.c.used + 1}
+            stmt: ReturningInsert[int]
             if self.engine.dialect.name == "postgresql":
-                from sqlalchemy.dialects.postgresql import insert
+                from sqlalchemy.dialects.postgresql import insert as pg_insert
+
+                stmt = (
+                    pg_insert(budget)
+                    .values(provider=provider, day=day, used=1)
+                    .on_conflict_do_update(index_elements=keys, set_=bump)
+                    .returning(budget.c.used)
+                )
             else:
-                from sqlalchemy.dialects.sqlite import insert
-            stmt = insert(budget).values(provider=provider, day=day, used=1)
-            stmt = stmt.on_conflict_do_update(index_elements=["provider", "day"], set_={"used": budget.c.used + 1}).returning(budget.c.used)
+                from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+                stmt = (
+                    sqlite_insert(budget)
+                    .values(provider=provider, day=day, used=1)
+                    .on_conflict_do_update(index_elements=keys, set_=bump)
+                    .returning(budget.c.used)
+                )
             used = int(conn.execute(stmt).scalar_one())
             if used > cap:
                 raise BudgetSpent(provider, cap)  # the raise rolls the increment back
             if fail_between is not None:
                 fail_between()
-            conn.execute(calls.insert().values(provider=provider, model=model, digest=digest, trace_id=trace_id, at=now))
+            conn.execute(
+                calls.insert().values(
+                    provider=provider, model=model, digest=digest, trace_id=trace_id, at=now
+                )
+            )
         return used
 
     def audit_rows(self) -> int:

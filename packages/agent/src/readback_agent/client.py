@@ -15,7 +15,9 @@ from typing import Any
 from mcp import Client
 from readback_tracing import carrier, tool_span
 
-WAREHOUSE_TOOLS = frozenset({"describe", "search_catalog", "run_sql", "published", "readback", "lookup", "warehouses"})
+WAREHOUSE_TOOLS = frozenset(
+    {"describe", "search_catalog", "run_sql", "published", "readback", "lookup", "warehouses"}
+)
 
 
 class ToolError(RuntimeError):

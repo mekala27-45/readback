@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 import sqlalchemy as sa
+from sqlalchemy.sql.dml import ReturningInsert
 
 SCHEMA = os.environ.get("READBACK_DB_SCHEMA", "readback")
 metadata = sa.MetaData()
@@ -76,8 +77,14 @@ def database_url() -> str:
 def engine(url: str | None = None) -> sa.Engine:
     url = url or database_url()
     if url.startswith("postgresql"):
-        eng = sa.create_engine(url, pool_pre_ping=True, pool_size=2, max_overflow=2, pool_recycle=240,
-                               connect_args={"options": f"-csearch_path={SCHEMA}"})
+        eng = sa.create_engine(
+            url,
+            pool_pre_ping=True,
+            pool_size=2,
+            max_overflow=2,
+            pool_recycle=240,
+            connect_args={"options": f"-csearch_path={SCHEMA}"},
+        )
     else:
         eng = sa.create_engine(url, connect_args={"check_same_thread": False})
     return eng
@@ -98,15 +105,27 @@ def create_local(eng: sa.Engine) -> None:
 class Log:
     engine: sa.Engine
 
-    def write_answer(self, answer_id: str, thread_id: str, answer: dict[str, Any], demo: bool = False) -> None:
+    def write_answer(
+        self, answer_id: str, thread_id: str, answer: dict[str, Any], demo: bool = False
+    ) -> None:
         with self.engine.begin() as conn:
-            conn.execute(answers.insert().values(
-                id=answer_id, thread_id=thread_id, question=answer["question"], answer=json.dumps(answer, sort_keys=True),
-                verdict=answer["verdict"], provider=answer["provider"], model=answer["model"],
-                tokens_in=int(answer.get("tokens_in", 0)), tokens_out=int(answer.get("tokens_out", 0)),
-                latency_ms=float(answer.get("latency_ms", 0.0)), trace_id=answer.get("trace_id", ""), demo=demo,
-                created_at=dt.datetime.now(dt.UTC),
-            ))
+            conn.execute(
+                answers.insert().values(
+                    id=answer_id,
+                    thread_id=thread_id,
+                    question=answer["question"],
+                    answer=json.dumps(answer, sort_keys=True),
+                    verdict=answer["verdict"],
+                    provider=answer["provider"],
+                    model=answer["model"],
+                    tokens_in=int(answer.get("tokens_in", 0)),
+                    tokens_out=int(answer.get("tokens_out", 0)),
+                    latency_ms=float(answer.get("latency_ms", 0.0)),
+                    trace_id=answer.get("trace_id", ""),
+                    demo=demo,
+                    created_at=dt.datetime.now(dt.UTC),
+                )
+            )
 
     def read_answer(self, answer_id: str) -> dict[str, Any] | None:
         with self.engine.connect() as conn:
@@ -118,7 +137,14 @@ class Log:
         return body
 
     def recent(self, limit: int = 20, demo: bool | None = None) -> list[dict[str, Any]]:
-        q = sa.select(answers.c.id, answers.c.question, answers.c.verdict, answers.c.provider, answers.c.trace_id, answers.c.created_at)
+        q = sa.select(
+            answers.c.id,
+            answers.c.question,
+            answers.c.verdict,
+            answers.c.provider,
+            answers.c.trace_id,
+            answers.c.created_at,
+        )
         if demo is not None:
             q = q.where(answers.c.demo == demo)
         q = q.order_by(answers.c.created_at.desc()).limit(max(1, min(limit, 100)))
@@ -131,20 +157,41 @@ class Log:
         now = dt.datetime.now(dt.UTC)
         with self.engine.begin() as conn:
             conn.execute(spans.delete().where(spans.c.created_at < now - SPAN_RETENTION))
-            existing = {r[0] for r in conn.execute(sa.select(spans.c.span_id).where(spans.c.span_id.in_([r["span_id"] for r in rows])))}
+            existing = {
+                r[0]
+                for r in conn.execute(
+                    sa.select(spans.c.span_id).where(spans.c.span_id.in_([r["span_id"] for r in rows]))
+                )
+            }
             fresh = [r for r in rows if r["span_id"] not in existing]
             if fresh:
-                conn.execute(spans.insert(), [
-                    {"span_id": r["span_id"], "trace_id": r["trace_id"], "parent_id": r["parent_id"], "name": r["name"],
-                     "start_ns": r["start_ns"], "end_ns": r["end_ns"], "attributes": json.dumps(r["attributes"], sort_keys=True), "created_at": now}
-                    for r in fresh
-                ])
+                conn.execute(
+                    spans.insert(),
+                    [
+                        {
+                            "span_id": r["span_id"],
+                            "trace_id": r["trace_id"],
+                            "parent_id": r["parent_id"],
+                            "name": r["name"],
+                            "start_ns": r["start_ns"],
+                            "end_ns": r["end_ns"],
+                            "attributes": json.dumps(r["attributes"], sort_keys=True),
+                            "created_at": now,
+                        }
+                        for r in fresh
+                    ],
+                )
         return len(fresh)
 
     def spans_of(self, trace_id: str) -> list[dict[str, Any]]:
         with self.engine.connect() as conn:
-            rows = conn.execute(sa.select(spans).where(spans.c.trace_id == trace_id).order_by(spans.c.start_ns)).mappings()
-            return [dict(r, attributes=json.loads(r["attributes"]), created_at=r["created_at"].isoformat()) for r in rows]
+            rows = conn.execute(
+                sa.select(spans).where(spans.c.trace_id == trace_id).order_by(spans.c.start_ns)
+            ).mappings()
+            return [
+                dict(r, attributes=json.loads(r["attributes"]), created_at=r["created_at"].isoformat())
+                for r in rows
+            ]
 
     def clear_answers(self) -> int:
         with self.engine.begin() as conn:
@@ -158,12 +205,27 @@ class SqlCounter:
         self.engine = eng
 
     def increment(self, client: str, window: str, start: dt.datetime) -> int:
+        row = {"client": client, "window_kind": window, "window_start": start, "used": 1}
+        keys = ["client", "window_kind", "window_start"]
+        bump = {"used": client_budget.c.used + 1}
+        stmt: ReturningInsert[int]
         if self.engine.dialect.name == "postgresql":
-            from sqlalchemy.dialects.postgresql import insert
+            from sqlalchemy.dialects.postgresql import insert as pg_insert
+
+            stmt = (
+                pg_insert(client_budget)
+                .values(**row)
+                .on_conflict_do_update(index_elements=keys, set_=bump)
+                .returning(client_budget.c.used)
+            )
         else:
-            from sqlalchemy.dialects.sqlite import insert
-        stmt = insert(client_budget).values(client=client, window_kind=window, window_start=start, used=1)
-        stmt = stmt.on_conflict_do_update(index_elements=["client", "window_kind", "window_start"],
-                                          set_={"used": client_budget.c.used + 1}).returning(client_budget.c.used)
+            from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+            stmt = (
+                sqlite_insert(client_budget)
+                .values(**row)
+                .on_conflict_do_update(index_elements=keys, set_=bump)
+                .returning(client_budget.c.used)
+            )
         with self.engine.begin() as conn:
             return int(conn.execute(stmt).scalar_one())

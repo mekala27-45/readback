@@ -80,7 +80,8 @@ def download(item: Item, base: Path, get: Any) -> str:
     found = hashlib.sha256(data).hexdigest()
     if found != item.sha256:
         raise FetchError(
-            f"{item.warehouse}: {item.path} has digest {found[:12]}, the lock says {item.sha256[:12]}; refusing it"
+            f"{item.warehouse}: {item.path} has digest {found[:12]}, "
+            f"the lock says {item.sha256[:12]}; refusing it"
         )
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(out.suffix + ".part")

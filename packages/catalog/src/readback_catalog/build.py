@@ -23,14 +23,36 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from readback_core.units import SPECS, spec
+from readback_core.units import SPECS, Unit, spec
 
 from readback_catalog.definitions import Entry, by_term, parse
 from readback_catalog.index import Doc, Index, Synonyms
-from readback_catalog.model import Citation, Column, Metric, QuarantineRow, TableEntry, WarehouseCatalog
+from readback_catalog.model import (
+    Citation,
+    Column,
+    DefinitionSource,
+    Metric,
+    QuarantineRow,
+    Role,
+    TableEntry,
+    WarehouseCatalog,
+)
 
-NUMERIC = ("TINYINT", "SMALLINT", "INTEGER", "BIGINT", "HUGEINT", "UTINYINT", "USMALLINT", "UINTEGER",
-           "UBIGINT", "FLOAT", "DOUBLE", "DECIMAL", "REAL")
+NUMERIC = (
+    "TINYINT",
+    "SMALLINT",
+    "INTEGER",
+    "BIGINT",
+    "HUGEINT",
+    "UTINYINT",
+    "USMALLINT",
+    "UINTEGER",
+    "UBIGINT",
+    "FLOAT",
+    "DOUBLE",
+    "DECIMAL",
+    "REAL",
+)
 TIME_TYPES = ("DATE", "TIMESTAMP", "TIME")
 # Tables this large are counted but their grain is not tested by a distinct count, which would
 # take minutes on a laptop; the grain is stated from the build's own documentation instead.
@@ -42,11 +64,17 @@ STATED_GRAINS = {
 }
 AS_OF = {"doorstep": "2026Q2", "turnaround": "2026-07", "ledger": "2026-08-31"}
 COVERS = {
-    "doorstep": "393 metros from 2000 to 2026Q2 in the price index, census years 2005 to 2024, HMDA 2018 to 2025",
+    "doorstep": (
+        "393 metros from 2000 to 2026Q2 in the price index, census years 2005 to 2024, HMDA 2018 to 2025"
+    ),
     "turnaround": "every scheduled domestic flight from January 2015 to July 2026, summarized",
     "ledger": "the fictional Harborline Bank, September 2023 to August 2026, with New Jersey HMDA",
 }
-METRIC_MART = {"doorstep": "mart_metro_year", "turnaround": "mart_carrier_month", "ledger": "metrics_bank_quarter"}
+METRIC_MART = {
+    "doorstep": "mart_metro_year",
+    "turnaround": "mart_carrier_month",
+    "ledger": "metrics_bank_quarter",
+}
 
 
 def norm(name: str) -> str:
@@ -82,19 +110,24 @@ def source_step(warehouse: str, table: str) -> str:
 
 @dataclass
 class Rules:
-    patterns: list[tuple[re.Pattern[str] | None, re.Pattern[str], str, str]]
+    patterns: list[tuple[re.Pattern[str] | None, re.Pattern[str], Role, Unit]]
 
     @classmethod
     def load(cls, path: Path) -> Rules:
         raw = yaml.safe_load(path.read_text(encoding="utf-8"))
         return cls(
             [
-                (re.compile(r["table"]) if r.get("table") else None, re.compile(r["pattern"]), r["role"], r["unit"])
+                (
+                    re.compile(r["table"]) if r.get("table") else None,
+                    re.compile(r["pattern"]),
+                    r["role"],
+                    r["unit"],
+                )
                 for r in raw["rules"]
             ]
         )
 
-    def match(self, name: str, table: str = "") -> tuple[str, str] | None:
+    def match(self, name: str, table: str = "") -> tuple[Role, Unit] | None:
         for table_pattern, pattern, role, unit in self.patterns:
             if table_pattern is not None and not table_pattern.fullmatch(table):
                 continue
@@ -114,7 +147,7 @@ class Sources:
     dictionary: dict[tuple[str, str], dict[str, str]]  # (file stem, normalized column) -> row
     bank_metrics: dict[str, tuple[str, int]] = field(default_factory=dict)  # name -> (definition, line)
 
-    def definition(self, column: str) -> tuple[str, Citation | None, str] | None:
+    def definition(self, column: str) -> tuple[str, Citation | None, DefinitionSource] | None:
         n = norm(column)
         if n in self.bank_metrics:
             text, line = self.bank_metrics[n]
@@ -123,7 +156,9 @@ class Sources:
             if any(p.fullmatch(n) for p in patterns):
                 entry = self.entries.get(term)
                 if entry is None:
-                    raise KeyError(f"{self.warehouse}: definition_terms names {term!r}, absent from the document")
+                    raise KeyError(
+                        f"{self.warehouse}: definition_terms names {term!r}, absent from the document"
+                    )
                 return entry.text, Citation(file="docs/definitions.md", line=entry.line), "definitions"
         if n in self.overrides:
             return self.overrides[n], None, "hand edit"
@@ -160,16 +195,26 @@ def _bank_metrics(path: Path) -> dict[str, tuple[str, int]]:
 def load_sources(root: Path, warehouse: str) -> Sources:
     base = root / "data" / "warehouses" / warehouse
     entries = by_term(parse((base / "docs/definitions.md").read_text(encoding="utf-8")))
-    terms_raw = yaml.safe_load((root / "catalog/definition_terms.yaml").read_text(encoding="utf-8"))[warehouse]
+    terms_raw = yaml.safe_load((root / "catalog/definition_terms.yaml").read_text(encoding="utf-8"))[
+        warehouse
+    ]
     terms = [(t["term"], [re.compile(c) for c in t["columns"]]) for t in terms_raw]
-    overrides = yaml.safe_load((root / "catalog/overrides.yaml").read_text(encoding="utf-8")).get(warehouse, {}) or {}
+    overrides = (
+        yaml.safe_load((root / "catalog/overrides.yaml").read_text(encoding="utf-8")).get(warehouse, {}) or {}
+    )
     dict_path = {
         "doorstep": base / "exports/csv/data_dictionary.csv",
         "turnaround": base / "exports/csv/dictionary.csv",
     }.get(warehouse)
     dictionary = _load_dictionary(dict_path) if dict_path else {}
-    return Sources(warehouse, entries, terms, {norm(k): v for k, v in overrides.items()}, dictionary,
-                   _bank_metrics(base / "metrics/bank.yaml"))
+    return Sources(
+        warehouse,
+        entries,
+        terms,
+        {norm(k): v for k, v in overrides.items()},
+        dictionary,
+        _bank_metrics(base / "metrics/bank.yaml"),
+    )
 
 
 def _reader(path: str) -> str:
@@ -200,20 +245,26 @@ def build_warehouse(
         path = str(root / "data" / "warehouses" / warehouse / t["path"])
         rel = _reader(path)
         desc = con.execute(f"select * from {rel} limit 0").description
-        rows = int(con.execute(f"select count(*) from {rel}").fetchone()[0])
+        counted = con.execute(f"select count(*) from {rel}").fetchone()
+        assert counted is not None  # a count always returns one row
+        rows = int(counted[0])
         columns: list[Column] = []
         stem = Path(t["path"]).stem.lower()
         previous_measure: Column | None = None
-        units_by_name: dict[str, tuple[str, str]] = {}
+        units_by_name: dict[str, tuple[Role, Unit]] = {}
         for name, dtype, *_ in desc:
             ty = str(dtype).upper()
             n = norm(name)
-            role: str
-            unit: str | None
+            role: Role
+            unit: Unit | None
             dict_row = sources.dictionary.get((stem, n)) if t["table"].startswith("export_") else None
             if dict_row and dict_row.get("format") in SPECS:
                 s = spec(dict_row["format"])
-                role = "measure" if s.numeric else ("time" if dict_row["format"] in {"year", "quarter"} else "label")
+                role = (
+                    "measure"
+                    if s.numeric
+                    else ("time" if dict_row["format"] in {"year", "quarter"} else "label")
+                )
                 unit = s.unit
             elif ty.endswith("]") or ty.startswith(("STRUCT", "MAP", "LIST")):
                 role, unit = "label", "none"
@@ -231,37 +282,74 @@ def build_warehouse(
                     hit = rules.match(n, t["table"])
                     if hit is None:
                         role, unit = "measure", None
-                        q(QuarantineRow(warehouse=warehouse, rule="column lacks a unit",
-                                        subject=f"{t['table']}.{name}", detail=f"{ty}: no rule in catalog/unit_rules.yaml matches"))
+                        q(
+                            QuarantineRow(
+                                warehouse=warehouse,
+                                rule="column lacks a unit",
+                                subject=f"{t['table']}.{name}",
+                                detail=f"{ty}: no rule in catalog/unit_rules.yaml matches",
+                            )
+                        )
                     else:
                         role, unit = hit
             units_by_name[n] = (role, unit or "none")
             found = sources.definition(name)
             definition: str | None
             citation: Citation | None
-            dsource: str | None
+            dsource: DefinitionSource | None
             if dict_row is not None and found is None:
-                definition = f"{name} in {Path(t['path']).name}: {dict_row.get('population') or dict_row.get('source')}"
-                citation = Citation(file=Path(t["path"]).parent.as_posix() + "/" + ("data_dictionary.csv" if warehouse == "doorstep" else "dictionary.csv"), line=0)
+                definition = (
+                    f"{name} in {Path(t['path']).name}: "
+                    f"{dict_row.get('population') or dict_row.get('source')}"
+                )
+                citation = Citation(
+                    file=Path(t["path"]).parent.as_posix()
+                    + "/"
+                    + ("data_dictionary.csv" if warehouse == "doorstep" else "dictionary.csv"),
+                    line=0,
+                )
                 dsource = "dictionary"
             elif found is not None:
                 definition, citation, dsource = found
             else:
                 definition, citation, dsource = None, None, None
                 if role == "measure":
-                    q(QuarantineRow(warehouse=warehouse, rule="column lacks a definition",
-                                    subject=f"{t['table']}.{name}", detail="no dictionary, definitions entry or hand edit"))
-            col = Column(name=name, type=ty, role=role, unit=unit, definition=definition,  # type: ignore[arg-type]
-                         citation=citation, definition_source=dsource)  # type: ignore[arg-type]
+                    q(
+                        QuarantineRow(
+                            warehouse=warehouse,
+                            rule="column lacks a definition",
+                            subject=f"{t['table']}.{name}",
+                            detail="no dictionary, definitions entry or hand edit",
+                        )
+                    )
+            col = Column(
+                name=name,
+                type=ty,
+                role=role,
+                unit=unit,
+                definition=definition,
+                citation=citation,
+                definition_source=dsource,
+            )
             columns.append(col)
             if role == "measure":
                 previous_measure = col
             if unit == "fraction" and rows and t["bytes"] < 50_000_000:
-                lo, hi = con.execute(f'select min("{name}"), max("{name}") from {rel}').fetchone()
+                bounds = con.execute(f'select min("{name}"), max("{name}") from {rel}').fetchone()
+                assert bounds is not None  # an aggregate always returns one row
+                lo, hi = bounds
                 if lo is not None and (float(lo) < -1.5 or float(hi) > 1.5):
-                    q(QuarantineRow(warehouse=warehouse, rule="unit disagrees with the values",
-                                    subject=f"{t['table']}.{name}",
-                                    detail=f"the rules say fraction, the values run from {float(lo):.4g} to {float(hi):.4g}"))
+                    q(
+                        QuarantineRow(
+                            warehouse=warehouse,
+                            rule="unit disagrees with the values",
+                            subject=f"{t['table']}.{name}",
+                            detail=(
+                                "the rules say fraction, "
+                                f"the values run from {float(lo):.4g} to {float(hi):.4g}"
+                            ),
+                        )
+                    )
         keys = [c.name for c in columns if c.role in {"key", "time", "label"}]
         stated = STATED_GRAINS.get((warehouse, t["table"]))
         if stated is not None:
@@ -272,15 +360,35 @@ def build_warehouse(
             grain, unique = _grain(con, rel, rows, keys)
         step = source_step(warehouse, t["table"])
         description = f"{rows:,} rows from {step}, one row per {', '.join(grain) if grain else 'row'}."
-        tables.append(TableEntry(warehouse=warehouse, name=t["table"], path=t["path"], grain=grain,
-                                 grain_unique=unique, rows=rows, source_step=step, description=description,
-                                 columns=columns))
+        tables.append(
+            TableEntry(
+                warehouse=warehouse,
+                name=t["table"],
+                path=t["path"],
+                grain=grain,
+                grain_unique=unique,
+                rows=rows,
+                source_step=step,
+                description=description,
+                columns=columns,
+            )
+        )
     metrics = build_metrics(root, warehouse, con, tables, quarantine)
-    return WarehouseCatalog(warehouse=warehouse, repository=lock["repository"], tag=lock["tag"], commit=lock["commit"],
-                            as_of=AS_OF[warehouse], covers=COVERS[warehouse], tables=tables, metrics=metrics)
+    return WarehouseCatalog(
+        warehouse=warehouse,
+        repository=lock["repository"],
+        tag=lock["tag"],
+        commit=lock["commit"],
+        as_of=AS_OF[warehouse],
+        covers=COVERS[warehouse],
+        tables=tables,
+        metrics=metrics,
+    )
 
 
-def build_metrics(root: Path, warehouse: str, con: Any, tables: list[TableEntry], quarantine: list[QuarantineRow]) -> list[Metric]:
+def build_metrics(
+    root: Path, warehouse: str, con: Any, tables: list[TableEntry], quarantine: list[QuarantineRow]
+) -> list[Metric]:
     base = root / "data" / "warehouses" / warehouse
     mart = METRIC_MART[warehouse]
     mart_entry = next(t for t in tables if t.name == mart)
@@ -292,11 +400,25 @@ def build_metrics(root: Path, warehouse: str, con: Any, tables: list[TableEntry]
             next(reader)
             for i, row in enumerate(reader, start=2):
                 name, _grain, over_mart = row[0], row[1], row[2]
-                found.append((name, f"select {over_mart} as value from {mart}", f"{name}, over the mart", Citation(file="exports/csv/metrics_definitions.csv", line=i)))
+                found.append(
+                    (
+                        name,
+                        f"select {over_mart} as value from {mart}",
+                        f"{name}, over the mart",
+                        Citation(file="exports/csv/metrics_definitions.csv", line=i),
+                    )
+                )
     else:
         bank = _bank_metrics(base / "metrics/bank.yaml")
         for name, (definition, line) in sorted(bank.items()):
-            found.append((name, f"select period, {name} as value from {mart} order by period", definition, Citation(file="metrics/bank.yaml", line=line)))
+            found.append(
+                (
+                    name,
+                    f"select period, {name} as value from {mart} order by period",
+                    definition,
+                    Citation(file="metrics/bank.yaml", line=line),
+                )
+            )
     out: list[Metric] = []
     marts = [t for t in tables if t.name.startswith(("mart_", "metrics_"))]
     for name, sql, definition, citation in found:
@@ -312,11 +434,26 @@ def build_metrics(root: Path, warehouse: str, con: Any, tables: list[TableEntry]
             except Exception as exc:  # duckdb raises its own error classes
                 error = error or str(exc).splitlines()[0][:160]
         if bound is None:
-            quarantine.append(QuarantineRow(warehouse=warehouse, rule="metric SQL does not parse against the table",
-                                            subject=name, detail=error))
+            quarantine.append(
+                QuarantineRow(
+                    warehouse=warehouse,
+                    rule="metric SQL does not parse against the table",
+                    subject=name,
+                    detail=error,
+                )
+            )
         table = bound or mart
-        out.append(Metric(warehouse=warehouse, name=name, definition=definition, sql=sql.replace(f"from {mart}", f"from {table}"),
-                          table=table, citation=citation, parses=bound is not None))
+        out.append(
+            Metric(
+                warehouse=warehouse,
+                name=name,
+                definition=definition,
+                sql=sql.replace(f"from {mart}", f"from {table}"),
+                table=table,
+                citation=citation,
+                parses=bound is not None,
+            )
+        )
     return out
 
 
@@ -336,15 +473,23 @@ class ManifestRow:
 
 
 def manifest_rows(root: Path, warehouse: str, quarantine: list[QuarantineRow]) -> list[ManifestRow]:
-    data = json.loads((root / "data" / "warehouses" / warehouse / "results/manifest.json").read_text(encoding="utf-8"))
+    data = json.loads(
+        (root / "data" / "warehouses" / warehouse / "results/manifest.json").read_text(encoding="utf-8")
+    )
     values: dict[str, Any] = data["values"]
     out: list[ManifestRow] = []
     for key in sorted(values):
         v = values[key]
         fmt = v.get("fmt", "")
         if fmt not in SPECS:
-            quarantine.append(QuarantineRow(warehouse=warehouse, rule="manifest rounding cannot be read",
-                                            subject=key, detail=f"format {fmt!r} is not in the unit table"))
+            quarantine.append(
+                QuarantineRow(
+                    warehouse=warehouse,
+                    rule="manifest rounding cannot be read",
+                    subject=key,
+                    detail=f"format {fmt!r} is not in the unit table",
+                )
+            )
             continue
         s = spec(fmt)
         raw = v.get("value")
@@ -357,9 +502,21 @@ def manifest_rows(root: Path, warehouse: str, quarantine: list[QuarantineRow]) -
                 if isinstance(lv, (int, float)) and isinstance(hv, (int, float)):
                     low, high = float(lv), float(hv)
         prov = v.get("provenance", {})
-        out.append(ManifestRow(warehouse=warehouse, key=key, value=number, text=text, fmt=fmt, unit=s.unit,
-                               step=s.step if s.numeric else None, low=low, high=high,
-                               population=str(prov.get("population") or ""), source=str(prov.get("source") or "")))
+        out.append(
+            ManifestRow(
+                warehouse=warehouse,
+                key=key,
+                value=number,
+                text=text,
+                fmt=fmt,
+                unit=s.unit,
+                step=s.step if s.numeric else None,
+                low=low,
+                high=high,
+                population=str(prov.get("population") or ""),
+                source=str(prov.get("source") or ""),
+            )
+        )
     return out
 
 
@@ -374,39 +531,87 @@ def definition_docs(root: Path) -> list[Doc]:
         text = (root / "data/warehouses" / warehouse / "docs/definitions.md").read_text(encoding="utf-8")
         seen: set[str] = set()
         for e in parse(text):
-            if e.term in seen or not e.paragraph or e.term.endswith(".") and len(e.paragraph) < 12:
+            if e.term in seen or not e.paragraph or (e.term.endswith(".") and len(e.paragraph) < 12):
                 continue
             seen.add(e.term)
             term = e.term.rstrip(".")
-            docs.append(Doc(id=f"{warehouse}.definition.{norm(term)}", kind="definition", warehouse=warehouse,
-                            name=f"{term} (docs/definitions.md:{e.line})", text=f"{term} {term} {term} {e.paragraph}",
-                            unit=None, definition=e.paragraph))
+            docs.append(
+                Doc(
+                    id=f"{warehouse}.definition.{norm(term)}",
+                    kind="definition",
+                    warehouse=warehouse,
+                    name=f"{term} (docs/definitions.md:{e.line})",
+                    text=f"{term} {term} {term} {e.paragraph}",
+                    unit=None,
+                    definition=e.paragraph,
+                )
+            )
     return docs
 
 
-def docs_for(catalogs: list[WarehouseCatalog], manifest: list[ManifestRow], root: Path | None = None) -> list[Doc]:
+def docs_for(
+    catalogs: list[WarehouseCatalog], manifest: list[ManifestRow], root: Path | None = None
+) -> list[Doc]:
     docs: list[Doc] = definition_docs(root) if root is not None else []
     for c in catalogs:
         for t in c.tables:
-            docs.append(Doc(id=f"{c.warehouse}.{t.name}", kind="table", warehouse=c.warehouse, name=t.name,
-                            text=f"{humanize(t.name)} {t.description} {' '.join(humanize(col.name) for col in t.columns)}",
-                            unit=None, definition=t.description))
+            docs.append(
+                Doc(
+                    id=f"{c.warehouse}.{t.name}",
+                    kind="table",
+                    warehouse=c.warehouse,
+                    name=t.name,
+                    text=(
+                        f"{humanize(t.name)} {t.description} "
+                        f"{' '.join(humanize(col.name) for col in t.columns)}"
+                    ),
+                    unit=None,
+                    definition=t.description,
+                )
+            )
             for col in t.columns:
                 if col.role != "measure":
                     continue
-                docs.append(Doc(id=f"{c.warehouse}.{t.name}.{col.name}", kind="column", warehouse=c.warehouse,
-                                name=f"{t.name}.{col.name}",
-                                text=f"{humanize(col.name)} {humanize(col.name)} {humanize(t.name)} {col.definition or ''}",
-                                unit=col.unit, definition=col.definition))
+                docs.append(
+                    Doc(
+                        id=f"{c.warehouse}.{t.name}.{col.name}",
+                        kind="column",
+                        warehouse=c.warehouse,
+                        name=f"{t.name}.{col.name}",
+                        text=(
+                            f"{humanize(col.name)} {humanize(col.name)} "
+                            f"{humanize(t.name)} {col.definition or ''}"
+                        ),
+                        unit=col.unit,
+                        definition=col.definition,
+                    )
+                )
         for m in c.metrics:
-            docs.append(Doc(id=f"{c.warehouse}.metric.{norm(m.name)}", kind="metric", warehouse=c.warehouse, name=m.name,
-                            text=f"{m.name} {m.name} {m.definition}", unit=None, definition=m.definition))
+            docs.append(
+                Doc(
+                    id=f"{c.warehouse}.metric.{norm(m.name)}",
+                    kind="metric",
+                    warehouse=c.warehouse,
+                    name=m.name,
+                    text=f"{m.name} {m.name} {m.definition}",
+                    unit=None,
+                    definition=m.definition,
+                )
+            )
     for r in manifest:
         if r.value is None:
             continue
-        docs.append(Doc(id=f"{r.warehouse}.manifest.{r.key}", kind="manifest", warehouse=r.warehouse, name=r.key,
-                        text=f"{humanize(r.key)} {humanize(r.key)} {r.population}", unit=r.unit,
-                        definition=r.population or None))
+        docs.append(
+            Doc(
+                id=f"{r.warehouse}.manifest.{r.key}",
+                kind="manifest",
+                warehouse=r.warehouse,
+                name=r.key,
+                text=f"{humanize(r.key)} {humanize(r.key)} {r.population}",
+                unit=r.unit,
+                definition=r.population or None,
+            )
+        )
     docs.sort(key=lambda d: d.id)
     return docs
 
@@ -435,7 +640,9 @@ def build(root: Path) -> dict[str, Any]:
     lock = json.loads((root / "data/warehouses.lock.json").read_text(encoding="utf-8"))
     rules = Rules.load(root / "catalog/unit_rules.yaml")
     quarantine: list[QuarantineRow] = []
-    catalogs = [build_warehouse(root, w, lock["warehouses"][w], rules, quarantine) for w in sorted(lock["warehouses"])]
+    catalogs = [
+        build_warehouse(root, w, lock["warehouses"][w], rules, quarantine) for w in sorted(lock["warehouses"])
+    ]
     manifest: list[ManifestRow] = []
     for w in sorted(lock["warehouses"]):
         manifest.extend(manifest_rows(root, w, quarantine))
@@ -443,21 +650,39 @@ def build(root: Path) -> dict[str, Any]:
         locked = {t["table"] for t in lock["warehouses"][c.warehouse]["tables"]}
         present = {t.name for t in c.tables}
         for missing in sorted(locked - present):
-            quarantine.append(QuarantineRow(warehouse=c.warehouse, rule="locked table absent from the catalog",
-                                            subject=missing, detail="the lock names it and the build did not catalog it"))
+            quarantine.append(
+                QuarantineRow(
+                    warehouse=c.warehouse,
+                    rule="locked table absent from the catalog",
+                    subject=missing,
+                    detail="the lock names it and the build did not catalog it",
+                )
+            )
     linked = {(r.warehouse, r.key) for r in manifest if r.key.startswith("chart.")}
     for r in manifest:
         if (r.warehouse, r.key) not in linked and r.value is not None:
             # The three manifests record the step that produced a value, not the table it was read from.
-            quarantine.append(QuarantineRow(warehouse=r.warehouse, rule="manifest key with no table behind it",
-                                            subject=r.key, detail=f"recorded origin only: {r.source or 'none'}"))
+            quarantine.append(
+                QuarantineRow(
+                    warehouse=r.warehouse,
+                    rule="manifest key with no table behind it",
+                    subject=r.key,
+                    detail=f"recorded origin only: {r.source or 'none'}",
+                )
+            )
     docs = docs_for(catalogs, manifest, root)
     index = Index(docs)
     syn_raw = yaml.safe_load((root / "catalog/synonyms.yaml").read_text(encoding="utf-8"))["synonyms"]
     synonyms = Synonyms(syn_raw)
     for phrase in synonyms.unmapped(index.vocabulary):
-        quarantine.append(QuarantineRow(warehouse="all", rule="synonym maps to nothing", subject=phrase,
-                                        detail="none of its targets is a word in the catalog"))
+        quarantine.append(
+            QuarantineRow(
+                warehouse="all",
+                rule="synonym maps to nothing",
+                subject=phrase,
+                detail="none of its targets is a word in the catalog",
+            )
+        )
     out_dir = root / "catalog"
     for c in catalogs:
         write_catalog(out_dir / f"{c.warehouse}.yaml", c)

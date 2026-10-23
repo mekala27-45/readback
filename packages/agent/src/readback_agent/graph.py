@@ -25,7 +25,15 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, Literal, TypedDict
 
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage, message_to_dict, messages_from_dict
+from langchain_core.messages import (
+    AIMessage,
+    BaseMessage,
+    HumanMessage,
+    SystemMessage,
+    ToolMessage,
+    message_to_dict,
+    messages_from_dict,
+)
 from langgraph.graph import END, START, StateGraph
 from langgraph.runtime import Runtime
 from langgraph.types import interrupt
@@ -158,7 +166,9 @@ def _condense(history: list[dict[str, str]], limit: int) -> tuple[list[BaseMessa
             messages += [HumanMessage(h["q"]), AIMessage(h["a"])]
         return messages, None
     older, recent = history[:-1], history[-1:]
-    summary = "Summary of earlier turns in this thread: " + " ".join(f"Asked: {h['q']} Answered: {h['a'].split('. ')[0]}." for h in older)
+    summary = "Summary of earlier turns in this thread: " + " ".join(
+        f"Asked: {h['q']} Answered: {h['a'].split('. ')[0]}." for h in older
+    )
     messages.append(SystemMessage(summary))
     for h in recent:
         messages += [HumanMessage(h["q"]), AIMessage(h["a"])]
@@ -177,12 +187,24 @@ async def _act_floor(state: State, ctx: Context) -> State:
     try:
         result = await ctx.floor.answer(state["question"], choice=state.get("choice"))
     except ToolError as err:
-        return {"refusal": TOO_WIDE.format(n=ctx.ceiling) if "ceiling" in err.message else f"a tool refused: {err.message}"}
+        return {
+            "refusal": TOO_WIDE.format(n=ctx.ceiling)
+            if "ceiling" in err.message
+            else f"a tool refused: {err.message}"
+        }
     if result.needs_choice is not None and not state.get("choice"):
         return {"needs_choice": result.needs_choice.model_dump(), "plan": [s.tool for s in result.plan]}
     if result.draft.refused:
-        return {"refusal": result.draft.refusal_reason or "the floor could not answer it", "plan": [s.tool for s in result.plan]}
-    return {"draft": result.draft.model_dump(), "plan": [s.tool for s in result.plan], "needs_choice": None, "aliases": {}}
+        return {
+            "refusal": result.draft.refusal_reason or "the floor could not answer it",
+            "plan": [s.tool for s in result.plan],
+        }
+    return {
+        "draft": result.draft.model_dump(),
+        "plan": [s.tool for s in result.plan],
+        "needs_choice": None,
+        "aliases": {},
+    }
 
 
 async def _act_model(state: State, ctx: Context) -> State:
@@ -194,13 +216,20 @@ async def _act_model(state: State, ctx: Context) -> State:
         if state.get("choice") and state.get("needs_choice"):
             pending = messages[-1]
             assert isinstance(pending, ToolMessage)
-            messages[-1] = ToolMessage(json.dumps({"resolved": state["choice"], "chosen_by": "the person"}), tool_call_id=pending.tool_call_id)
+            messages[-1] = ToolMessage(
+                json.dumps({"resolved": state["choice"], "chosen_by": "the person"}),
+                tool_call_id=pending.tool_call_id,
+            )
     else:
         history, summary = _condense(state.get("history") or [], ctx.summarize_after)
         if summary:
             _span("readback.summary", "extractive")
         plan = ", ".join(state.get("plan") or [])
-        messages = [SystemMessage(ctx.registry.text("system")), *history, HumanMessage(f"{state['question']}\n\n(Suggested tools, in order: {plan}.)")]
+        messages = [
+            SystemMessage(ctx.registry.text("system")),
+            *history,
+            HumanMessage(f"{state['question']}\n\n(Suggested tools, in order: {plan}.)"),
+        ]
     try:
         while True:
             ai = await caller(messages, ctx.specs)
@@ -218,8 +247,16 @@ async def _act_model(state: State, ctx: Context) -> State:
                     continue
                 messages.append(ToolMessage(_model_view(result, aliases), tool_call_id=call["id"]))
                 if call["name"] == "lookup" and result.get("needs_choice"):
-                    choice = Choice(kind=result["kind"], name=result["query"], candidates=[c["value"] for c in result["candidates"]])
-                    return {"needs_choice": choice.model_dump(), "messages": [message_to_dict(m) for m in messages], "aliases": aliases}
+                    choice = Choice(
+                        kind=result["kind"],
+                        name=result["query"],
+                        candidates=[c["value"] for c in result["candidates"]],
+                    )
+                    return {
+                        "needs_choice": choice.model_dump(),
+                        "messages": [message_to_dict(m) for m in messages],
+                        "aliases": aliases,
+                    }
         draft = await _submit(caller, messages, ctx, state)
     except BudgetSpent:
         return await _switch(state, ctx)
@@ -227,19 +264,33 @@ async def _act_model(state: State, ctx: Context) -> State:
         _span("readback.cassette.miss", miss.digest)
         raise
     if draft is None:
-        return {"refusal": "the model did not produce a valid structured answer after one repair", "aliases": aliases,
-                "messages": [message_to_dict(m) for m in messages]}
+        return {
+            "refusal": "the model did not produce a valid structured answer after one repair",
+            "aliases": aliases,
+            "messages": [message_to_dict(m) for m in messages],
+        }
     if draft.refused:
         return {"refusal": draft.refusal_reason or "the model refused", "aliases": aliases}
-    return {"draft": draft.model_dump(), "messages": [message_to_dict(m) for m in messages], "aliases": aliases, "needs_choice": None}
+    return {
+        "draft": draft.model_dump(),
+        "messages": [message_to_dict(m) for m in messages],
+        "aliases": aliases,
+        "needs_choice": None,
+    }
 
 
-async def _submit(caller: ModelCaller, messages: list[BaseMessage], ctx: Context, state: State) -> Draft | None:
+async def _submit(
+    caller: ModelCaller, messages: list[BaseMessage], ctx: Context, state: State
+) -> Draft | None:
     """The structured answer, with one parse and repair step."""
     ask = HumanMessage(ctx.registry.text("submit_answer"))
     error: str | None = None
     for attempt in range(2):
-        prompt = [*messages, ask] if error is None else [*messages, ask, HumanMessage(f"That answer did not parse: {error}. Submit it again.")]
+        prompt = (
+            [*messages, ask]
+            if error is None
+            else [*messages, ask, HumanMessage(f"That answer did not parse: {error}. Submit it again.")]
+        )
         raw = await caller.structured(prompt, Draft)
         try:
             return Draft.model_validate(raw)
@@ -252,8 +303,17 @@ async def _submit(caller: ModelCaller, messages: list[BaseMessage], ctx: Context
 async def _switch(state: State, ctx: Context) -> State:
     """The budget middleware: at the cap, the next eligible provider takes the turn."""
     choice = ctx.router.choose(exclude=(state["provider"],))
-    _span("readback.provider.switch", f"{state['provider']} to {choice.provider.name}: the day's budget is spent")
-    new: State = {**state, "provider": choice.provider.name, "model": choice.provider.model_id(), "messages": [], "aliases": {}}
+    _span(
+        "readback.provider.switch",
+        f"{state['provider']} to {choice.provider.name}: the day's budget is spent",
+    )
+    new: State = {
+        **state,
+        "provider": choice.provider.name,
+        "model": choice.provider.model_id(),
+        "messages": [],
+        "aliases": {},
+    }
     if choice.provider.is_floor:
         return {**(await _act_floor(new, ctx)), "provider": "floor", "model": "no model"}
     out = await _act_model(new, ctx)
@@ -261,7 +321,7 @@ async def _switch(state: State, ctx: Context) -> State:
 
 
 def _resolve_aliases(args: dict[str, Any], aliases: dict[str, str]) -> dict[str, Any]:
-    out = json.loads(json.dumps(args))
+    out: dict[str, Any] = json.loads(json.dumps(args))
     claim = out.get("claim")
     if isinstance(claim, dict) and claim.get("result_id") in aliases:
         claim["result_id"] = aliases[claim["result_id"]]
@@ -318,7 +378,17 @@ async def gate_node(state: State, runtime: Runtime[Context]) -> State:
         "unsupported": len(report.unsupported),
         "readback_calls": report.readback_calls,
         "failures": report.failures(),
-        "claims": [{"index": c.index, "span": c.span, "verdict": c.verdict, "reason": c.reason, "evidence": c.evidence, "tolerance": c.tolerance} for c in report.claims],
+        "claims": [
+            {
+                "index": c.index,
+                "span": c.span,
+                "verdict": c.verdict,
+                "reason": c.reason,
+                "evidence": c.evidence,
+                "tolerance": c.tolerance,
+            }
+            for c in report.claims
+        ],
     }
     out: State = {"gate": summary}
     if state.get("attempts", 0) == 0:
@@ -373,15 +443,22 @@ def _base(state: State, ctx: Context, verdict: str, text: str) -> dict[str, Any]
 
 async def refuse_node(state: State, runtime: Runtime[Context]) -> State:
     ctx = runtime.context
-    reason = state.get("refusal") or "the answer did not pass the gate after one repair: " + "; ".join((state.get("gate") or {}).get("failures", []))[:400]
+    reason = (
+        state.get("refusal")
+        or "the answer did not pass the gate after one repair: "
+        + "; ".join((state.get("gate") or {}).get("failures", []))[:400]
+    )
     text = f"{REFUSAL} This question was refused because {reason}."
     base = _base(state, ctx, "refused", text)
     gate = state.get("gate") or {}
     base["refusal_reason"] = reason
     base["gate"] = GateSummary(
-        tokens=gate.get("tokens", 0), exempt=gate.get("exempt", 0),
-        unsupported_before=state.get("unsupported_before", 0), unsupported_after=gate.get("unsupported", 0),
-        readback_calls=gate.get("readback_calls", 0), caught=state.get("caught") or [],
+        tokens=gate.get("tokens", 0),
+        exempt=gate.get("exempt", 0),
+        unsupported_before=state.get("unsupported_before", 0),
+        unsupported_after=gate.get("unsupported", 0),
+        readback_calls=gate.get("readback_calls", 0),
+        caught=state.get("caught") or [],
         first_draft=(state.get("first_draft") or {}).get("text"),
     ).model_dump()
     return {"answer": Answer.model_validate(base).model_dump()}
@@ -395,8 +472,16 @@ async def answer_node(state: State, runtime: Runtime[Context]) -> State:
     claims = []
     for i, c in enumerate(draft.claims):
         g = checks.get(i, {})
-        claims.append(ShippedClaim(**c.model_dump(), span=tuple(g["span"]) if g.get("span") else None, verdict=g.get("verdict", "unchecked"),
-                                   evidence=g.get("evidence"), tolerance=g.get("tolerance"), reason=g.get("reason", "")))
+        claims.append(
+            ShippedClaim(
+                **c.model_dump(),
+                span=tuple(g["span"]) if g.get("span") else None,
+                verdict=g.get("verdict", "unchecked"),
+                evidence=g.get("evidence"),
+                tolerance=g.get("tolerance"),
+                reason=g.get("reason", ""),
+            )
+        )
     verdict = "repaired" if state.get("attempts", 0) else "verified"
     base = _base(state, ctx, verdict, draft.text)
     base.update(
@@ -405,17 +490,20 @@ async def answer_node(state: State, runtime: Runtime[Context]) -> State:
         selection=draft.selection,
         direction=draft.direction,
         gate=GateSummary(
-            tokens=gate.get("tokens", 0), exempt=gate.get("exempt", 0),
-            unsupported_before=state.get("unsupported_before", 0), unsupported_after=gate.get("unsupported", 0),
-            readback_calls=gate.get("readback_calls", 0), caught=state.get("caught") or [],
+            tokens=gate.get("tokens", 0),
+            exempt=gate.get("exempt", 0),
+            unsupported_before=state.get("unsupported_before", 0),
+            unsupported_after=gate.get("unsupported", 0),
+            readback_calls=gate.get("readback_calls", 0),
+            caught=state.get("caught") or [],
             first_draft=(state.get("first_draft") or {}).get("text") if state.get("attempts") else None,
         ).model_dump(),
     )
     return {"answer": Answer.model_validate(base).model_dump()}
 
 
-def build() -> StateGraph:
-    g: StateGraph = StateGraph(State, context_schema=Context)
+def build() -> StateGraph[State, Context, State, State]:
+    g: StateGraph[State, Context, State, State] = StateGraph(State, context_schema=Context)
     g.add_node("classify", classify_node)
     g.add_node("plan", plan_node)
     g.add_node("act", act_node)

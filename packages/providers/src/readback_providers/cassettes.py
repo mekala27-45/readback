@@ -22,7 +22,9 @@ from readback_core.hashing import sha256_json
 
 class CassetteMiss(LookupError):
     def __init__(self, provider: str, digest: str) -> None:
-        super().__init__(f"no cassette for {provider} request {digest}; record it with scripts/record_cassettes.py")
+        super().__init__(
+            f"no cassette for {provider} request {digest}; record it with scripts/record_cassettes.py"
+        )
         self.provider = provider
         self.digest = digest
 
@@ -35,7 +37,12 @@ def mode() -> str:
 def message_form(message: Any) -> dict[str, Any]:
     """A LangChain message in the canonical form the digest is taken over."""
     kind = getattr(message, "type", "unknown")
-    out: dict[str, Any] = {"type": kind, "content": message.content if isinstance(message.content, str) else json.dumps(message.content, sort_keys=True)}
+    out: dict[str, Any] = {
+        "type": kind,
+        "content": message.content
+        if isinstance(message.content, str)
+        else json.dumps(message.content, sort_keys=True),
+    }
     calls = getattr(message, "tool_calls", None)
     if calls:
         out["tool_calls"] = [{"name": c["name"], "args": c["args"], "id": c.get("id")} for c in calls]
@@ -44,14 +51,22 @@ def message_form(message: Any) -> dict[str, Any]:
     return out
 
 
-def request_digest(provider: str, model: str, prompt_hash: str, messages: list[Any], tools: list[dict[str, Any]] | None = None) -> str:
-    return sha256_json({
-        "provider": provider,
-        "model": model,
-        "prompt_hash": prompt_hash,
-        "messages": [message_form(m) for m in messages],
-        "tools": sorted(t["function"]["name"] for t in tools or []),
-    })
+def request_digest(
+    provider: str,
+    model: str,
+    prompt_hash: str,
+    messages: list[Any],
+    tools: list[dict[str, Any]] | None = None,
+) -> str:
+    return sha256_json(
+        {
+            "provider": provider,
+            "model": model,
+            "prompt_hash": prompt_hash,
+            "messages": [message_form(m) for m in messages],
+            "tools": sorted(t["function"]["name"] for t in tools or []),
+        }
+    )
 
 
 @dataclass
@@ -85,8 +100,24 @@ class Store:
         self.hits += 1
         return Cassette(**json.loads(path.read_text(encoding="utf-8")))
 
-    def put(self, provider: str, model: str, reported: str | None, prompt_hash: str, digest: str, response: dict[str, Any]) -> Cassette:
-        c = Cassette(provider, model, reported, dt.datetime.now(dt.UTC).date().isoformat(), prompt_hash, digest, response)
+    def put(
+        self,
+        provider: str,
+        model: str,
+        reported: str | None,
+        prompt_hash: str,
+        digest: str,
+        response: dict[str, Any],
+    ) -> Cassette:
+        c = Cassette(
+            provider,
+            model,
+            reported,
+            dt.datetime.now(dt.UTC).date().isoformat(),
+            prompt_hash,
+            digest,
+            response,
+        )
         c.write(self.root)
         return c
 
@@ -94,4 +125,6 @@ class Store:
         folder = self.root / provider
         if not folder.exists():
             return []
-        return sorted({json.loads(p.read_text(encoding="utf-8"))["recorded_at"] for p in folder.glob("*.json")})
+        return sorted(
+            {json.loads(p.read_text(encoding="utf-8"))["recorded_at"] for p in folder.glob("*.json")}
+        )

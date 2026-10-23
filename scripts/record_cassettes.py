@@ -70,7 +70,13 @@ async def record(provider: str, limit: int | None) -> dict[str, Any]:
     path = paths.results_dir() / "evals" / "runs" / f"{provider}.json"
     path.write_text(json.dumps(doc, indent=1, sort_keys=True, default=str) + "\n", encoding="utf-8")
     graded = sum(1 for r in fresh.values() if r.get("graded"))
-    return {"provider": provider, "asked": len(questions), "graded": graded, "allowance": allowance, "total_rows": len(rows)}
+    return {
+        "provider": provider,
+        "asked": len(questions),
+        "graded": graded,
+        "allowance": allowance,
+        "total_rows": len(rows),
+    }
 
 
 def main() -> None:

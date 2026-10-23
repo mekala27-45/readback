@@ -86,7 +86,13 @@ extend-exclude = ["web", "notebooks", "data"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "N", "W"]
-ignore = ["RUF001", "RUF002", "RUF003"]
+# N818: Refused, TimedOut, BudgetSpent and CassetteMiss read as what happened, and are caught by name.
+ignore = ["RUF001", "RUF002", "RUF003", "N818"]
+
+[tool.ruff.lint.per-file-ignores]
+# The scripts put the repository root on sys.path before importing from it.
+"scripts/*" = ["E402"]
+"tests/*" = ["E402"]
 
 [tool.mypy]
 python_version = "3.12"

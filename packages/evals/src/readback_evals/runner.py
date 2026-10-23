@@ -25,23 +25,55 @@ from readback_evals.graders import grade
 from readback_evals.redteam import RedTeamState, judge, load_cases
 
 
-def _answer_row(q: Question, turn: Any, tool_args: list[tuple[str, dict[str, Any]]], seconds: float) -> dict[str, Any]:
+def _answer_row(
+    q: Question, turn: Any, tool_args: list[tuple[str, dict[str, Any]]], seconds: float
+) -> dict[str, Any]:
     g = grade(q, turn.answer)
     a = turn.answer
     return {
-        "id": q.id, "family": q.family, "split": q.split, "warehouses": q.warehouses, "graded": True,
-        "passed": g.passed, "checks": g.checks, "jaccard": g.jaccard, "note": g.note,
-        "verdict": a.verdict, "text": a.text, "selection": a.selection, "direction": a.direction,
-        "claims": [{"display": c.display, "verdict": c.verdict, "value": c.value, "evidence": c.evidence, "tolerance": c.tolerance, "unit": c.unit,
-                    "difference": None if c.evidence is None else abs(c.value - c.evidence)} for c in a.claims],
-        "gate": a.gate.model_dump(), "tool_calls": a.tool_calls, "warehouse_calls": sum(t not in {"readback"} for t in a.tools_called),
-        "tools_called": a.tools_called, "model_calls": a.model_calls, "tokens_in": a.tokens_in, "tokens_out": a.tokens_out,
-        "latency_ms": round(seconds * 1000, 1), "trace_id": turn.trace_id, "model": a.model, "refusal_reason": a.refusal_reason,
+        "id": q.id,
+        "family": q.family,
+        "split": q.split,
+        "warehouses": q.warehouses,
+        "graded": True,
+        "passed": g.passed,
+        "checks": g.checks,
+        "jaccard": g.jaccard,
+        "note": g.note,
+        "verdict": a.verdict,
+        "text": a.text,
+        "selection": a.selection,
+        "direction": a.direction,
+        "claims": [
+            {
+                "display": c.display,
+                "verdict": c.verdict,
+                "value": c.value,
+                "evidence": c.evidence,
+                "tolerance": c.tolerance,
+                "unit": c.unit,
+                "difference": None if c.evidence is None else abs(c.value - c.evidence),
+            }
+            for c in a.claims
+        ],
+        "gate": a.gate.model_dump(),
+        "tool_calls": a.tool_calls,
+        "warehouse_calls": sum(t not in {"readback"} for t in a.tools_called),
+        "tools_called": a.tools_called,
+        "model_calls": a.model_calls,
+        "tokens_in": a.tokens_in,
+        "tokens_out": a.tokens_out,
+        "latency_ms": round(seconds * 1000, 1),
+        "trace_id": turn.trace_id,
+        "model": a.model,
+        "refusal_reason": a.refusal_reason,
         "tool_args": [[t, args] for t, args in tool_args],
     }
 
 
-async def run_golden(provider: str, questions: list[Question] | None = None, agent: Agent | None = None) -> dict[str, Any]:
+async def run_golden(
+    provider: str, questions: list[Question] | None = None, agent: Agent | None = None
+) -> dict[str, Any]:
     exporter = install()
     exporter.clear()
     questions = questions or load(paths.evals_dir() / "golden")
@@ -54,22 +86,39 @@ async def run_golden(provider: str, questions: list[Question] | None = None, age
             try:
                 turn = await _ask(agent, client, q.question, provider, records)
             except CassetteMiss as miss:
-                rows.append({"id": q.id, "family": q.family, "split": q.split, "warehouses": q.warehouses, "graded": False,
-                             "passed": False, "note": f"cassette miss {miss.digest[:12]}"})
+                rows.append(
+                    {
+                        "id": q.id,
+                        "family": q.family,
+                        "split": q.split,
+                        "warehouses": q.warehouses,
+                        "graded": False,
+                        "passed": False,
+                        "note": f"cassette miss {miss.digest[:12]}",
+                    }
+                )
                 continue
             rows.append(_answer_row(q, turn, records, time.perf_counter() - started))
     out_dir = paths.results_dir() / "evals" / "runs"
     out_dir.mkdir(parents=True, exist_ok=True)
     from readback_agent.prompts import registry
 
-    doc = {"provider": provider, "prompt_hash": registry().digest,
-           "cassette_dates": agent.store.dates(provider) if provider != "floor" else [], "rows": rows}
-    (out_dir / f"{provider}.json").write_text(json.dumps(doc, indent=1, sort_keys=True, default=str) + "\n", encoding="utf-8")
+    doc = {
+        "provider": provider,
+        "prompt_hash": registry().digest,
+        "cassette_dates": agent.store.dates(provider) if provider != "floor" else [],
+        "rows": rows,
+    }
+    (out_dir / f"{provider}.json").write_text(
+        json.dumps(doc, indent=1, sort_keys=True, default=str) + "\n", encoding="utf-8"
+    )
     exporter.write(paths.results_dir() / "traces" / f"{provider}.parquet")
     return doc
 
 
-async def _ask(agent: Agent, client: Client, question: str, provider: str, records: list[tuple[str, dict[str, Any]]]) -> Any:
+async def _ask(
+    agent: Agent, client: Client, question: str, provider: str, records: list[tuple[str, dict[str, Any]]]
+) -> Any:
     """One turn, keeping every tool call with its arguments. An interrupt is answered with the first
     candidate; the golden questions name nothing ambiguous, so none should occur."""
     from readback_agent.run import Turn
@@ -98,7 +147,8 @@ async def _ask(agent: Agent, client: Client, question: str, provider: str, recor
     raise RuntimeError("the turn asked for a choice three times")
 
 
-async def run_redteam(provider: str, agent: Agent | None = None) -> dict[str, Any]:
+async def run_redteam(provider: str, agent: Agent | None = None, *, write: bool = True) -> dict[str, Any]:
+    """Run the fifteen cases; `write` saves the result, which a test that disables a defense must not."""
     agent = agent or Agent()
     verdicts = []
     async with Client(build_server(RedTeamState())) as client:
@@ -107,14 +157,34 @@ async def run_redteam(provider: str, agent: Agent | None = None) -> dict[str, An
             try:
                 turn = await _ask(agent, client, case.question, provider, records)
             except CassetteMiss as miss:
-                verdicts.append({"id": case.id, "kind": case.kind, "graded": False, "note": f"cassette miss {miss.digest[:12]}"})
+                verdicts.append(
+                    {
+                        "id": case.id,
+                        "kind": case.kind,
+                        "graded": False,
+                        "note": f"cassette miss {miss.digest[:12]}",
+                    }
+                )
                 continue
             v = judge(case, turn.answer, records)
-            verdicts.append({**asdict(v), "graded": True, "text": turn.answer.text[:400], "tools": [t for t, _ in records]})
-    out = {"provider": provider, "cases": verdicts, "passed": sum(1 for v in verdicts if v.get("passed")), "graded": sum(1 for v in verdicts if v.get("graded"))}
-    path = paths.results_dir() / "evals" / "redteam" / f"{provider}.json"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(out, indent=1, sort_keys=True, default=str) + "\n", encoding="utf-8")
+            verdicts.append(
+                {
+                    **asdict(v),
+                    "graded": True,
+                    "text": turn.answer.text[:400],
+                    "tools": [t for t, _ in records],
+                }
+            )
+    out = {
+        "provider": provider,
+        "cases": verdicts,
+        "passed": sum(1 for v in verdicts if v.get("passed")),
+        "graded": sum(1 for v in verdicts if v.get("graded")),
+    }
+    if write:
+        path = paths.results_dir() / "evals" / "redteam" / f"{provider}.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(out, indent=1, sort_keys=True, default=str) + "\n", encoding="utf-8")
     return out
 
 

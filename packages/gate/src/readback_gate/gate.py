@@ -26,13 +26,28 @@ from typing import Any, Literal
 
 TOKEN = re.compile(
     r"(?<![\w.])(?P<sign>[-+])?(?P<cur>\$)?\s?(?P<num>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)"
-    r"(?P<suffix>\s?(?:%|percent\b|pts\b|percentage points\b|million\b|billion\b|thousand\b|[MBk]\b|min\b|minutes\b|x\b))?"
+    r"(?P<suffix>\s?(?:%|percent\b|pts\b|percentage points\b|million\b|billion\b|thousand\b"
+    r"|[MBk]\b|min\b|minutes\b|x\b))?"
     r"(?![\w])"
 )
 QUARTER = re.compile(r"\b(?:19|20)\d\dQ[1-4]\b")
 LIST_ITEM = re.compile(r"^\s*(\d{1,2})[.)]\s+", re.M)
 YEAR_RANGE = (1900, 2099)
-UNIT_WORDS = ("%", "percent", "pts", "percentage points", "million", "billion", "thousand", "m", "b", "k", "min", "minutes", "x")
+UNIT_WORDS = (
+    "%",
+    "percent",
+    "pts",
+    "percentage points",
+    "million",
+    "billion",
+    "thousand",
+    "m",
+    "b",
+    "k",
+    "min",
+    "minutes",
+    "x",
+)
 
 Rule = Literal["year", "identifier", "ordinal", "list count"]
 
@@ -77,7 +92,11 @@ class Report:
 
     def failures(self) -> list[str]:
         out = [f"the number {t.text!r} has no claim behind it" for t in self.unsupported]
-        out += [f"claim {c.index} ({c.display or c.value}) did not read back: {c.reason}" for c in self.claims if c.verdict != "agree"]
+        out += [
+            f"claim {c.index} ({c.display or c.value}) did not read back: {c.reason}"
+            for c in self.claims
+            if c.verdict != "agree"
+        ]
         return out
 
 
@@ -113,7 +132,9 @@ def is_year(token: Token, text: str) -> bool:
     if not YEAR_RANGE[0] <= int(raw) <= YEAR_RANGE[1]:
         return False
     after = text[token.end : token.end + 12].lower().lstrip()
-    if after.startswith(UNIT_WORDS[:1]) or re.match(r"(percent|pts|million|billion|thousand|min\b|minutes|x\b)", after):
+    if after.startswith(UNIT_WORDS[:1]) or re.match(
+        r"(percent|pts|million|billion|thousand|min\b|minutes|x\b)", after
+    ):
         return False
     before = text[max(0, token.start - 1) : token.start]
     return before != "$"
@@ -134,9 +155,11 @@ def check_text(
     remaining: list[Token] = []
     for tok in found:
         raw = text[tok.start : tok.end]
-        if QUARTER.search(text[max(0, tok.start - 6) : tok.end + 2]) and re.fullmatch(r"\d{4}", tok.text):
-            exempt.append(Exempt(tok, "identifier"))
-        elif tok.text.lower() in ids or raw.strip().lower() in ids:
+        if (
+            (QUARTER.search(text[max(0, tok.start - 6) : tok.end + 2]) and re.fullmatch(r"\d{4}", tok.text))
+            or tok.text.lower() in ids
+            or raw.strip().lower() in ids
+        ):
             exempt.append(Exempt(tok, "identifier"))
         elif is_year(tok, text):
             exempt.append(Exempt(tok, "year"))

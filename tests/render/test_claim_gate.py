@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from readback_core.manifest import ManifestBuilder
 from readback_render.render import ClaimGateError, Renderer, Target, hand_typed_numbers
 from readback_render.targets import discover, template_roots
@@ -21,7 +20,9 @@ def manifest():  # type: ignore[no-untyped-def]
 def repo(tmp_path: Path) -> Path:
     t = tmp_path / "docs" / "templates"
     t.mkdir(parents=True)
-    (t / "README.md.j2").write_text("Questions: {{ v('golden.questions') }}, floor {{ v('floor.accuracy') }}.\n")
+    (t / "README.md.j2").write_text(
+        "Questions: {{ v('golden.questions') }}, floor {{ v('floor.accuracy') }}.\n"
+    )
     (t / "_partial.md.j2").write_text("partial\n")
     return tmp_path
 

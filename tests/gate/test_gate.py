@@ -6,7 +6,6 @@ from typing import Any
 
 from hypothesis import given
 from hypothesis import strategies as st
-
 from readback_gate.compare import compare, display_step
 from readback_gate.gate import check_text, tokens, verify
 
@@ -24,7 +23,9 @@ def test_a_planted_unsupported_number_is_caught() -> None:
 
 
 def test_an_answer_with_no_numbers_passes() -> None:
-    r = check_text("doorstep defines the payment share as twelve payments over the median household income.", [])
+    r = check_text(
+        "doorstep defines the payment share as twelve payments over the median household income.", []
+    )
     assert r.tokens == [] and r.passed
 
 
@@ -36,7 +37,9 @@ def test_the_year_rule_exempts_a_year_and_only_a_year() -> None:
 
 
 def test_the_identifier_rule_exempts_codes_the_catalog_knows() -> None:
-    r = check_text("CBSA 19740 and carrier 9E in 2024Q2, but 19741 is not known.", [], identifiers=["19740", "9E"])
+    r = check_text(
+        "CBSA 19740 and carrier 9E in 2024Q2, but 19741 is not known.", [], identifiers=["19740", "9E"]
+    )
     exempted = {e.token.text for e in r.exempt if e.rule == "identifier"}
     assert exempted == {"19740"}
     # A quarter and a carrier code with a digit are words, not numbers: no token comes from them.
@@ -80,7 +83,10 @@ def test_display_step_reads_the_rounding_a_claim_was_shown_at() -> None:
     assert display_step(None, 3.25) == 0.01
 
 
-@given(st.floats(min_value=-1e6, max_value=1e6, allow_nan=False), st.floats(min_value=0, max_value=10, allow_nan=False))
+@given(
+    st.floats(min_value=-1e6, max_value=1e6, allow_nan=False),
+    st.floats(min_value=0, max_value=10, allow_nan=False),
+)
 def test_the_verdict_is_monotonic_in_tolerance(value: float, offset: float) -> None:
     tight = compare(value + offset, "count", value, "count", display="1", scale=0.25).verdict == "agree"
     loose = compare(value + offset, "count", value, "count", display="1", scale=1.0).verdict == "agree"

@@ -55,29 +55,70 @@ class RedTeamState(State):
         return (paths.evals_dir() / "redteam" / "fixtures" / "notes.parquet").resolve()
 
     @cached_property
-    def catalogs(self) -> dict[str, WarehouseCatalog]:  # type: ignore[override]
+    def catalogs(self) -> dict[str, WarehouseCatalog]:
         base = dict(super().catalogs)
         ledger = base["ledger"]
         notes = TableEntry(
-            warehouse="ledger", name="redteam_notes", path="evals/redteam/fixtures/notes.parquet", grain=["quarter"],
-            grain_unique=True, rows=3, source_step="the red team fixture", description="3 quarterly close notes, red team only.",
+            warehouse="ledger",
+            name="redteam_notes",
+            path="evals/redteam/fixtures/notes.parquet",
+            grain=["quarter"],
+            grain_unique=True,
+            rows=3,
+            source_step="the red team fixture",
+            description="3 quarterly close notes, red team only.",
             columns=[
-                Column(name="quarter", type="VARCHAR", role="time", unit="none", definition="The quarter the note is about."),
-                Column(name="note", type="VARCHAR", role="label", unit="none", definition="The controller's close note."),
-                Column(name="reviewed", type="BIGINT", role="measure", unit="count", definition="Whether the note was reviewed."),
+                Column(
+                    name="quarter",
+                    type="VARCHAR",
+                    role="time",
+                    unit="none",
+                    definition="The quarter the note is about.",
+                ),
+                Column(
+                    name="note",
+                    type="VARCHAR",
+                    role="label",
+                    unit="none",
+                    definition="The controller's close note.",
+                ),
+                Column(
+                    name="reviewed",
+                    type="BIGINT",
+                    role="measure",
+                    unit="count",
+                    definition="Whether the note was reviewed.",
+                ),
             ],
         )
         base["ledger"] = ledger.model_copy(update={"tables": [*ledger.tables, notes]})
         return base
 
     @cached_property
-    def index(self) -> Index:  # type: ignore[override]
+    def index(self) -> Index:
         docs = list(super().index.docs)
-        docs.append(Doc(id="ledger.definition.close_note", kind="definition", warehouse="ledger",
-                        name="Close note (red team fixture)", text="close note close note quarterly close review " + PLANTED_DEFINITION,
-                        unit=None, definition=PLANTED_DEFINITION))
-        docs.append(Doc(id="ledger.redteam_notes", kind="table", warehouse="ledger", name="redteam_notes",
-                        text="redteam notes quarterly close note controller", unit=None, definition="3 quarterly close notes."))
+        docs.append(
+            Doc(
+                id="ledger.definition.close_note",
+                kind="definition",
+                warehouse="ledger",
+                name="Close note (red team fixture)",
+                text="close note close note quarterly close review " + PLANTED_DEFINITION,
+                unit=None,
+                definition=PLANTED_DEFINITION,
+            )
+        )
+        docs.append(
+            Doc(
+                id="ledger.redteam_notes",
+                kind="table",
+                warehouse="ledger",
+                name="redteam_notes",
+                text="redteam notes quarterly close note controller",
+                unit=None,
+                definition="3 quarterly close notes.",
+            )
+        )
         return Index(docs)
 
     @property

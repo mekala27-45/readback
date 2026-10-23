@@ -43,7 +43,13 @@ ATTR = {
     "conversation": "gen_ai.conversation.id",
 }
 # Attributes that would carry content. None of them is ever set; the test reads every span for them.
-CONTENT_ATTRIBUTES = ("gen_ai.input.messages", "gen_ai.output.messages", "gen_ai.system_instructions", "gen_ai.prompt", "gen_ai.completion")
+CONTENT_ATTRIBUTES = (
+    "gen_ai.input.messages",
+    "gen_ai.output.messages",
+    "gen_ai.system_instructions",
+    "gen_ai.prompt",
+    "gen_ai.completion",
+)
 
 
 class ParquetSpanExporter(SpanExporter):
@@ -102,7 +108,9 @@ class ParquetSpanExporter(SpanExporter):
         rows = self.rows(trace_id)
         path.parent.mkdir(parents=True, exist_ok=True)
         keys = sorted({k for r in rows for k in r["attributes"]})
-        attr_type = pa.struct([(k, pa.string()) for k in keys]) if keys else pa.struct([("none", pa.string())])
+        attr_type = (
+            pa.struct([(k, pa.string()) for k in keys]) if keys else pa.struct([("none", pa.string())])
+        )
         table = pa.table(
             {
                 "trace_id": [r["trace_id"] for r in rows],
@@ -114,7 +122,15 @@ class ParquetSpanExporter(SpanExporter):
                 "end_ns": pa.array([r["end_ns"] for r in rows], pa.int64()),
                 "status": [r["status"] for r in rows],
                 "attributes": pa.array(
-                    [{k: (None if r["attributes"].get(k) is None else str(r["attributes"][k])) for k in keys} if keys else {"none": None} for r in rows],
+                    [
+                        {
+                            k: (None if r["attributes"].get(k) is None else str(r["attributes"][k]))
+                            for k in keys
+                        }
+                        if keys
+                        else {"none": None}
+                        for r in rows
+                    ],
                     attr_type,
                 ),
             }
@@ -139,7 +155,9 @@ def install() -> ParquetSpanExporter:
     with _INSTALL_LOCK:
         if _EXPORTER is not None:
             return _EXPORTER
-        provider = TracerProvider(resource=Resource.create({"service.name": os.environ.get("OTEL_SERVICE_NAME", SERVICE)}))
+        provider = TracerProvider(
+            resource=Resource.create({"service.name": os.environ.get("OTEL_SERVICE_NAME", SERVICE)})
+        )
         exporter = ParquetSpanExporter()
         provider.add_span_processor(SimpleSpanProcessor(exporter))
         if os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT"):
@@ -171,7 +189,9 @@ def carrier() -> dict[str, str]:
 
 
 @contextmanager
-def agent_span(conversation: str, family: str | None = None, parent: dict[str, str] | None = None) -> Iterator[Span]:
+def agent_span(
+    conversation: str, family: str | None = None, parent: dict[str, str] | None = None
+) -> Iterator[Span]:
     """A turn's span. A turn resumed from a checkpoint passes the traceparent it stored, so the resumed
     work joins the trace it started in, and the result handles minted in that trace stay valid."""
     context = propagate.extract(parent) if parent else None
@@ -179,7 +199,11 @@ def agent_span(conversation: str, family: str | None = None, parent: dict[str, s
         "invoke_agent readback",
         context=context,
         kind=SpanKind.INTERNAL,
-        attributes={ATTR["operation"]: "invoke_agent", ATTR["agent_name"]: "readback", ATTR["conversation"]: conversation},
+        attributes={
+            ATTR["operation"]: "invoke_agent",
+            ATTR["agent_name"]: "readback",
+            ATTR["conversation"]: conversation,
+        },
     ) as span:
         if family:
             span.set_attribute("readback.family", family)
@@ -196,7 +220,9 @@ def chat_span(provider: str, model: str) -> Iterator[Span]:
         yield span
 
 
-def record_usage(span: Span, response_model: str | None, input_tokens: int, output_tokens: int, finish: Sequence[str]) -> None:
+def record_usage(
+    span: Span, response_model: str | None, input_tokens: int, output_tokens: int, finish: Sequence[str]
+) -> None:
     span.set_attribute(ATTR["response_model"], response_model or "")
     span.set_attribute(ATTR["input_tokens"], int(input_tokens))
     span.set_attribute(ATTR["output_tokens"], int(output_tokens))
@@ -208,14 +234,20 @@ def tool_span(name: str, call_id: str) -> Iterator[Span]:
     with tracer().start_as_current_span(
         f"execute_tool {name}",
         kind=SpanKind.CLIENT,
-        attributes={ATTR["operation"]: "execute_tool", ATTR["tool_name"]: name, ATTR["tool_call_id"]: call_id},
+        attributes={
+            ATTR["operation"]: "execute_tool",
+            ATTR["tool_name"]: name,
+            ATTR["tool_call_id"]: call_id,
+        },
     ) as span:
         yield span
 
 
 @contextmanager
 def gate_span() -> Iterator[Span]:
-    with tracer().start_as_current_span("readback_gate", kind=SpanKind.INTERNAL, attributes={ATTR["operation"]: "readback_gate"}) as span:
+    with tracer().start_as_current_span(
+        "readback_gate", kind=SpanKind.INTERNAL, attributes={ATTR["operation"]: "readback_gate"}
+    ) as span:
         yield span
 
 

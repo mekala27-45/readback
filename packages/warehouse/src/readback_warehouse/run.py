@@ -53,7 +53,9 @@ def digest_rows(columns: list[str], rows: list[list[Any]]) -> str:
     return sha256_json({"columns": columns, "rows": rows})
 
 
-def execute(warehouse: Warehouse, guarded: Guarded, *, timeout: float = TIMEOUT_SECONDS, count: bool = True) -> Result:
+def execute(
+    warehouse: Warehouse, guarded: Guarded, *, timeout: float = TIMEOUT_SECONDS, count: bool = True
+) -> Result:
     cur = warehouse.cursor()
     timer = threading.Timer(timeout, cur.interrupt)
     started = time.perf_counter()
@@ -67,7 +69,10 @@ def execute(warehouse: Warehouse, guarded: Guarded, *, timeout: float = TIMEOUT_
         if count and len(rows) >= guarded.limit:
             total = int(cur.execute(f"select count(*) from ({guarded.unlimited}) as counted").fetchone()[0])  # type: ignore[index]
     except Exception as exc:
-        if time.perf_counter() - started >= timeout * 0.95 and "INTERRUPT" in type(exc).__name__.upper() + str(exc).upper():
+        if (
+            time.perf_counter() - started >= timeout * 0.95
+            and "INTERRUPT" in type(exc).__name__.upper() + str(exc).upper()
+        ):
             raise TimedOut(timeout) from exc
         raise
     finally:

@@ -61,7 +61,12 @@ def parse(text: str) -> list[Entry]:
                 body = bullet.group("rest") if bullet else lines[j]
                 # A paragraph can wrap over several lines; read until a blank line.
                 k = j + 1
-                while not bullet and k < len(lines) and lines[k].strip() and not lines[k].lstrip().startswith("-"):
+                while (
+                    not bullet
+                    and k < len(lines)
+                    and lines[k].strip()
+                    and not lines[k].lstrip().startswith("-")
+                ):
                     body += " " + lines[k]
                     k += 1
                 out.append(Entry(heading.group("term"), first_sentence(body), j + 1, _clean(body)))
@@ -72,7 +77,14 @@ def parse(text: str) -> list[Entry]:
             rest = bullet.group("rest")
             out.append(Entry(bullet.group("term").strip(), first_sentence(rest), i + 1, _clean(rest)))
             for bold in _BOLD.finditer(rest):
-                out.append(Entry(bold.group("term").strip(), _sentence_with(rest, bold.group("term")), i + 1, _clean(rest)))
+                out.append(
+                    Entry(
+                        bold.group("term").strip(),
+                        _sentence_with(rest, bold.group("term")),
+                        i + 1,
+                        _clean(rest),
+                    )
+                )
         else:
             for bold in _BOLD.finditer(line):
                 term = bold.group("term").strip()

@@ -5,9 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from scripts import check_no_em_dash, check_statement, check_vocabulary, scan_for_planted_identifiers
-
 from readback_core.statements import STATEMENT
+
+from scripts import check_no_em_dash, check_statement, check_vocabulary, scan_for_planted_identifiers
 
 
 def test_dash_gate_passes_clean_text(tmp_path: Path) -> None:
@@ -88,7 +88,9 @@ def test_identifier_scan_catches_a_phone_number_in_the_answer_log(tmp_path: Path
         scan_for_planted_identifiers.check(tmp_path, [f], planted=set())
 
 
-def test_identifier_scan_skips_nanosecond_timestamps_but_not_the_same_digits_elsewhere(tmp_path: Path) -> None:
+def test_identifier_scan_skips_nanosecond_timestamps_but_not_the_same_digits_elsewhere(
+    tmp_path: Path,
+) -> None:
     luhn = "4111111111111111"
     clean = tmp_path / "spans.json"
     clean.write_text(f'{{"spans": [{{"start_ns": {luhn}, "name": "chat"}}]}}', encoding="utf-8")

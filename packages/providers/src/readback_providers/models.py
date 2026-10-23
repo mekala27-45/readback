@@ -14,7 +14,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, BaseMessage, messages_from_dict, message_to_dict
+from langchain_core.messages import AIMessage, BaseMessage, message_to_dict, messages_from_dict
+from pydantic import SecretStr
 from readback_tracing import chat_span, record_usage
 
 from readback_providers.cassettes import CassetteMiss, Store, mode, request_digest
@@ -28,7 +29,9 @@ def build_chat_model(p: Provider) -> BaseChatModel:
     if p.name == "gemini":
         from langchain_google_genai import ChatGoogleGenerativeAI
 
-        return ChatGoogleGenerativeAI(model=model, google_api_key=os.environ[str(p.key_env)], temperature=0, max_retries=1)
+        return ChatGoogleGenerativeAI(
+            model=model, google_api_key=os.environ[str(p.key_env)], temperature=0, max_retries=1
+        )
     if p.name == "groq":
         from langchain_groq import ChatGroq
 
@@ -36,7 +39,13 @@ def build_chat_model(p: Provider) -> BaseChatModel:
     if p.name in {"openrouter", "sambanova"}:
         from langchain_openai import ChatOpenAI
 
-        return ChatOpenAI(model=model, api_key=os.environ[str(p.key_env)], base_url=p.base_url, temperature=0, max_retries=1)  # type: ignore[arg-type]
+        return ChatOpenAI(
+            model=model,
+            api_key=SecretStr(os.environ[str(p.key_env)]),
+            base_url=p.base_url,
+            temperature=0,
+            max_retries=1,
+        )
     if p.name == "ollama":
         from langchain_ollama import ChatOllama
 
@@ -89,11 +98,15 @@ class ModelCaller:
                     self._model = self.factory(self.provider)
                 bound = self._model.bind_tools(tools) if tools else self._model
                 started = time.perf_counter()
-                message = await bound.ainvoke(messages)  # type: ignore[assignment]
-                span.set_attribute("readback.model.latency_ms", round((time.perf_counter() - started) * 1000, 1))
+                message = await bound.ainvoke(messages)
+                span.set_attribute(
+                    "readback.model.latency_ms", round((time.perf_counter() - started) * 1000, 1)
+                )
                 meta = getattr(message, "response_metadata", {}) or {}
                 reported = meta.get("model_name") or meta.get("model") or model_id
-                self.store.put(self.provider.name, model_id, reported, self.prompt_hash, digest, message_to_dict(message))
+                self.store.put(
+                    self.provider.name, model_id, reported, self.prompt_hash, digest, message_to_dict(message)
+                )
                 span.set_attribute("readback.cassette", "recorded")
             usage = getattr(message, "usage_metadata", None) or {}
             tin, tout = int(usage.get("input_tokens", 0)), int(usage.get("output_tokens", 0))
@@ -110,7 +123,13 @@ class ModelCaller:
         tool calling strategy where it does not. Through the same cassette and budget as any call."""
         model_id = self.provider.model_id()
         method = "json_schema" if self.provider.structured == "schema" else "function_calling"
-        digest = request_digest(self.provider.name, model_id, self.prompt_hash, messages, [{"function": {"name": f"structured:{schema.__name__}:{method}"}}])
+        digest = request_digest(
+            self.provider.name,
+            model_id,
+            self.prompt_hash,
+            messages,
+            [{"function": {"name": f"structured:{schema.__name__}:{method}"}}],
+        )
         with chat_span(self.provider.name, model_id) as span:
             span.set_attribute("readback.cassette.digest", digest)
             span.set_attribute("readback.structured.method", method)
@@ -124,19 +143,27 @@ class ModelCaller:
                 if mode() != "record":
                     span.set_attribute("readback.cassette", "miss")
                     raise CassetteMiss(self.provider.name, digest)
-                self.ledger.reserve(self.provider.name, model_id, int(self.provider.daily_budget or 0), digest, self.trace_id)
+                self.ledger.reserve(
+                    self.provider.name, model_id, int(self.provider.daily_budget or 0), digest, self.trace_id
+                )
                 if self._model is None:
                     self._model = self.factory(self.provider)
-                runnable = self._model.with_structured_output(schema, method=method, include_raw=True)  # type: ignore[arg-type]
+                runnable = self._model.with_structured_output(schema, method=method, include_raw=True)
                 out = await runnable.ainvoke(messages)
                 raw = out.get("raw") if isinstance(out, dict) else None
                 parsed = out.get("parsed") if isinstance(out, dict) else out
-                if hasattr(parsed, "model_dump"):
-                    parsed = parsed.model_dump()
+                dump = getattr(parsed, "model_dump", None)
+                if callable(dump):
+                    parsed = dump()
                 meta = getattr(raw, "response_metadata", {}) or {}
                 reported = meta.get("model_name") or meta.get("model") or model_id
-                response = {"structured": parsed, "raw": message_to_dict(raw) if raw is not None else None,
-                            "parsing_error": str(out.get("parsing_error")) if isinstance(out, dict) and out.get("parsing_error") else None}
+                response = {
+                    "structured": parsed,
+                    "raw": message_to_dict(raw) if raw is not None else None,
+                    "parsing_error": str(out.get("parsing_error"))
+                    if isinstance(out, dict) and out.get("parsing_error")
+                    else None,
+                }
                 self.store.put(self.provider.name, model_id, reported, self.prompt_hash, digest, response)
                 span.set_attribute("readback.cassette", "recorded")
             raw_message = messages_from_dict([response["raw"]])[0] if response.get("raw") else None

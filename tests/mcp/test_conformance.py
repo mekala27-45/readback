@@ -7,10 +7,10 @@ import sys
 
 import jsonschema
 import pytest
-
 from mcp import Client, StdioServerParameters
-from readback_mcp_server.server import TOOL_ORDER
+from mcp.shared.exceptions import MCPError
 from readback_core.statements import STATEMENT
+from readback_mcp_server.server import TOOL_ORDER
 
 from .conftest import TRACEPARENT
 
@@ -67,9 +67,11 @@ async def test_no_deprecated_feature_is_advertised(client: Client) -> None:
 
 
 async def test_prompts_validate_their_arguments(client: Client) -> None:
-    ok = await client.get_prompt("compare", {"warehouse": "doorstep", "entity_a": "Denver", "entity_b": "Austin"})
+    ok = await client.get_prompt(
+        "compare", {"warehouse": "doorstep", "entity_a": "Denver", "entity_b": "Austin"}
+    )
     assert "Denver" in json.dumps(ok.model_dump())
-    with pytest.raises(Exception):
+    with pytest.raises(MCPError):
         await client.get_prompt("compare", {"warehouse": "nowhere", "entity_a": "a", "entity_b": "b"})
 
 

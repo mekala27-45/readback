@@ -1,9 +1,9 @@
 """The readback command: eval, redteam, scorecard, manifest.
 
-    uv run readback eval --provider floor
-    uv run readback redteam --provider floor
-    uv run readback scorecard
-    uv run readback manifest
+uv run readback eval --provider floor
+uv run readback redteam --provider floor
+uv run readback scorecard
+uv run readback manifest
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 
 
 @app.command()
-def eval(provider: str = "floor", split: str = "all") -> None:  # noqa: A001
+def eval(provider: str = "floor", split: str = "all") -> None:
     """Run the golden set through one provider and grade it."""
     from readback_core import paths
 
@@ -30,7 +30,16 @@ def eval(provider: str = "floor", split: str = "all") -> None:  # noqa: A001
     doc = asyncio.run(run_golden(provider, questions))
     rows = doc["rows"]
     graded = [r for r in rows if r["graded"]]
-    print(json.dumps({"provider": provider, "questions": len(rows), "graded": len(graded), "passed": sum(r["passed"] for r in graded)}))
+    print(
+        json.dumps(
+            {
+                "provider": provider,
+                "questions": len(rows),
+                "graded": len(graded),
+                "passed": sum(r["passed"] for r in graded),
+            }
+        )
+    )
 
 
 @app.command()
@@ -49,7 +58,11 @@ def scorecard() -> None:
 
     card = build()
     write(card)
-    print(json.dumps({"providers": [r["provider"] for r in card["test"]["rows"]], "default": card["default_provider"]}))
+    print(
+        json.dumps(
+            {"providers": [r["provider"] for r in card["test"]["rows"]], "default": card["default_provider"]}
+        )
+    )
 
 
 @app.command()

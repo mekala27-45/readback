@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from readback_warehouse.connection import Warehouse
 from readback_warehouse.guard import ROW_CEILING, Refused, guard
 from readback_warehouse.run import TimedOut, execute
@@ -44,7 +43,9 @@ def test_refusals_name_the_clause(sql: str, clause: str) -> None:
 
 def test_limit_is_added_at_the_ceiling_and_capped() -> None:
     assert guard("select * from ch5_ranking", "doorstep", TABLES).limit == ROW_CEILING
-    assert guard("select * from ch5_ranking limit 9999", "doorstep", TABLES).sql.endswith(f"LIMIT {ROW_CEILING}")
+    assert guard("select * from ch5_ranking limit 9999", "doorstep", TABLES).sql.endswith(
+        f"LIMIT {ROW_CEILING}"
+    )
     assert guard("select * from ch5_ranking limit 3", "doorstep", TABLES).limit == 3
     assert guard("select * from ch5_ranking", "doorstep", TABLES, limit=7).limit == 7
 
@@ -70,5 +71,5 @@ def test_a_statement_past_the_timeout_is_stopped() -> None:
 
 def test_the_connection_refuses_a_write_the_guard_never_sees() -> None:
     w = Warehouse.shared()
-    with pytest.raises(Exception, match="(?i)read.only|cannot execute"):
+    with pytest.raises(Exception, match=r"(?i)read.only|cannot execute"):
         w.query("create table doorstep.x as select 1")

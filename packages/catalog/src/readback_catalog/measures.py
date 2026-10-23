@@ -61,7 +61,12 @@ def value_sql(m: Measure, entity: str | None, time: str | int | None) -> str:
 
 
 def ranking_sql(
-    m: Measure, time: str | int | None, k: int, highest: bool, floor: str | None = None, having: str | None = None
+    m: Measure,
+    time: str | int | None,
+    k: int,
+    highest: bool,
+    floor: str | None = None,
+    having: str | None = None,
 ) -> str:
     """The top k entities by the measure at a time, ties broken by the entity name.
 
@@ -78,7 +83,8 @@ def ranking_sql(
     extra = f" and {having}" if having else ""
     return (
         f"select {m.entity_column} as entity, {m.expr} as value from {m.warehouse}.{m.table}{clause} "
-        f"group by {m.entity_column} having {m.expr} is not null{extra} order by value {order}, entity limit {k}"
+        f"group by {m.entity_column} having {m.expr} is not null{extra} "
+        f"order by value {order}, entity limit {k}"
     )
 
 
@@ -90,5 +96,6 @@ def period_ranking_sql(m: Measure, k: int, highest: bool, periods: list[str]) ->
     order = "desc" if highest else "asc"
     return (
         f"select {m.time_column} as entity, {m.expr} as value from {m.warehouse}.{m.table} "
-        f"where {m.time_column} in ({inlist}) group by {m.time_column} order by value {order}, entity limit {k}"
+        f"where {m.time_column} in ({inlist}) group by {m.time_column} "
+        f"order by value {order}, entity limit {k}"
     )

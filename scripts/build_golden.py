@@ -136,7 +136,14 @@ class Builder:
         v = self.value(sql)
         if v is None:
             return None
-        return {"value": round(v, 10), "unit": m.unit, "fmt": m.fmt, "tolerance": tolerance(m.fmt), "sql": sql, "label": label}
+        return {
+            "value": round(v, 10),
+            "unit": m.unit,
+            "fmt": m.fmt,
+            "tolerance": tolerance(m.fmt),
+            "sql": sql,
+            "label": label,
+        }
 
     def add(self, family: str, warehouses: list[str], question: str, **fields: Any) -> None:
         key = warehouses[0] if family not in {"multi", "refusal"} else family
@@ -144,7 +151,9 @@ class Builder:
         n = self.counter[(key, family)]  # type: ignore[index]
         prefix = {"doorstep": "D", "turnaround": "T", "ledger": "L", "multi": "M", "refusal": "R"}[key]
         qid = f"{prefix}-{family.replace('_', '')}-{n:02d}"
-        self.questions.append({"id": qid, "family": family, "warehouses": warehouses, "question": question, **fields})
+        self.questions.append(
+            {"id": qid, "family": family, "warehouses": warehouses, "question": question, **fields}
+        )
 
     # entity and time naming
     def entity_name(self, m: Measure, entity: str | None) -> str:
@@ -194,18 +203,41 @@ class Builder:
             when = self.phrase_time(m, t)
             if m.entity in {"nation", "bank"}:
                 subject = "at Harborline Bank" if m.entity == "bank" else ""
-                q = self.pick([f"What was the {phrase} {subject} {when}?", f"What was the {phrase} {when}{', ' + subject if subject else ''}?"])
+                q = self.pick(
+                    [
+                        f"What was the {phrase} {subject} {when}?",
+                        f"What was the {phrase} {when}{', ' + subject if subject else ''}?",
+                    ]
+                )
             elif m.entity == "applicant_group":
                 q = f"What was the {phrase} for {e} applicants in ledger's New Jersey HMDA comparison?"
             elif m.entity == "aml_rule":
                 q = f"What was the {phrase} of the {e.replace('_', ' ')} rule in ledger's AML rule scorecard?"
             else:
                 name = self.entity_name(m, e)
-                q = self.pick([f"What was the {phrase} in {name} {when}?", f"In {name}, what was the {phrase} {when}?"]) if m.entity == "metro" else self.pick(
-                    [f"What was {name}'s {phrase} {when}?", f"What was the {phrase} for {name} {when}?"]
-                ) if m.entity == "carrier" else f"What was the {phrase} at {name} {when}?"
+                q = (
+                    self.pick(
+                        [
+                            f"What was the {phrase} in {name} {when}?",
+                            f"In {name}, what was the {phrase} {when}?",
+                        ]
+                    )
+                    if m.entity == "metro"
+                    else self.pick(
+                        [f"What was {name}'s {phrase} {when}?", f"What was the {phrase} for {name} {when}?"]
+                    )
+                    if m.entity == "carrier"
+                    else f"What was the {phrase} at {name} {when}?"
+                )
             q = re.sub(r"\s+", " ", q).replace(" ?", "?").replace(" ,", ",")
-            self.add("lookup", [wh], q, claims=[c], measure=mid, entities=[x for x in (e, None if t is None else str(t)) if x is not None])
+            self.add(
+                "lookup",
+                [wh],
+                q,
+                claims=[c],
+                measure=mid,
+                entities=[x for x in (e, None if t is None else str(t)) if x is not None],
+            )
 
     def comparison(self, wh: str, ids: list[str]) -> None:
         for mid in ids:
@@ -231,18 +263,36 @@ class Builder:
             else:
                 na, nb = self.entity_name(m, a), self.entity_name(m, b)
                 when = self.phrase_time(m, t)
-                q = self.pick([f"Which had the higher {phrase} {when}, {na} or {nb}?", f"{when.capitalize()}, was the {phrase} higher in {na} or {nb}?"]).strip()
+                q = self.pick(
+                    [
+                        f"Which had the higher {phrase} {when}, {na} or {nb}?",
+                        f"{when.capitalize()}, was the {phrase} higher in {na} or {nb}?",
+                    ]
+                ).strip()
                 if m.entity == "carrier":
                     q = f"Which carrier had the higher {phrase} {when}, {na} or {nb}?"
                 if m.entity == "applicant_group":
-                    q = f"In ledger's New Jersey HMDA comparison, which group had the higher {phrase}, {na} or {nb} applicants?"
+                    q = (
+                        "In ledger's New Jersey HMDA comparison, "
+                        f"which group had the higher {phrase}, {na} or {nb} applicants?"
+                    )
                 if m.entity == "aml_rule":
-                    q = f"Which AML rule in ledger had the higher {phrase}, {na.replace('_', ' ')} or {nb.replace('_', ' ')}?"
+                    q = (
+                        f"Which AML rule in ledger had the higher {phrase}, "
+                        f"{na.replace('_', ' ')} or {nb.replace('_', ' ')}?"
+                    )
                 if m.entity == "airport":
                     q = f"Which airport had the higher {phrase} {when}, {na} or {nb}?"
             q = re.sub(r"\s+", " ", q).replace(" ,", ",")
-            self.add("comparison", [wh], q, claims=[c1, c2], entity=winner, measure=mid,
-                     entities=[a, b] + ([str(t)] if m.entity not in {"nation", "bank"} and t is not None else []))
+            self.add(
+                "comparison",
+                [wh],
+                q,
+                claims=[c1, c2],
+                entity=winner,
+                measure=mid,
+                entities=[a, b] + ([str(t)] if m.entity not in {"nation", "bank"} and t is not None else []),
+            )
 
     def trend(self, wh: str, ids: list[str]) -> None:
         for mid in ids:
@@ -250,7 +300,10 @@ class Builder:
             for _ in range(30):
                 e = self.pick(self.entities(m))
                 t1, t2 = sorted(self.rng.sample(sorted(self.times(m), key=str), 2), key=str)
-                c1, c2 = self.claim(m, value_sql(m, e, t1), str(t1)), self.claim(m, value_sql(m, e, t2), str(t2))
+                c1, c2 = (
+                    self.claim(m, value_sql(m, e, t1), str(t1)),
+                    self.claim(m, value_sql(m, e, t2), str(t2)),
+                )
                 if c1 and c2 and abs(c1["value"] - c2["value"]) > 2 * c1["tolerance"]:
                     break
             direction = "rose" if c2["value"] > c1["value"] else "fell"
@@ -262,13 +315,30 @@ class Builder:
             else:
                 name = self.entity_name(m, e)
                 if m.entity == "metro":
-                    q = self.pick([f"Did the {phrase} in {name} rise or fall from {t1} to {t2}?", f"From {t1} to {t2}, did the {phrase} in {name} go up or down?"])
+                    q = self.pick(
+                        [
+                            f"Did the {phrase} in {name} rise or fall from {t1} to {t2}?",
+                            f"From {t1} to {t2}, did the {phrase} in {name} go up or down?",
+                        ]
+                    )
                 elif m.entity == "airport":
                     q = f"Did the {phrase} at {name} rise or fall from {t1} to {t2}?"
                 else:
-                    q = self.pick([f"Did {name}'s {phrase} rise or fall from {t1} to {t2}?", f"From {t1} to {t2}, did {name}'s {phrase} go up or down?"])
-            self.add("trend", [wh], q, claims=[c1, c2], direction=direction, measure=mid,
-                     entities=[x for x in (e, str(t1), str(t2)) if x is not None])
+                    q = self.pick(
+                        [
+                            f"Did {name}'s {phrase} rise or fall from {t1} to {t2}?",
+                            f"From {t1} to {t2}, did {name}'s {phrase} go up or down?",
+                        ]
+                    )
+            self.add(
+                "trend",
+                [wh],
+                q,
+                claims=[c1, c2],
+                direction=direction,
+                measure=mid,
+                entities=[x for x in (e, str(t1), str(t2)) if x is not None],
+            )
 
     def top_k(self, wh: str, specs: list[tuple[str, int, bool]]) -> None:
         for mid, k, highest in specs:
@@ -282,28 +352,62 @@ class Builder:
             elif m.entity == "metro":
                 t = self.pick(self.times(m))
                 sql = ranking_sql(m, t, k, highest, floor=BIG_METRO_FLOOR)
-                q = f"Among metros with at least a million households in {t}, which {k} had the {word} {phrase}?"
+                q = (
+                    f"Among metros with at least a million households in {t}, "
+                    f"which {k} had the {word} {phrase}?"
+                )
             elif m.entity == "carrier":
                 t = self.pick(self.times(m))
                 sql = ranking_sql(m, t, k, highest, having=BIG_CARRIER_HAVING)
-                q = f"Among carriers that flew at least half a million flights in {t}, which {k} had the {word} {phrase}?"
+                q = (
+                    f"Among carriers that flew at least half a million flights in {t}, "
+                    f"which {k} had the {word} {phrase}?"
+                )
             elif m.entity == "airport":
                 t = self.pick(self.times(m))
-                sql = ranking_sql(m, t, k, highest, floor="airport in (" + ", ".join(quote(a) for a in AIRPORTS) + ")")
-                q = f"Of the airports {', '.join(AIRPORTS[:-1])} and {AIRPORTS[-1]}, which {k} had the {word} {phrase} in {t}?"
+                sql = ranking_sql(
+                    m, t, k, highest, floor="airport in (" + ", ".join(quote(a) for a in AIRPORTS) + ")"
+                )
+                q = (
+                    f"Of the airports {', '.join(AIRPORTS[:-1])} and {AIRPORTS[-1]}, "
+                    f"which {k} had the {word} {phrase} in {t}?"
+                )
             else:
                 t = None
                 sql = ranking_sql(m, None, k, highest)
-                q = f"In ledger, which {k} had the {word} {phrase}?" if m.entity != "applicant_group" else f"Which {k} applicant groups had the {word} {phrase} in ledger's New Jersey HMDA comparison?"
+                q = (
+                    f"In ledger, which {k} had the {word} {phrase}?"
+                    if m.entity != "applicant_group"
+                    else (
+                        f"Which {k} applicant groups had the {word} {phrase} "
+                        "in ledger's New Jersey HMDA comparison?"
+                    )
+                )
                 if m.entity == "aml_rule":
                     q = f"Which {k} AML rules in ledger had the {word} {phrase}?"
             _, rows = self.w.query(sql)
             ranking = [str(r[0]) for r in rows]
-            claims = [{"value": round(float(r[1]), 10), "unit": m.unit, "fmt": m.fmt, "tolerance": tolerance(m.fmt),
-                       "sql": None, "label": str(r[0])} for r in rows]
+            claims = [
+                {
+                    "value": round(float(r[1]), 10),
+                    "unit": m.unit,
+                    "fmt": m.fmt,
+                    "tolerance": tolerance(m.fmt),
+                    "sql": None,
+                    "label": str(r[0]),
+                }
+                for r in rows
+            ]
             claims[0]["sql"] = sql
-            self.add("top_k", [wh], q, claims=claims, ranking=ranking, measure=mid,
-                     entities=[str(t)] if t is not None else [])
+            self.add(
+                "top_k",
+                [wh],
+                q,
+                claims=claims,
+                ranking=ranking,
+                measure=mid,
+                entities=[str(t)] if t is not None else [],
+            )
 
     def definition(self, wh: str) -> None:
         for term, phrases in DEFINITIONS[wh]:
@@ -316,12 +420,46 @@ class Builder:
         pairs = [("doorstep", "turnaround"), ("doorstep", "ledger"), ("turnaround", "ledger")]
         for a, b in pairs:
             winner = a if counts[a] > counts[b] else b
-            self.add("multi", [a, b], f"Which warehouse publishes more tables, {a} or {b}?", entity=winner,
-                     claims=[{"value": counts[a], "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": None, "label": a},
-                             {"value": counts[b], "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": None, "label": b}])
+            self.add(
+                "multi",
+                [a, b],
+                f"Which warehouse publishes more tables, {a} or {b}?",
+                entity=winner,
+                claims=[
+                    {
+                        "value": counts[a],
+                        "unit": "count",
+                        "fmt": "int",
+                        "tolerance": 0.5,
+                        "sql": None,
+                        "label": a,
+                    },
+                    {
+                        "value": counts[b],
+                        "unit": "count",
+                        "fmt": "int",
+                        "tolerance": 0.5,
+                        "sql": None,
+                        "label": b,
+                    },
+                ],
+            )
         total = sum(counts.values())
-        self.add("multi", ["doorstep", "turnaround", "ledger"], "How many published tables do doorstep, turnaround and ledger have in total?",
-                 claims=[{"value": total, "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": None, "label": "total"}])
+        self.add(
+            "multi",
+            ["doorstep", "turnaround", "ledger"],
+            "How many published tables do doorstep, turnaround and ledger have in total?",
+            claims=[
+                {
+                    "value": total,
+                    "unit": "count",
+                    "fmt": "int",
+                    "tolerance": 0.5,
+                    "sql": None,
+                    "label": "total",
+                }
+            ],
+        )
         row_pairs = [
             (("doorstep", "mart_metro_year"), ("turnaround", "mart_carrier_month")),
             (("doorstep", "ch5_ranking"), ("ledger", "f11_reconciliation")),
@@ -334,37 +472,116 @@ class Builder:
             sa, sb = f"select count(*) from {wa}.{ta}", f"select count(*) from {wb}.{tb}"
             na, nb = int(self.w.scalar(sa)), int(self.w.scalar(sb))
             winner = f"{wa}.{ta}" if na > nb else f"{wb}.{tb}"
-            self.add("multi", [wa, wb], f"Which has more rows, {wa}'s {ta} or {wb}'s {tb}?", entity=winner,
-                     claims=[{"value": na, "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": sa, "label": f"{wa}.{ta}"},
-                             {"value": nb, "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": sb, "label": f"{wb}.{tb}"}])
+            self.add(
+                "multi",
+                [wa, wb],
+                f"Which has more rows, {wa}'s {ta} or {wb}'s {tb}?",
+                entity=winner,
+                claims=[
+                    {
+                        "value": na,
+                        "unit": "count",
+                        "fmt": "int",
+                        "tolerance": 0.5,
+                        "sql": sa,
+                        "label": f"{wa}.{ta}",
+                    },
+                    {
+                        "value": nb,
+                        "unit": "count",
+                        "fmt": "int",
+                        "tolerance": 0.5,
+                        "sql": sb,
+                        "label": f"{wb}.{tb}",
+                    },
+                ],
+            )
         shared = [
-            ("doorstep", "select distinct year from doorstep.mart_metro_year where median_income is not null", "ledger",
-             "select distinct cast(period as integer) from ledger.metrics_bank_year", "census years in doorstep's metro year mart", "years in ledger's yearly bank metrics"),
-            ("turnaround", "select distinct year from turnaround.mart_carrier_month", "ledger",
-             "select distinct cast(period as integer) from ledger.metrics_bank_year", "years in turnaround's carrier month mart", "years in ledger's yearly bank metrics"),
-            ("doorstep", "select distinct year from doorstep.ch1_national_series", "turnaround",
-             "select distinct year from turnaround.mart_carrier_month", "years in doorstep's national series", "years in turnaround's carrier month mart"),
+            (
+                "doorstep",
+                "select distinct year from doorstep.mart_metro_year where median_income is not null",
+                "ledger",
+                "select distinct cast(period as integer) from ledger.metrics_bank_year",
+                "census years in doorstep's metro year mart",
+                "years in ledger's yearly bank metrics",
+            ),
+            (
+                "turnaround",
+                "select distinct year from turnaround.mart_carrier_month",
+                "ledger",
+                "select distinct cast(period as integer) from ledger.metrics_bank_year",
+                "years in turnaround's carrier month mart",
+                "years in ledger's yearly bank metrics",
+            ),
+            (
+                "doorstep",
+                "select distinct year from doorstep.ch1_national_series",
+                "turnaround",
+                "select distinct year from turnaround.mart_carrier_month",
+                "years in doorstep's national series",
+                "years in turnaround's carrier month mart",
+            ),
         ]
         for wa, sa, wb, sb, la, lb in shared:
             ya = {int(r[0]) for r in self.w.query(sa)[1]}
             yb = {int(r[0]) for r in self.w.query(sb)[1]}
             both = sorted(ya & yb)
-            self.add("multi", [wa, wb], f"Which years appear in both the {la} and the {lb}?", ranking=[str(y) for y in both],
-                     claims=[{"value": len(both), "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": f"select count(*) from (({sa}) intersect ({sb}))", "label": "years in both"}])
+            self.add(
+                "multi",
+                [wa, wb],
+                f"Which years appear in both the {la} and the {lb}?",
+                ranking=[str(y) for y in both],
+                claims=[
+                    {
+                        "value": len(both),
+                        "unit": "count",
+                        "fmt": "int",
+                        "tolerance": 0.5,
+                        "sql": f"select count(*) from (({sa}) intersect ({sb}))",
+                        "label": "years in both",
+                    }
+                ],
+            )
         metrics = 0
         for name in ("doorstep", "turnaround"):
             import csv as _csv
 
             with (ROOT / "data/warehouses" / name / "exports/csv/metrics_definitions.csv").open() as h:
                 metrics += sum(1 for _ in _csv.reader(h)) - 1
-        self.add("multi", ["doorstep", "turnaround"], "How many metrics do doorstep and turnaround define between them in their metric layers?",
-                 claims=[{"value": metrics, "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": None, "label": "metrics"}])
+        self.add(
+            "multi",
+            ["doorstep", "turnaround"],
+            "How many metrics do doorstep and turnaround define between them in their metric layers?",
+            claims=[
+                {
+                    "value": metrics,
+                    "unit": "count",
+                    "fmt": "int",
+                    "tolerance": 0.5,
+                    "sql": None,
+                    "label": "metrics",
+                }
+            ],
+        )
         values = 0
         for name in ("doorstep", "turnaround", "ledger"):
             data = json.loads((ROOT / "data/warehouses" / name / "results/manifest.json").read_text())
             values += len(data["values"])
-        self.add("multi", ["doorstep", "turnaround", "ledger"], "How many values do the manifests of doorstep, turnaround and ledger publish in total?",
-                 claims=[{"value": values, "unit": "count", "fmt": "int", "tolerance": 0.5, "sql": None, "label": "manifest values"}])
+        self.add(
+            "multi",
+            ["doorstep", "turnaround", "ledger"],
+            "How many values do the manifests of doorstep, turnaround and ledger publish in total?",
+            claims=[
+                {
+                    "value": values,
+                    "unit": "count",
+                    "fmt": "int",
+                    "tolerance": 0.5,
+                    "sql": None,
+                    "label": "manifest values",
+                }
+            ],
+        )
 
     def refusal(self) -> None:
         for q in REFUSALS:
@@ -396,20 +613,164 @@ def split(questions: list[dict[str, Any]]) -> None:
 
 def main() -> int:
     b = Builder()
-    b.lookup("doorstep", ["payment_share", "median_home", "median_income", "price_to_income", "renter_burdened_share", "renter_households", "permits", "national_rate"])
-    b.comparison("doorstep", ["payment_share", "median_home", "renter_burdened_share", "median_income", "price_to_income", "national_payment_share", "permits", "national_renter_burdened"])
-    b.trend("doorstep", ["payment_share", "median_home", "median_income", "renter_burdened_share", "price_to_income", "national_rate", "national_payment_share", "permits"])
-    b.top_k("doorstep", [("payment_share", 3, True), ("payment_share", 3, False), ("median_home", 3, True), ("renter_burdened_share", 3, True), ("price_to_income", 3, True), ("median_income", 3, True), ("median_income", 3, False), ("permits", 3, True)])
+    b.lookup(
+        "doorstep",
+        [
+            "payment_share",
+            "median_home",
+            "median_income",
+            "price_to_income",
+            "renter_burdened_share",
+            "renter_households",
+            "permits",
+            "national_rate",
+        ],
+    )
+    b.comparison(
+        "doorstep",
+        [
+            "payment_share",
+            "median_home",
+            "renter_burdened_share",
+            "median_income",
+            "price_to_income",
+            "national_payment_share",
+            "permits",
+            "national_renter_burdened",
+        ],
+    )
+    b.trend(
+        "doorstep",
+        [
+            "payment_share",
+            "median_home",
+            "median_income",
+            "renter_burdened_share",
+            "price_to_income",
+            "national_rate",
+            "national_payment_share",
+            "permits",
+        ],
+    )
+    b.top_k(
+        "doorstep",
+        [
+            ("payment_share", 3, True),
+            ("payment_share", 3, False),
+            ("median_home", 3, True),
+            ("renter_burdened_share", 3, True),
+            ("price_to_income", 3, True),
+            ("median_income", 3, True),
+            ("median_income", 3, False),
+            ("permits", 3, True),
+        ],
+    )
     b.definition("doorstep")
-    b.lookup("turnaround", ["on_time_rate", "cancellation_rate", "mean_arrival_delay", "flights_flown", "airport_cancellation_rate", "airport_departure_delay", "national_on_time", "on_time_rate"])
-    b.comparison("turnaround", ["on_time_rate", "cancellation_rate", "mean_arrival_delay", "flights_flown", "airport_cancellation_rate", "airport_departure_delay", "on_time_rate", "national_on_time"])
-    b.trend("turnaround", ["on_time_rate", "cancellation_rate", "mean_arrival_delay", "flights_flown", "airport_cancellation_rate", "airport_departure_delay", "national_on_time", "on_time_rate"])
-    b.top_k("turnaround", [("on_time_rate", 3, True), ("on_time_rate", 3, False), ("cancellation_rate", 3, True), ("mean_arrival_delay", 3, True), ("mean_arrival_delay", 3, False), ("airport_cancellation_rate", 3, True), ("airport_departure_delay", 3, True), ("flights_flown", 3, True)])
+    b.lookup(
+        "turnaround",
+        [
+            "on_time_rate",
+            "cancellation_rate",
+            "mean_arrival_delay",
+            "flights_flown",
+            "airport_cancellation_rate",
+            "airport_departure_delay",
+            "national_on_time",
+            "on_time_rate",
+        ],
+    )
+    b.comparison(
+        "turnaround",
+        [
+            "on_time_rate",
+            "cancellation_rate",
+            "mean_arrival_delay",
+            "flights_flown",
+            "airport_cancellation_rate",
+            "airport_departure_delay",
+            "on_time_rate",
+            "national_on_time",
+        ],
+    )
+    b.trend(
+        "turnaround",
+        [
+            "on_time_rate",
+            "cancellation_rate",
+            "mean_arrival_delay",
+            "flights_flown",
+            "airport_cancellation_rate",
+            "airport_departure_delay",
+            "national_on_time",
+            "on_time_rate",
+        ],
+    )
+    b.top_k(
+        "turnaround",
+        [
+            ("on_time_rate", 3, True),
+            ("on_time_rate", 3, False),
+            ("cancellation_rate", 3, True),
+            ("mean_arrival_delay", 3, True),
+            ("mean_arrival_delay", 3, False),
+            ("airport_cancellation_rate", 3, True),
+            ("airport_departure_delay", 3, True),
+            ("flights_flown", 3, True),
+        ],
+    )
     b.definition("turnaround")
-    b.lookup("ledger", ["nim", "efficiency_ratio", "roa", "net_income", "total_deposits", "npl_ratio", "denial_rate", "rule_precision"])
-    b.comparison("ledger", ["nim", "efficiency_ratio", "net_income", "total_deposits", "capital_ratio", "denial_rate", "rule_precision", "rule_alerts"])
-    b.trend("ledger", ["nim", "efficiency_ratio", "roa", "net_income", "total_deposits", "npl_ratio", "capital_ratio", "nim"])
-    b.top_k("ledger", [("net_income", 3, True), ("nim", 3, True), ("efficiency_ratio", 3, False), ("total_deposits", 3, True), ("denial_rate", 3, True), ("denial_rate", 2, False), ("rule_alerts", 2, True), ("rule_precision", 2, False)])
+    b.lookup(
+        "ledger",
+        [
+            "nim",
+            "efficiency_ratio",
+            "roa",
+            "net_income",
+            "total_deposits",
+            "npl_ratio",
+            "denial_rate",
+            "rule_precision",
+        ],
+    )
+    b.comparison(
+        "ledger",
+        [
+            "nim",
+            "efficiency_ratio",
+            "net_income",
+            "total_deposits",
+            "capital_ratio",
+            "denial_rate",
+            "rule_precision",
+            "rule_alerts",
+        ],
+    )
+    b.trend(
+        "ledger",
+        [
+            "nim",
+            "efficiency_ratio",
+            "roa",
+            "net_income",
+            "total_deposits",
+            "npl_ratio",
+            "capital_ratio",
+            "nim",
+        ],
+    )
+    b.top_k(
+        "ledger",
+        [
+            ("net_income", 3, True),
+            ("nim", 3, True),
+            ("efficiency_ratio", 3, False),
+            ("total_deposits", 3, True),
+            ("denial_rate", 3, True),
+            ("denial_rate", 2, False),
+            ("rule_alerts", 2, True),
+            ("rule_precision", 2, False),
+        ],
+    )
     b.definition("ledger")
     b.multi()
     b.refusal()
@@ -424,10 +785,16 @@ def main() -> int:
     for q in b.questions:
         groups[q["warehouses"][0] if q["family"] not in {"multi", "refusal"} else q["family"]].append(q)
     for name, qs in sorted(groups.items()):
-        header = (f"# Golden questions: {name}. Written by scripts/build_golden.py (seed {SEED}); every value is the\n"
-                  "# result of the SQL beside it over the fetched tables. Do not edit by hand: the golden-question\n"
-                  "# skill says how to add one.\n")
-        body = yaml.safe_dump({"questions": sorted(qs, key=lambda q: q["id"])}, sort_keys=False, allow_unicode=True, width=120)
+        header = (
+            f"# Golden questions: {name}. Written by scripts/build_golden.py (seed {SEED}); "
+            "every value is the\n"
+            "# result of the SQL beside it over the fetched tables. "
+            "Do not edit by hand: the golden-question\n"
+            "# skill says how to add one.\n"
+        )
+        body = yaml.safe_dump(
+            {"questions": sorted(qs, key=lambda q: q["id"])}, sort_keys=False, allow_unicode=True, width=120
+        )
         (OUT / f"{name}.yaml").write_text(header + body, encoding="utf-8")
     print(f"golden: {len(b.questions)} questions, {counts['dev']} dev and {counts['test']} test")
     for q in b.questions[:3]:

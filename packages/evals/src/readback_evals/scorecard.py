@@ -78,7 +78,7 @@ def row_stats(rows: list[dict[str, Any]], total: int) -> dict[str, Any]:
 
 
 def by_family(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    out = {}
+    out: dict[str, dict[str, Any]] = {}
     for fam in FAMILIES:
         f = [r for r in rows if r["family"] == fam and r.get("graded")]
         k = sum(1 for r in f if r["passed"])
@@ -88,12 +88,26 @@ def by_family(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
 
 
 def _answer_from(row: dict[str, Any]) -> Answer:
-    return Answer(question="", family=row["family"], text=row.get("text", ""), verdict=row.get("verdict", "refused"), provider="",
-                  model="", selection=row.get("selection") or [], direction=row.get("direction"), tools_called=row.get("tools_called", []),
-                  claims=[ShippedClaim(value=c["value"], unit=c["unit"], display=c["display"], verdict=c["verdict"]) for c in row.get("claims", [])])
+    return Answer(
+        question="",
+        family=row["family"],
+        text=row.get("text", ""),
+        verdict=row.get("verdict", "refused"),
+        provider="",
+        model="",
+        selection=row.get("selection") or [],
+        direction=row.get("direction"),
+        tools_called=row.get("tools_called", []),
+        claims=[
+            ShippedClaim(value=c["value"], unit=c["unit"], display=c["display"], verdict=c["verdict"])
+            for c in row.get("claims", [])
+        ],
+    )
 
 
-def tolerance_interior(rows: list[dict[str, Any]], golden: dict[str, Question], scales: Iterable[float] = (0.5, 1.0, 2.0)) -> dict[str, float | None]:
+def tolerance_interior(
+    rows: list[dict[str, Any]], golden: dict[str, Question], scales: Iterable[float] = (0.5, 1.0, 2.0)
+) -> dict[str, float | None]:
     """Accuracy with the golden tolerance at a quarter, a half and one unit of the published rounding."""
     out: dict[str, float | None] = {}
     graded = [r for r in rows if r.get("graded")]
@@ -101,14 +115,21 @@ def tolerance_interior(rows: list[dict[str, Any]], golden: dict[str, Question], 
         k = 0
         for r in graded:
             q = golden[r["id"]]
-            scaled = q.model_copy(update={"claims": [c.model_copy(update={"tolerance": c.tolerance * scale}) for c in q.claims]})
+            scaled = q.model_copy(
+                update={"claims": [c.model_copy(update={"tolerance": c.tolerance * scale}) for c in q.claims]}
+            )
             k += grade(scaled, _answer_from(r)).passed
         out[f"{scale / 2:g} unit"] = k / len(graded) if graded else None
     return out
 
 
-def ceiling_interior(rows: list[dict[str, Any]], ceilings: Iterable[int] = (4, 8, 12)) -> dict[str, float | None]:
-    """Accuracy had the tool call ceiling been 4, 8 or 12: an answer over the ceiling would have been refused."""
+def ceiling_interior(
+    rows: list[dict[str, Any]], ceilings: Iterable[int] = (4, 8, 12)
+) -> dict[str, float | None]:
+    """Accuracy had the tool call ceiling been 4, 8 or 12.
+
+    An answer over the ceiling would have been refused.
+    """
     graded = [r for r in rows if r.get("graded")]
     out: dict[str, float | None] = {}
     for c in ceilings:
@@ -117,7 +138,9 @@ def ceiling_interior(rows: list[dict[str, Any]], ceilings: Iterable[int] = (4, 8
     return out
 
 
-def split_size_interior(runs: dict[str, dict[str, Any]], golden: list[Question], sizes: Iterable[int] = (30, 50, 70)) -> dict[str, str]:
+def split_size_interior(
+    runs: dict[str, dict[str, Any]], golden: list[Question], sizes: Iterable[int] = (30, 50, 70)
+) -> dict[str, str]:
     """The default provider chosen on development splits of 30, 50 and 70, drawn the same way."""
     from scripts.build_golden import split as draw
 
@@ -139,7 +162,9 @@ def _draw_sized(qs: list[dict[str, Any]], size: int) -> None:
     rng = random.Random(20261024 + size)
     strata: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for q in sorted(qs, key=lambda q: q["id"]):
-        strata[(q["family"], q["warehouses"][0] if q["family"] not in {"multi", "refusal"} else q["family"])].append(q)
+        strata[
+            (q["family"], q["warehouses"][0] if q["family"] not in {"multi", "refusal"} else q["family"])
+        ].append(q)
     share = size / len(qs)
     for key in sorted(strata):
         items = list(strata[key])
@@ -152,6 +177,7 @@ def _draw_sized(qs: list[dict[str, Any]], size: int) -> None:
 
 def choose_default(runs: dict[str, dict[str, Any]], dev_ids: set[str]) -> tuple[str, str]:
     """The provider with the best development accuracy whose interval clears the floor's; else the floor."""
+
     def acc(name: str) -> tuple[float, float, float, int]:
         rows = [r for r in runs[name]["rows"] if r["id"] in dev_ids and r.get("graded")]
         k = sum(1 for r in rows if r["passed"])
@@ -185,8 +211,13 @@ def build() -> dict[str, Any]:
                 continue
             rows = [r for r in runs[name]["rows"] if r["split"] == split]
             s = row_stats(rows, totals[split])
-            s.update(provider=name, families=by_family(rows), cassette_dates=runs[name].get("cassette_dates", []),
-                     prompt_hash=runs[name].get("prompt_hash"), model=providers[name].model_id() if name in providers else "")
+            s.update(
+                provider=name,
+                families=by_family(rows),
+                cassette_dates=runs[name].get("cassette_dates", []),
+                prompt_hash=runs[name].get("prompt_hash"),
+                model=providers[name].model_id() if name in providers else "",
+            )
             rows_out.append(s)
             card["prompt_hash"] = card["prompt_hash"] or runs[name].get("prompt_hash")
         card[split] = {"rows": rows_out}
@@ -200,7 +231,16 @@ def build() -> dict[str, Any]:
             if name == "floor" or not r["graded"]:
                 continue
             low, high, p = difference_interval(r["passed"], r["graded"], f["passed"], f["graded"])
-            comparisons.append({"provider": name, "against": "floor", "difference": r["accuracy"] - f["accuracy"], "low": low, "high": high, "p": p})
+            comparisons.append(
+                {
+                    "provider": name,
+                    "against": "floor",
+                    "difference": r["accuracy"] - f["accuracy"],
+                    "low": low,
+                    "high": high,
+                    "p": p,
+                }
+            )
     rejected = benjamini_hochberg([c["p"] for c in comparisons]) if comparisons else []
     for c, rej in zip(comparisons, rejected, strict=True):
         c["significant_bh"] = rej
@@ -213,7 +253,15 @@ def build() -> dict[str, Any]:
     for name, run in runs.items():
         for r in run["rows"]:
             if r["split"] == "test" and r.get("graded") and r["gate"].get("caught"):
-                catches.append({"provider": name, "id": r["id"], "caught": r["gate"]["caught"], "draft": r["gate"].get("first_draft"), "shipped": r.get("text")})
+                catches.append(
+                    {
+                        "provider": name,
+                        "id": r["id"],
+                        "caught": r["gate"]["caught"],
+                        "draft": r["gate"].get("first_draft"),
+                        "shipped": r.get("text"),
+                    }
+                )
     card["catches"] = catches
     # The interior tests.
     interior: dict[str, Any] = {}
@@ -232,8 +280,13 @@ def build() -> dict[str, Any]:
     interior["ranking"] = ranks
     interior["not_measured"] = {
         "retrieval depth": "measured on the floor only (definition family), by scripts/interior_depth.py",
-        "summarization threshold": "the golden set has no multi turn question, so the threshold never fires in the eval",
-        "daily budget": "the floor has no budget; a model's live share at half, as set and double its budget is printed with its row",
+        "summarization threshold": (
+            "the golden set has no multi turn question, so the threshold never fires in the eval"
+        ),
+        "daily budget": (
+            "the floor has no budget; a model's live share at half, as set and double its budget "
+            "is printed with its row"
+        ),
     }
     card["interior"] = interior
     depth = paths.results_dir() / "evals" / "interior_depth.json"
@@ -241,7 +294,12 @@ def build() -> dict[str, Any]:
         card["interior"]["depth"] = json.loads(depth.read_text(encoding="utf-8"))
     # The red team.
     card["redteam"] = {name: _redteam(name) for name in PROVIDER_ORDER if _redteam(name)}
-    card["judge"] = {"run": False, "reason": "the clarity judge needs a model key; it runs only from cassettes in CI and within budget live"}
+    card["judge"] = {
+        "run": False,
+        "reason": (
+            "the clarity judge needs a model key; it runs only from cassettes in CI and within budget live"
+        ),
+    }
     return card
 
 

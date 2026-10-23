@@ -9,7 +9,7 @@ from __future__ import annotations
 import difflib
 import fnmatch
 import re
-from typing import Any
+from typing import Any, Literal
 
 from readback_core.formats import format_value
 from readback_core.units import spec
@@ -46,7 +46,9 @@ class ToolRefusal(ValueError):
 
 def _check_warehouse(state: State, warehouse: str) -> None:
     if warehouse not in state.catalogs:
-        raise ToolRefusal(f"there is no warehouse {warehouse!r}; the three are doorstep, turnaround and ledger")
+        raise ToolRefusal(
+            f"there is no warehouse {warehouse!r}; the three are doorstep, turnaround and ledger"
+        )
 
 
 def warehouses(state: State) -> WarehousesOut:
@@ -77,7 +79,9 @@ def describe(state: State, warehouse: str, table: str) -> DescribeOut:
         raise ToolRefusal(f"{warehouse} has no table {table!r}; the nearest names are {', '.join(near)}")
     order = [g for g in entry.grain if entry.column(g) is not None] or [entry.columns[0].name]
     order_sql = ", ".join(f'"{c}"' for c in order)
-    cols, rows = state.warehouse.query(f'select * from {warehouse}."{entry.name}" order by {order_sql} limit {EXAMPLES}')
+    cols, rows = state.warehouse.query(
+        f'select * from {warehouse}."{entry.name}" order by {order_sql} limit {EXAMPLES}'
+    )
     from readback_warehouse.run import plain
 
     examples = [{c: plain(v) for c, v in zip(cols, r, strict=True)} for r in rows]
@@ -104,7 +108,9 @@ def describe(state: State, warehouse: str, table: str) -> DescribeOut:
     )
 
 
-def search_catalog(state: State, query: str, k: int = 8, warehouse: str | None = None, kind: str | None = None) -> SearchOut:
+def search_catalog(
+    state: State, query: str, k: int = 8, warehouse: str | None = None, kind: str | None = None
+) -> SearchOut:
     if warehouse is not None:
         _check_warehouse(state, warehouse)
     k = max(1, min(int(k), SEARCH_CEILING))
@@ -128,7 +134,10 @@ def search_catalog(state: State, query: str, k: int = 8, warehouse: str | None =
 
 
 def _one_definition(kind: str, text: str | None) -> str | None:
-    """One definition sentence for a column or a table; a definitions entry is kept whole, up to 600 characters."""
+    """One definition sentence for a column or a table.
+
+    A definitions entry is kept whole, up to 600 characters.
+    """
     if not text:
         return None
     if kind == "definition":
@@ -137,7 +146,10 @@ def _one_definition(kind: str, text: str | None) -> str | None:
 
 
 def catalog_fact(state: State, key: str) -> float:
-    """A count the catalog knows: tables, rows, metrics or manifest values, summed over warehouses joined by +."""
+    """A count the catalog knows: tables, rows, metrics or manifest values.
+
+    Keys joined by + are summed over warehouses.
+    """
     parts = key.split(".")
     if len(parts) not in (2, 3):
         raise ToolRefusal(f"{key!r} is not a catalog key")
@@ -160,7 +172,9 @@ def catalog_fact(state: State, key: str) -> float:
         elif parts[1] == "manifest_values":
             total += len(state.manifest[name])
         else:
-            raise ToolRefusal(f"the catalog knows tables, rows, metrics and manifest_values, not {parts[1]!r}")
+            raise ToolRefusal(
+                f"the catalog knows tables, rows, metrics and manifest_values, not {parts[1]!r}"
+            )
     return float(total)
 
 
@@ -203,7 +217,9 @@ def published(state: State, warehouse: str, key_or_pattern: str) -> PublishedOut
         keys = [pattern] if pattern in entries else []
     if not keys:
         near = difflib.get_close_matches(pattern, sorted(entries), n=3, cutoff=0.0)
-        raise ToolRefusal(f"{warehouse}'s manifest has no key matching {pattern!r}; the nearest keys are {', '.join(near)}")
+        raise ToolRefusal(
+            f"{warehouse}'s manifest has no key matching {pattern!r}; the nearest keys are {', '.join(near)}"
+        )
     matched = len(keys)
     values = []
     for key in keys[:PUBLISHED_CEILING]:
@@ -251,12 +267,24 @@ def _readback_definition(state: State, claim: Claim) -> ReadbackOut:
         return _refused(claim, f"there is no definition {claim.definition_id!r}")
     printed = [t.value for t in tokens(doc.definition or "")]
     match = [v for v in printed if abs(v - claim.value) <= 1e-9 * max(1.0, abs(v))]
-    verdict = "agree" if match else "disagree"
-    reason = (f"{doc.name} prints {claim.display or claim.value}" if match
-              else f"{doc.name} does not print {claim.display or claim.value}")
-    return ReadbackOut(verdict=verdict, claim=claim.value, claim_unit=claim.unit, evidence=match[0] if match else None,
-                       evidence_unit=claim.unit, unit_source="catalog", difference=0.0 if match else None,
-                       tolerance=0.0, reason=reason, evidence_ref=doc.id)
+    verdict: Literal["agree", "disagree"] = "agree" if match else "disagree"
+    reason = (
+        f"{doc.name} prints {claim.display or claim.value}"
+        if match
+        else f"{doc.name} does not print {claim.display or claim.value}"
+    )
+    return ReadbackOut(
+        verdict=verdict,
+        claim=claim.value,
+        claim_unit=claim.unit,
+        evidence=match[0] if match else None,
+        evidence_unit=claim.unit,
+        unit_source="catalog",
+        difference=0.0 if match else None,
+        tolerance=0.0,
+        reason=reason,
+        evidence_ref=doc.id,
+    )
 
 
 def _cell(columns: list[str], rows: list[list[Any]], column: str | None, row: int) -> tuple[str, Any]:
@@ -265,7 +293,9 @@ def _cell(columns: list[str], rows: list[list[Any]], column: str | None, row: in
     if row >= len(rows):
         raise ToolRefusal(f"the result has {len(rows)} rows; row {row} does not exist")
     if column is None:
-        numeric = [i for i, v in enumerate(rows[row]) if isinstance(v, (int, float)) and not isinstance(v, bool)]
+        numeric = [
+            i for i, v in enumerate(rows[row]) if isinstance(v, (int, float)) and not isinstance(v, bool)
+        ]
         if len(numeric) != 1:
             raise ToolRefusal("name the column: the row has more than one number in it")
         return columns[numeric[0]], rows[row][numeric[0]]
@@ -277,18 +307,33 @@ def _cell(columns: list[str], rows: list[list[Any]], column: str | None, row: in
 
 def readback(state: State, claim: Claim, chain: str) -> ReadbackOut:
     """Re-run or look up the evidence for one claim and compare it in the claim's unit."""
-    sources = [s for s in (claim.result_id, claim.sql, claim.manifest_key, claim.catalog_key, claim.definition_id) if s]
+    sources = [
+        s
+        for s in (claim.result_id, claim.sql, claim.manifest_key, claim.catalog_key, claim.definition_id)
+        if s
+    ]
     if len(sources) != 1:
-        return _refused(claim, "a claim needs exactly one of result_id, sql, manifest_key, catalog_key or definition_id")
+        return _refused(
+            claim, "a claim needs exactly one of result_id, sql, manifest_key, catalog_key or definition_id"
+        )
     try:
         if claim.definition_id:
             return _readback_definition(state, claim)
         if claim.catalog_key:
             fact = catalog_fact(state, claim.catalog_key)
             c = compare(claim.value, claim.unit, fact, "count", published_step=1.0)
-            return ReadbackOut(verdict=c.verdict, claim=claim.value, claim_unit=claim.unit, evidence=c.evidence,
-                               evidence_unit="count", unit_source="catalog", difference=c.difference,
-                               tolerance=c.tolerance, reason=c.reason, evidence_ref=f"catalog:{claim.catalog_key}")
+            return ReadbackOut(
+                verdict=c.verdict,
+                claim=claim.value,
+                claim_unit=claim.unit,
+                evidence=c.evidence,
+                evidence_unit="count",
+                unit_source="catalog",
+                difference=c.difference,
+                tolerance=c.tolerance,
+                reason=c.reason,
+                evidence_ref=f"catalog:{claim.catalog_key}",
+            )
         if claim.manifest_key:
             if claim.warehouse is None:
                 return _refused(claim, "a manifest key needs its warehouse")
@@ -396,17 +441,26 @@ def candidates(state: State, kind: str, name: str) -> tuple[str | None, list[Loo
         pool = contains or difflib.get_close_matches(name, titles, n=5, cutoff=0.4)
         return None, [LookupCandidate(value=t, label=t) for t in pool[:8]]
     if kind in {"carrier", "airport", "applicant_group", "aml_rule"}:
-        table = {"carrier": "carriers", "airport": "airports", "applicant_group": "applicant_groups", "aml_rule": "aml_rules"}[kind]
+        table = {
+            "carrier": "carriers",
+            "airport": "airports",
+            "applicant_group": "applicant_groups",
+            "aml_rule": "aml_rules",
+        }[kind]
         names: dict[str, list[str]] = state.entities.get(table, {})
         for code, aliases in names.items():
             if _norm(str(code)) == q or any(_norm(a) == q for a in aliases):
                 return str(code), []
         if kind == "airport" and re.fullmatch(r"[A-Za-z]{3}", name.strip()):
             code = name.strip().upper()
-            hit = state.warehouse.scalar("select count(*) from turnaround.mart_airport_day where airport = ?", [code])
+            hit = state.warehouse.scalar(
+                "select count(*) from turnaround.mart_airport_day where airport = ?", [code]
+            )
             if hit:
                 return code, []
-        pool = difflib.get_close_matches(name, [a for v in names.values() for a in v] + [str(k) for k in names], n=5, cutoff=0.5)
+        pool = difflib.get_close_matches(
+            name, [a for v in names.values() for a in v] + [str(k) for k in names], n=5, cutoff=0.5
+        )
         return None, [LookupCandidate(value=p, label=p) for p in pool]
     if kind == "year":
         m = re.search(r"(19|20)\d\d", name)
@@ -418,14 +472,18 @@ def candidates(state: State, kind: str, name: str) -> tuple[str | None, list[Loo
         words = {"first": 1, "second": 2, "third": 3, "fourth": 4}
         m2 = re.search(r"(first|second|third|fourth) quarter of ((?:19|20)\d\d)", name.lower())
         return (f"{m2.group(2)}Q{words[m2.group(1)]}", []) if m2 else (None, [])
-    _, rows = state.warehouse.query("select distinct county, cast(county_fips as varchar) from ledger.f03_county order by 1")
+    _, rows = state.warehouse.query(
+        "select distinct county, cast(county_fips as varchar) from ledger.f03_county order by 1"
+    )
     for county, fips in rows:
         if _norm(str(county)) == q or str(fips) == name.strip():
             return str(fips), []
     return None, [LookupCandidate(value=str(f), label=str(c)) for c, f in rows if q and q in _norm(str(c))]
 
 
-def lookup_result(kind: str, name: str, resolved: str | None, cands: list[LookupCandidate], asked: bool) -> LookupOut:
+def lookup_result(
+    kind: str, name: str, resolved: str | None, cands: list[LookupCandidate], asked: bool
+) -> LookupOut:
     return LookupOut(
         kind=kind,
         query=name,

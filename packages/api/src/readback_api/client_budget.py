@@ -55,7 +55,8 @@ class MemoryCounter:
 class PostgresCounter:
     SQL = (
         "insert into readback.client_budget (client, window_kind, window_start, used) values (%s, %s, %s, 1) "
-        "on conflict (client, window_kind, window_start) do update set used = readback.client_budget.used + 1 "
+        "on conflict (client, window_kind, window_start) "
+        "do update set used = readback.client_budget.used + 1 "
         "returning used"
     )
 
@@ -70,8 +71,13 @@ class PostgresCounter:
 
 
 class ClientBudget:
-    def __init__(self, counter: Counter, hourly: int = HOURLY, daily: int = DAILY,
-                 clock: Callable[[], dt.datetime] | None = None) -> None:
+    def __init__(
+        self,
+        counter: Counter,
+        hourly: int = HOURLY,
+        daily: int = DAILY,
+        clock: Callable[[], dt.datetime] | None = None,
+    ) -> None:
         self.counter = counter
         self.hourly = hourly
         self.daily = daily
@@ -85,7 +91,19 @@ class ClientBudget:
         h = self.counter.increment(client, "hour", hour)
         d = self.counter.increment(client, "day", day)
         if h > self.hourly:
-            return Decision(False, h, d, f"this client has used its {self.hourly} requests for the hour; the window resets at {(hour + dt.timedelta(hours=1)):%H:%M} UTC")
+            return Decision(
+                False,
+                h,
+                d,
+                f"this client has used its {self.hourly} requests for the hour; "
+                f"the window resets at {(hour + dt.timedelta(hours=1)):%H:%M} UTC",
+            )
         if d > self.daily:
-            return Decision(False, h, d, f"this client has used its {self.daily} requests for the day; the window resets at midnight UTC")
+            return Decision(
+                False,
+                h,
+                d,
+                f"this client has used its {self.daily} requests for the day; "
+                "the window resets at midnight UTC",
+            )
         return Decision(True, h, d, "")

@@ -11,7 +11,9 @@ PHONE = re.compile(r"(?<![\w.])(?:\+?1[ .-]?)?\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}(?!
 SSN = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")
 CARD = re.compile(r"(?<![\w.-])(?:\d[ -]?){13,19}(?![\w-])")
 # A customer, account or loan identifier: letters and digits a person would copy from a statement.
-IDENT = re.compile(r"\b(?:[A-Z]{1,3}-?\d{5,}|\d{8,12}|(?:acct|account|customer|loan)[ #:]*[A-Z0-9-]{5,})\b", re.I)
+IDENT = re.compile(
+    r"\b(?:[A-Z]{1,3}-?\d{5,}|\d{8,12}|(?:acct|account|customer|loan)[ #:]*[A-Z0-9-]{5,})\b", re.I
+)
 
 
 @dataclass(frozen=True)

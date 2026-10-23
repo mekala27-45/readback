@@ -72,7 +72,9 @@ class State:
 
     @cached_property
     def entities(self) -> dict[str, Any]:
-        data: dict[str, Any] = yaml.safe_load((self.root / "catalog" / "entities.yaml").read_text(encoding="utf-8"))
+        data: dict[str, Any] = yaml.safe_load(
+            (self.root / "catalog" / "entities.yaml").read_text(encoding="utf-8")
+        )
         return data
 
     @cached_property
@@ -106,7 +108,9 @@ class State:
                 if not sql:
                     continue
                 try:
-                    tables = {str(t.name).lower() for t in sqlglot.parse_one(sql, read="duckdb").find_all(exp.Table)}
+                    tables = {
+                        str(t.name).lower() for t in sqlglot.parse_one(sql, read="duckdb").find_all(exp.Table)
+                    }
                 except Exception:  # a figure's SQL in another dialect simply links nothing
                     continue
                 for t in sorted(tables & names):
@@ -149,7 +153,9 @@ class State:
         return hashlib.sha256(("readback result handle " + sha256_text(lock)).encode()).digest()
 
     def mint(self, warehouse: str, sql: str, digest: str, chain: str) -> str:
-        body = json.dumps({"w": warehouse, "s": sql, "d": digest, "c": chain}, separators=(",", ":"), sort_keys=True)
+        body = json.dumps(
+            {"w": warehouse, "s": sql, "d": digest, "c": chain}, separators=(",", ":"), sort_keys=True
+        )
         payload = base64.urlsafe_b64encode(body.encode()).decode().rstrip("=")
         mac = hmac.new(self._handle_key, payload.encode(), hashlib.sha256).hexdigest()[:24]
         return f"r1.{payload}.{mac}"

@@ -9,6 +9,7 @@ from readback_core.model import StrictModel
 from readback_core.units import Unit
 
 Role = Literal["key", "time", "label", "measure"]
+DefinitionSource = Literal["dictionary", "definitions", "metrics", "hand edit"]
 WAREHOUSES: tuple[str, ...] = ("doorstep", "turnaround", "ledger")
 
 
@@ -24,7 +25,7 @@ class Column(StrictModel):
     unit: Unit | None
     definition: str | None
     citation: Citation | None = None
-    definition_source: Literal["dictionary", "definitions", "metrics", "hand edit"] | None = None
+    definition_source: DefinitionSource | None = None
     manifest_keys: list[str] = Field(default_factory=list)
 
 

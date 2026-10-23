@@ -60,11 +60,34 @@ REFUSED_NODES: dict[str, str] = {
 # Functions that read files, the network or the environment, or that change state.
 REFUSED_FUNCTIONS = frozenset(
     {
-        "read_parquet", "read_csv", "read_csv_auto", "read_json", "read_json_auto", "read_ndjson",
-        "read_text", "read_blob", "parquet_scan", "parquet_metadata", "parquet_schema", "glob",
-        "read_xlsx", "sniff_csv", "duckdb_settings", "duckdb_extensions", "duckdb_secrets",
-        "getenv", "current_setting", "query", "query_table", "load_extension", "install_extension",
-        "duckdb_databases", "duckdb_tables", "duckdb_views", "duckdb_columns", "pragma_version",
+        "read_parquet",
+        "read_csv",
+        "read_csv_auto",
+        "read_json",
+        "read_json_auto",
+        "read_ndjson",
+        "read_text",
+        "read_blob",
+        "parquet_scan",
+        "parquet_metadata",
+        "parquet_schema",
+        "glob",
+        "read_xlsx",
+        "sniff_csv",
+        "duckdb_settings",
+        "duckdb_extensions",
+        "duckdb_secrets",
+        "getenv",
+        "current_setting",
+        "query",
+        "query_table",
+        "load_extension",
+        "install_extension",
+        "duckdb_databases",
+        "duckdb_tables",
+        "duckdb_views",
+        "duckdb_columns",
+        "pragma_version",
     }
 )
 SET_OPERATIONS = (exp.Union, exp.Intersect, exp.Except)
@@ -87,7 +110,7 @@ class Guarded:
     tables: tuple[str, ...]
 
 
-def _is_query(node: exp.Expression) -> bool:
+def _is_query(node: exp.Expr) -> bool:
     if isinstance(node, exp.Select):
         return True
     if isinstance(node, SET_OPERATIONS):
@@ -97,7 +120,7 @@ def _is_query(node: exp.Expression) -> bool:
     return False
 
 
-def _function_name(node: exp.Expression) -> str | None:
+def _function_name(node: exp.Expr) -> str | None:
     if isinstance(node, exp.Anonymous):
         return str(node.name).lower()
     if isinstance(node, exp.Func):
@@ -119,16 +142,24 @@ def guard(
     try:
         parsed = [p for p in sqlglot.parse(sql, read="duckdb") if p is not None]
     except ParseError as err:
-        raise Refused("the statement", f"it does not parse as DuckDB SQL ({str(err).splitlines()[0][:120]})") from err
+        raise Refused(
+            "the statement", f"it does not parse as DuckDB SQL ({str(err).splitlines()[0][:120]})"
+        ) from err
     if len(parsed) != 1:
-        raise Refused("a second statement", f"{len(parsed)} statements were sent; one SELECT or WITH is allowed")
+        raise Refused(
+            "a second statement", f"{len(parsed)} statements were sent; one SELECT or WITH is allowed"
+        )
     tree = parsed[0]
     for node in tree.walk():
         kind = type(node).__name__
         if kind in REFUSED_NODES:
             raise Refused(REFUSED_NODES[kind], "the server is read only and runs queries only")
-    if not _is_query(tree):
-        raise Refused(type(tree).__name__.upper(), "only a SELECT, a WITH over a SELECT, or a set operation of SELECTs runs")
+    # Every shape _is_query accepts is an exp.Query; the isinstance check narrows the type.
+    if not isinstance(tree, exp.Query) or not _is_query(tree):
+        raise Refused(
+            type(tree).__name__.upper(),
+            "only a SELECT, a WITH over a SELECT, or a set operation of SELECTs runs",
+        )
     for node in tree.walk():
         name = _function_name(node)
         if name and (name in REFUSED_FUNCTIONS or name.startswith(("read_", "pragma_", "duckdb_"))):
@@ -165,7 +196,11 @@ def guard(
     final = requested if current is None else min(current, requested)
     unlimited_tree = tree.copy()
     unlimited_tree.set("limit", None)
-    limited = tree.limit(final, copy=True) if isinstance(tree, exp.Select) else exp.select("*").from_(tree.subquery("q")).limit(final)
+    limited = (
+        tree.limit(final, copy=True)
+        if isinstance(tree, exp.Select)
+        else exp.select("*").from_(tree.subquery("q")).limit(final)
+    )
     return Guarded(
         sql=limited.sql(dialect="duckdb"),
         unlimited=unlimited_tree.sql(dialect="duckdb"),

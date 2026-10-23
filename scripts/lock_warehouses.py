@@ -50,7 +50,12 @@ RULES: dict[str, dict[str, object]] = {
         ],
     },
     "ledger": {
-        "tables": ["results/*.parquet", "results/*/*.parquet", "results/*/*/*.parquet", "results/exports/extracts/*.csv"],
+        "tables": [
+            "results/*.parquet",
+            "results/*/*.parquet",
+            "results/*/*/*.parquet",
+            "results/exports/extracts/*.csv",
+        ],
         "skip": set(),
         "documents": ["results/manifest.json", "docs/definitions.md", "metrics/bank.yaml", "LICENSE"],
     },
@@ -73,7 +78,9 @@ def git(repo: Path, *args: str) -> str:
 
 
 def blob_sha256(repo: Path, path: str) -> tuple[str, int]:
-    data = subprocess.run(["git", "-C", str(repo), "show", f"{TAG}:{path}"], check=True, capture_output=True).stdout
+    data = subprocess.run(
+        ["git", "-C", str(repo), "show", f"{TAG}:{path}"], check=True, capture_output=True
+    ).stdout
     return hashlib.sha256(data).hexdigest(), len(data)
 
 
@@ -87,7 +94,9 @@ def lock_one(name: str, repo: Path) -> dict[str, object]:
     for path in listed:
         if path in rules["skip"]:  # type: ignore[operator]
             continue
-        if not any(fnmatch.fnmatchcase(path, pat) and path.count("/") == pat.count("/") for pat in rules["tables"]):  # type: ignore[attr-defined]
+        if not any(
+            fnmatch.fnmatchcase(path, pat) and path.count("/") == pat.count("/") for pat in rules["tables"]
+        ):  # type: ignore[attr-defined]
             continue
         digest, size = blob_sha256(repo, path)
         tables.append({"path": path, "table": table_name(name, path), "sha256": digest, "bytes": size})
@@ -119,7 +128,10 @@ def main() -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(lock, indent=1) + "\n", encoding="utf-8")
     for name, w in lock["warehouses"].items():  # type: ignore[attr-defined]
-        print(f"{name}: {len(w['tables'])} tables, {sum(t['bytes'] for t in w['tables']) / 1e6:.1f} MB at {w['commit'][:7]}")
+        print(
+            f"{name}: {len(w['tables'])} tables, "
+            f"{sum(t['bytes'] for t in w['tables']) / 1e6:.1f} MB at {w['commit'][:7]}"
+        )
     return 0
 
 

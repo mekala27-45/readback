@@ -39,28 +39,66 @@ async def test_readback_agrees_within_half_a_unit_of_the_published_rounding(clie
     pub = await call(client, "published", {"warehouse": "ledger", "key_or_pattern": "f01.nim_q"})
     v = pub.structured_content["values"][0]
     assert v["display"] == "5.60%"
-    ok = await call(client, "readback", {"claim": {"value": 5.6, "unit": "percent", "warehouse": "ledger", "manifest_key": "f01.nim_q"}})
+    ok = await call(
+        client,
+        "readback",
+        {"claim": {"value": 5.6, "unit": "percent", "warehouse": "ledger", "manifest_key": "f01.nim_q"}},
+    )
     assert ok.structured_content["verdict"] == "agree"
-    off = await call(client, "readback", {"claim": {"value": 5.61, "unit": "percent", "warehouse": "ledger", "manifest_key": "f01.nim_q"}})
+    off = await call(
+        client,
+        "readback",
+        {"claim": {"value": 5.61, "unit": "percent", "warehouse": "ledger", "manifest_key": "f01.nim_q"}},
+    )
     assert off.structured_content["verdict"] == "disagree"
 
 
 async def test_readback_converts_a_percent_and_refuses_a_dollar_against_a_fraction(client: Client) -> None:
-    as_fraction = await call(client, "readback", {"claim": {"value": 0.056, "unit": "fraction", "warehouse": "ledger", "manifest_key": "f01.nim_q"}})
+    as_fraction = await call(
+        client,
+        "readback",
+        {"claim": {"value": 0.056, "unit": "fraction", "warehouse": "ledger", "manifest_key": "f01.nim_q"}},
+    )
     assert as_fraction.structured_content["verdict"] == "agree"
-    mismatch = await call(client, "readback", {"claim": {"value": 0.056, "unit": "dollars", "warehouse": "ledger", "manifest_key": "f01.nim_q"}})
+    mismatch = await call(
+        client,
+        "readback",
+        {"claim": {"value": 0.056, "unit": "dollars", "warehouse": "ledger", "manifest_key": "f01.nim_q"}},
+    )
     assert mismatch.structured_content["verdict"] == "unit mismatch"
 
 
 async def test_readback_finds_a_result_id_in_its_chain_and_refuses_a_foreign_one(client: Client) -> None:
-    run = await call(client, "run_sql", {"warehouse": "turnaround", "sql": "select sum(on_time) / sum(flown) as rate from mart_carrier_month where carrier = 'DL' and year = 2019"})
+    run = await call(
+        client,
+        "run_sql",
+        {
+            "warehouse": "turnaround",
+            "sql": (
+                "select sum(on_time) / sum(flown) as rate from mart_carrier_month "
+                "where carrier = 'DL' and year = 2019"
+            ),
+        },
+    )
     rid = run.structured_content["result_id"]
     value = run.structured_content["rows"][0][0]
-    claim = {"value": round(value * 100, 1), "unit": "percent", "display": f"{value * 100:.1f}%", "result_id": rid, "column": "rate", "evidence_unit": "fraction"}
+    claim = {
+        "value": round(value * 100, 1),
+        "unit": "percent",
+        "display": f"{value * 100:.1f}%",
+        "result_id": rid,
+        "column": "rate",
+        "evidence_unit": "fraction",
+    }
     mine = await call(client, "readback", {"claim": claim})
-    assert mine.structured_content["verdict"] == "agree" and mine.structured_content["unit_source"] == "declared"
+    assert (
+        mine.structured_content["verdict"] == "agree" and mine.structured_content["unit_source"] == "declared"
+    )
     foreign = await call(client, "readback", {"claim": claim}, parent=OTHER)
-    assert foreign.structured_content["verdict"] == "refused" and "another request chain" in foreign.structured_content["reason"]
+    assert (
+        foreign.structured_content["verdict"] == "refused"
+        and "another request chain" in foreign.structured_content["reason"]
+    )
     tampered = dict(claim, result_id=rid[:-2] + ("00" if not rid.endswith("00") else "11"))
     bad = await call(client, "readback", {"claim": tampered})
     assert bad.structured_content["verdict"] == "refused"
@@ -72,7 +110,9 @@ async def test_readback_needs_exactly_one_source(client: Client) -> None:
 
 
 async def test_run_sql_refuses_with_the_clause_named(client: Client) -> None:
-    r = await call(client, "run_sql", {"warehouse": "doorstep", "sql": "select * from turnaround.mart_carrier_month"})
+    r = await call(
+        client, "run_sql", {"warehouse": "doorstep", "sql": "select * from turnaround.mart_carrier_month"}
+    )
     assert r.is_error and "turnaround.mart_carrier_month" in r.content[0].text
 
 
@@ -96,8 +136,12 @@ async def test_lookup_returns_candidates_when_the_client_cannot_be_asked(client:
 
 
 async def test_lookup_resolves_names_the_way_the_warehouse_spells_them(client: Client) -> None:
-    for kind, name, want in [("carrier", "Delta Air Lines", "DL"), ("metro", "Denver", "Denver-Aurora-Centennial, CO"),
-                             ("airport", "LaGuardia", "LGA"), ("quarter", "the second quarter of 2025", "2025Q2"),
-                             ("aml_rule", "money mule", "mule")]:
+    for kind, name, want in [
+        ("carrier", "Delta Air Lines", "DL"),
+        ("metro", "Denver", "Denver-Aurora-Centennial, CO"),
+        ("airport", "LaGuardia", "LGA"),
+        ("quarter", "the second quarter of 2025", "2025Q2"),
+        ("aml_rule", "money mule", "mule"),
+    ]:
         r = await call(client, "lookup", {"kind": kind, "name": name})
         assert r.structured_content["resolved"] == want, (kind, name)

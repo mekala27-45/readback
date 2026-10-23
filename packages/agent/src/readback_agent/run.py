@@ -46,19 +46,36 @@ def graph(checkpointer: BaseCheckpointSaver[Any]) -> Any:
 def submit_answer_spec(reg: Registry) -> dict[str, Any]:
     from readback_core.answer import Draft
 
-    return {"type": "function", "function": {"name": "submit_answer", "description": reg.text("submit_answer").strip(), "parameters": Draft.model_json_schema()}}
+    return {
+        "type": "function",
+        "function": {
+            "name": "submit_answer",
+            "description": reg.text("submit_answer").strip(),
+            "parameters": Draft.model_json_schema(),
+        },
+    }
 
 
 async def tool_specs(client: Client) -> list[dict[str, Any]]:
     tools = (await client.list_tools()).tools
-    return [{"type": "function", "function": {"name": t.name, "description": t.description or "", "parameters": t.input_schema}} for t in tools]
+    return [
+        {
+            "type": "function",
+            "function": {"name": t.name, "description": t.description or "", "parameters": t.input_schema},
+        }
+        for t in tools
+    ]
 
 
 def preview(result: Any) -> dict[str, Any] | None:
     """What a tool card on the desk shows: the columns and the first ten rows of a run_sql result."""
     if not isinstance(result, dict) or "columns" not in result or "rows" not in result:
         return None
-    return {"columns": result["columns"], "rows": result["rows"][:10], "row_count": result.get("row_count", len(result["rows"]))}
+    return {
+        "columns": result["columns"],
+        "rows": result["rows"][:10],
+        "row_count": result.get("row_count", len(result["rows"])),
+    }
 
 
 @dataclass
@@ -79,9 +96,22 @@ class Agent:
 
     async def identifiers(self, tools: ToolClient) -> set[str]:
         if self._identifiers is None:
-            out = await tools.call("run_sql", {"warehouse": "doorstep", "sql": "select distinct cbsa_code from mart_metro_year", "limit": 500})
+            out = await tools.call(
+                "run_sql",
+                {
+                    "warehouse": "doorstep",
+                    "sql": "select distinct cbsa_code from mart_metro_year",
+                    "limit": 500,
+                },
+            )
             ids = {str(r[0]) for r in out["rows"]}
-            more = await tools.call("run_sql", {"warehouse": "ledger", "sql": "select distinct cast(county_fips as varchar) from f03_county"})
+            more = await tools.call(
+                "run_sql",
+                {
+                    "warehouse": "ledger",
+                    "sql": "select distinct cast(county_fips as varchar) from f03_county",
+                },
+            )
             ids |= {str(r[0]) for r in more["rows"]}
             self._identifiers = ids
             await Floor(tools.call).dictionaries()
@@ -118,15 +148,26 @@ class Agent:
             span.set_attribute("readback.router.reason", choice.reason)
             span.set_attribute("readback.prompt_hash", reg.digest)
             if cleaned.removed:
-                span.set_attribute("readback.redacted", ",".join(f"{k}:{v}" for k, v in sorted(cleaned.removed.items())))
+                span.set_attribute(
+                    "readback.redacted", ",".join(f"{k}:{v}" for k, v in sorted(cleaned.removed.items()))
+                )
 
             def make_caller(p: Any) -> ModelCaller:
                 kwargs = {"factory": self.model_factory} if self.model_factory else {}
                 return ModelCaller(p, self.ledger, self.store, reg.digest, trace_id, **kwargs)
 
-            ctx = Context(tools=tools, router=router, make_caller=make_caller, registry=reg, floor=Floor(tools.call), specs=specs,
-                          identifiers=identifiers, ceiling=self.ceiling, summarize_after=self.summarize_after,
-                          fail_gate_once=[True] if fail_gate_once else [])
+            ctx = Context(
+                tools=tools,
+                router=router,
+                make_caller=make_caller,
+                registry=reg,
+                floor=Floor(tools.call),
+                specs=specs,
+                identifiers=identifiers,
+                ceiling=self.ceiling,
+                summarize_after=self.summarize_after,
+                fail_gate_once=[True] if fail_gate_once else [],
+            )
             if resume is not None:
                 start: Any = Command(resume=resume)
             else:
@@ -136,10 +177,25 @@ class Agent:
                 if last:
                     history.append({"q": last["question"], "a": last["text"]})
                 start = {
-                    "question": cleaned.text, "thread_id": thread, "provider": choice.provider.name, "model": choice.provider.model_id(),
-                    "history": history, "messages": [], "aliases": {}, "attempts": 0, "draft": None, "first_draft": None,
-                    "gate": None, "needs_choice": None, "choice": None, "refusal": None, "caught": [], "answer": None,
-                    "unsupported_before": 0, "started": time.perf_counter(), "traceparent": carrier(),
+                    "question": cleaned.text,
+                    "thread_id": thread,
+                    "provider": choice.provider.name,
+                    "model": choice.provider.model_id(),
+                    "history": history,
+                    "messages": [],
+                    "aliases": {},
+                    "attempts": 0,
+                    "draft": None,
+                    "first_draft": None,
+                    "gate": None,
+                    "needs_choice": None,
+                    "choice": None,
+                    "refusal": None,
+                    "caught": [],
+                    "answer": None,
+                    "unsupported_before": 0,
+                    "started": time.perf_counter(),
+                    "traceparent": carrier(),
                 }
             sent = 0
             meta = {"thread_id": thread, "trace_id": trace_id, "redactions": cleaned.removed}
@@ -148,15 +204,35 @@ class Agent:
                     while sent < len(tools.records):
                         r = tools.records[sent]
                         sent += 1
-                        yield {"event": "tool", **meta, "id": r.id, "tool": r.tool, "ok": r.ok, "args": r.args,
-                               "result_id": (r.result or {}).get("result_id"), "error": r.error, "preview": preview(r.result)}
+                        yield {
+                            "event": "tool",
+                            **meta,
+                            "id": r.id,
+                            "tool": r.tool,
+                            "ok": r.ok,
+                            "args": r.args,
+                            "result_id": (r.result or {}).get("result_id"),
+                            "error": r.error,
+                            "preview": preview(r.result),
+                        }
                     if node == "classify" and values:
-                        yield {"event": "classified", **meta, "family": values.get("family"), "rule": values.get("rule"),
-                               "provider": choice.provider.name, "reason": choice.reason}
+                        yield {
+                            "event": "classified",
+                            **meta,
+                            "family": values.get("family"),
+                            "rule": values.get("rule"),
+                            "provider": choice.provider.name,
+                            "reason": choice.reason,
+                        }
                     elif node == "gate" and values:
                         gate = values.get("gate") or {}
-                        yield {"event": "gate", **meta, "passed": gate.get("passed"), "claims": gate.get("claims", []),
-                               "unsupported": gate.get("unsupported", 0)}
+                        yield {
+                            "event": "gate",
+                            **meta,
+                            "passed": gate.get("passed"),
+                            "claims": gate.get("claims", []),
+                            "unsupported": gate.get("unsupported", 0),
+                        }
                     elif node == "__interrupt__":
                         value = values[0].value if isinstance(values, (list, tuple)) else values
                         yield {"event": "interrupt", **meta, **dict(value)}
@@ -175,8 +251,18 @@ class Agent:
             if event["event"] == "answer":
                 answer = Answer.model_validate(event["answer"])
             elif event["event"] == "interrupt":
-                interrupt_value = {k: v for k, v in event.items() if k not in {"event", "thread_id", "trace_id", "redactions"}}
-        return Turn(meta.get("thread_id", ""), answer, interrupt_value, meta.get("trace_id", ""), meta.get("redactions", {}))
+                interrupt_value = {
+                    k: v
+                    for k, v in event.items()
+                    if k not in {"event", "thread_id", "trace_id", "redactions"}
+                }
+        return Turn(
+            meta.get("thread_id", ""),
+            answer,
+            interrupt_value,
+            meta.get("trace_id", ""),
+            meta.get("redactions", {}),
+        )
 
     async def resume_after_crash(self, client: Client, thread_id: str, provider: str | None = None) -> Turn:
         """Continue a turn whose process stopped mid graph, from its last checkpoint."""
@@ -187,7 +273,14 @@ class Agent:
         saved = await self.app.aget_state(config)
         parent = (saved.values or {}).get("traceparent") if saved else None
         with agent_span(thread_id, parent=parent) as span:
-            ctx = Context(tools=tools, router=router, make_caller=lambda p: ModelCaller(p, self.ledger, self.store, reg.digest, trace_id_of(span)),
-                          registry=reg, floor=Floor(tools.call), specs=await tool_specs(client), identifiers=await self.identifiers(tools))
+            ctx = Context(
+                tools=tools,
+                router=router,
+                make_caller=lambda p: ModelCaller(p, self.ledger, self.store, reg.digest, trace_id_of(span)),
+                registry=reg,
+                floor=Floor(tools.call),
+                specs=await tool_specs(client),
+                identifiers=await self.identifiers(tools),
+            )
             result = await self.app.ainvoke(None, config, context=ctx)
             return Turn(thread_id, Answer.model_validate(result["answer"]), None, trace_id_of(span))

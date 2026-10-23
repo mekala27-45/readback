@@ -43,7 +43,9 @@ class ColumnOut(BaseModel):
     role: str
     unit: str | None
     definition: str | None
-    cited: str | None = Field(default=None, description="file:line of the definition in the build, when lifted")
+    cited: str | None = Field(
+        default=None, description="file:line of the definition in the build, when lifted"
+    )
 
 
 class DescribeOut(Out):
@@ -119,7 +121,9 @@ class Claim(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
     value: float
-    unit: str = Field(description="the unit of the value as claimed: fraction, percent, dollars, count, minutes ...")
+    unit: str = Field(
+        description="the unit of the value as claimed: fraction, percent, dollars, count, minutes ..."
+    )
     display: str | None = Field(default=None, description="the number as it will be shown, e.g. 26.5%")
     warehouse: WarehouseName | None = None
     result_id: str | None = Field(default=None, description="from an earlier run_sql in the same chain")
@@ -131,7 +135,8 @@ class Claim(BaseModel):
         "<warehouse>.<table>.rows; warehouses joined by + are summed, as doorstep+ledger.tables",
     )
     definition_id: str | None = Field(
-        default=None, description="a definition document from search_catalog, for a number the build's definition prints"
+        default=None,
+        description="a definition document from search_catalog, for a number the build's definition prints",
     )
     column: str | None = Field(default=None, description="the result column the value is read from")
     row: int = Field(default=0, ge=0)
@@ -164,5 +169,7 @@ class LookupOut(Out):
     query: str
     resolved: str | None
     warehouse: WarehouseName | None
-    needs_choice: bool = Field(description="true when the name matches more than one entity and the client could not be asked")
+    needs_choice: bool = Field(
+        description="true when the name matches more than one entity and the client could not be asked"
+    )
     candidates: list[LookupCandidate]

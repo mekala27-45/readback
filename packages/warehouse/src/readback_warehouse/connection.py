@@ -42,7 +42,9 @@ def _build_views(db: Path, base: Path, lock: dict[str, Any], extra: dict[tuple[s
                 path = base / name / t["path"]
                 if not path.exists():
                     raise WarehouseMissing(f"{name}: {t['path']} is not on disk; run make fetch")
-                con.execute(f'create or replace view "{name}"."{t["table"]}" as select * from {_reader(path)}')
+                con.execute(
+                    f'create or replace view "{name}"."{t["table"]}" as select * from {_reader(path)}'
+                )
         for (schema, table), path in sorted(extra.items()):
             con.execute(f'create or replace view "{schema}"."{table}" as select * from {_reader(path)}')
     finally:

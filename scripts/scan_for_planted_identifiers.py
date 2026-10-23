@@ -178,12 +178,7 @@ def findings(
 def targets(root: Path) -> list[Path]:
     found: list[Path] = []
     for pattern in SCAN_GLOBS:
-        found.extend(
-            p
-            for p in root.glob(pattern)
-            if p.is_file()
-            and "node_modules" not in p.parts
-        )
+        found.extend(p for p in root.glob(pattern) if p.is_file() and "node_modules" not in p.parts)
     return sorted(set(found))
 
 

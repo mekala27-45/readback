@@ -13,7 +13,7 @@ import re
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, TypeGuard
 
 import yaml
 from readback_catalog.measures import Measure, load, period_ranking_sql, quote, ranking_sql, value_sql
@@ -26,11 +26,20 @@ from readback_core.units import FRACTIONAL
 from readback_planner.classify import Classification, classify
 
 CallTool = Callable[[str, dict[str, Any]], Awaitable[dict[str, Any]]]
-FULL_QUARTERS = [f"{y}Q{q}" for y in (2023, 2024, 2025, 2026) for q in (1, 2, 3, 4) if "2023Q4" <= f"{y}Q{q}" <= "2026Q2"]
+FULL_QUARTERS = [
+    f"{y}Q{q}" for y in (2023, 2024, 2025, 2026) for q in (1, 2, 3, 4) if "2023Q4" <= f"{y}Q{q}" <= "2026Q2"
+]
 YEAR = re.compile(r"\b(19\d\d|20\d\d)\b(?!Q)")
 QUARTER = re.compile(r"\b(20\d\dQ[1-4])\b")
 TOP_K = re.compile(r"\bwhich (\d+)\b|\b(?:top|bottom) (\d+)\b", re.I)
 NUMBER = re.compile(r"[-+]?\$?\d[\d,]*(?:\.\d+)?")
+
+
+WarehouseName = Literal["doorstep", "turnaround", "ledger"]
+
+
+def _is_warehouse(name: str) -> TypeGuard[WarehouseName]:
+    return name in ("doorstep", "turnaround", "ledger")
 
 
 class FloorCannot(ValueError):
@@ -79,7 +88,7 @@ class Dictionaries:
         for code, aliases in entities.get("carriers", {}).items():
             for a in aliases:
                 self.names.append(("carrier", str(a), str(code)))
-        for code, aliases in entities.get("airports", {}).items():
+        for code in entities.get("airports", {}):
             self.names.append(("airport", str(code), str(code)))
         for group in entities.get("applicant_groups", {}):
             self.names.append(("applicant_group", str(group), str(group)))
@@ -138,10 +147,27 @@ class Floor:
 
     async def dictionaries(self) -> Dictionaries:
         if self._dict is None:
-            out = await self.tool("run_sql", {"warehouse": "doorstep", "sql": "select distinct cbsa_title, kind from mart_metro_year order by cbsa_title", "limit": 500})
+            out = await self.tool(
+                "run_sql",
+                {
+                    "warehouse": "doorstep",
+                    "sql": "select distinct cbsa_title, kind from mart_metro_year order by cbsa_title",
+                    "limit": 500,
+                },
+            )
             rows = [(r[0], r[1]) for r in out["rows"]]
             if out["row_count"] > len(rows):
-                more = await self.tool("run_sql", {"warehouse": "doorstep", "sql": "select distinct cbsa_title, kind from mart_metro_year where kind = 'metropolitan' order by cbsa_title", "limit": 500})
+                more = await self.tool(
+                    "run_sql",
+                    {
+                        "warehouse": "doorstep",
+                        "sql": (
+                            "select distinct cbsa_title, kind from mart_metro_year "
+                            "where kind = 'metropolitan' order by cbsa_title"
+                        ),
+                        "limit": 500,
+                    },
+                )
                 rows = sorted({*rows, *[(r[0], r[1]) for r in more["rows"]]})
             self._dict = Dictionaries(rows, self.entities)
             Floor._shared = self._dict
@@ -154,7 +180,15 @@ class Floor:
         airports = d.find(question, {"airport"})
         c = classify(question, self.measures, airport_named=bool(airports))
         if c.family == "refusal":
-            return FloorResult(Draft(text=f"{REFUSAL} This question was refused because {c.refusal}.", refused=True, refusal_reason=c.refusal), c, self.plan)
+            return FloorResult(
+                Draft(
+                    text=f"{REFUSAL} This question was refused because {c.refusal}.",
+                    refused=True,
+                    refusal_reason=c.refusal,
+                ),
+                c,
+                self.plan,
+            )
         try:
             if c.family == "definition":
                 draft = await self.definition(question, c)
@@ -164,22 +198,43 @@ class Floor:
                 raise FloorCannot("it names no measure the warehouses publish")
             else:
                 mentions = d.find(question, {c.measure.entity})
-                if c.measure.entity in {"metro", "carrier", "airport"} and not mentions and c.family != "top_k":
+                if (
+                    c.measure.entity in {"metro", "carrier", "airport"}
+                    and not mentions
+                    and c.family != "top_k"
+                ):
                     ambiguous = self._ambiguous(question, c.measure.entity)
                     if ambiguous and choice is None:
-                        return FloorResult(Draft(text="", refused=False), c, self.plan, needs_choice=ambiguous)
+                        return FloorResult(
+                            Draft(text="", refused=False), c, self.plan, needs_choice=ambiguous
+                        )
                     if ambiguous and choice:
                         mentions = [Mention(c.measure.entity, choice, choice, question.find(ambiguous.name))]
                     else:
-                        raise FloorCannot(f"it names a {c.measure.entity} that is not in the {c.measure.warehouse} warehouse")
+                        raise FloorCannot(
+                            f"it names a {c.measure.entity} that is not in the "
+                            f"{c.measure.warehouse} warehouse"
+                        )
                 draft = await getattr(self, c.family)(question, c.measure, mentions)
         except FloorCannot as err:
-            return FloorResult(Draft(text=f"{REFUSAL} This question was refused because {err}.", refused=True, refusal_reason=str(err)), c, self.plan)
+            return FloorResult(
+                Draft(
+                    text=f"{REFUSAL} This question was refused because {err}.",
+                    refused=True,
+                    refusal_reason=str(err),
+                ),
+                c,
+                self.plan,
+            )
         return FloorResult(draft, c, self.plan)
 
     def _ambiguous(self, question: str, kind: str) -> Choice | None:
         for word, spec in self.entities.get("ambiguous", {}).items():
-            if spec["kind"] == kind and re.search(rf"\b{re.escape(word)}\b", question, re.I) and len(spec["candidates"]) > 1:
+            if (
+                spec["kind"] == kind
+                and re.search(rf"\b{re.escape(word)}\b", question, re.I)
+                and len(spec["candidates"]) > 1
+            ):
                 return Choice(kind=kind, name=word, candidates=list(spec["candidates"]))
         return None
 
@@ -193,8 +248,16 @@ class Floor:
 
     def claim(self, m: Measure, value: float, rid: str, row: int = 0, column: str = "value") -> DraftClaim:
         shown_value, unit, shown = _display(value, m)
-        return DraftClaim(value=shown_value, unit=unit, display=shown, warehouse=m.warehouse,  # type: ignore[arg-type]
-                          result_id=rid, column=column, row=row, evidence_unit=m.unit)
+        return DraftClaim(
+            value=shown_value,
+            unit=unit,
+            display=shown,
+            warehouse=m.warehouse,  # type: ignore[arg-type]
+            result_id=rid,
+            column=column,
+            row=row,
+            evidence_unit=m.unit,
+        )
 
     def times(self, question: str, m: Measure) -> list[str | int]:
         if m.time == "year":
@@ -205,8 +268,13 @@ class Floor:
 
     @staticmethod
     def where(m: Measure, name: str) -> str:
-        return {"metro": f"in {name}", "carrier": f"for {name}", "airport": f"at {name}",
-                "applicant_group": f"for {name} applicants", "aml_rule": f"for the {name.replace('_', ' ')} rule"}.get(m.entity, "")
+        return {
+            "metro": f"in {name}",
+            "carrier": f"for {name}",
+            "airport": f"at {name}",
+            "applicant_group": f"for {name} applicants",
+            "aml_rule": f"for the {name.replace('_', ' ')} rule",
+        }.get(m.entity, "")
 
     def written(self, mentions: list[Mention]) -> dict[str, str]:
         return {x.value: x.text for x in mentions}
@@ -221,7 +289,11 @@ class Floor:
         t = times[0] if times else None
         v, rid = await self.value(m, entity, t)
         c = self.claim(m, v, rid)
-        subject = self.where(m, mentions[0].text) if entity else ("at Harborline Bank" if m.entity == "bank" else "")
+        subject = (
+            self.where(m, mentions[0].text)
+            if entity
+            else ("at Harborline Bank" if m.entity == "bank" else "")
+        )
         when = f" in {t}" if t is not None else ""
         text = f"The {m.phrases[0]} {subject}{when} was {c.display}.".replace("  ", " ").replace(" .", ".")
         return Draft(text=text, claims=[c], warehouses=[m.warehouse], selection=[entity] if entity else [])
@@ -237,7 +309,9 @@ class Floor:
             ca, cb = self.claim(m, va, ra), self.claim(m, vb, rb)
             win, lose, cw, cl = (a, b, ca, cb) if va > vb else (b, a, cb, ca)
             where = " at Harborline Bank" if m.entity == "bank" else ""
-            text = f"The {m.phrases[0]}{where} was higher in {win}: {cw.display} against {cl.display} in {lose}."
+            text = (
+                f"The {m.phrases[0]}{where} was higher in {win}: {cw.display} against {cl.display} in {lose}."
+            )
             claims = [cw, cl]
             return Draft(text=text, claims=claims, warehouses=[m.warehouse], selection=[str(win)])
         if len(mentions) < 2:
@@ -251,7 +325,9 @@ class Floor:
         cx, cy = self.claim(m, vx, rx), self.claim(m, vy, ry)
         (w, cw), (l_, cl) = ((x, cx), (y, cy)) if vx > vy else ((y, cy), (x, cx))
         when = f" in {t}" if t is not None else ""
-        text = f"{w.text} had the higher {m.phrases[0]}{when}: {cw.display}, against {cl.display} for {l_.text}."
+        text = (
+            f"{w.text} had the higher {m.phrases[0]}{when}: {cw.display}, against {cl.display} for {l_.text}."
+        )
         return Draft(text=text, claims=[cw, cl], warehouses=[m.warehouse], selection=[w.value])
 
     async def trend(self, question: str, m: Measure, mentions: list[Mention]) -> Draft:
@@ -265,7 +341,9 @@ class Floor:
         va, ra = await self.value(m, entity, a)
         vb, rb = await self.value(m, entity, b)
         ca, cb = self.claim(m, va, ra), self.claim(m, vb, rb)
-        direction = "rose" if cb.value > ca.value else ("fell" if cb.value < ca.value else "unchanged")
+        direction: Literal["rose", "fell", "unchanged"] = (
+            "rose" if cb.value > ca.value else ("fell" if cb.value < ca.value else "unchanged")
+        )
         if m.entity == "bank":
             subject = "Harborline Bank's " + m.phrases[0]
         elif entity:
@@ -273,7 +351,9 @@ class Floor:
         else:
             subject = f"The {m.phrases[0]}"
         text = f"{subject} {direction} from {ca.display} in {a} to {cb.display} in {b}."
-        return Draft(text=text[0].upper() + text[1:], claims=[ca, cb], warehouses=[m.warehouse], direction=direction)  # type: ignore[arg-type]
+        return Draft(
+            text=text[0].upper() + text[1:], claims=[ca, cb], warehouses=[m.warehouse], direction=direction
+        )
 
     async def top_k(self, question: str, m: Measure, mentions: list[Mention]) -> Draft:
         k_match = TOP_K.search(question)
@@ -284,14 +364,20 @@ class Floor:
         if m.entity == "bank":
             sql = period_ranking_sql(m, k, highest, FULL_QUARTERS)
         elif m.entity == "metro":
-            floor = "households >= 1000000" if re.search(r"at least a million households", question, re.I) else None
+            floor = (
+                "households >= 1000000"
+                if re.search(r"at least a million households", question, re.I)
+                else None
+            )
             sql = ranking_sql(m, t, k, highest, floor=floor)
         elif m.entity == "carrier":
             having = "sum(flown) >= 500000" if re.search(r"half a million flights", question, re.I) else None
             sql = ranking_sql(m, t, k, highest, having=having)
         elif m.entity == "airport":
             named = [x.value for x in mentions] or [str(a) for a in self.entities.get("airports", {})]
-            sql = ranking_sql(m, t, k, highest, floor="airport in (" + ", ".join(quote(a) for a in named) + ")")
+            sql = ranking_sql(
+                m, t, k, highest, floor="airport in (" + ", ".join(quote(a) for a in named) + ")"
+            )
         else:
             sql = ranking_sql(m, None, k, highest)
         out = await self.tool("run_sql", {"warehouse": m.warehouse, "sql": sql})
@@ -302,10 +388,16 @@ class Floor:
         claims = [self.claim(m, float(r[1]), rid, row=i) for i, r in enumerate(rows)]
         names = [str(r[0]) for r in rows]
         carrier_names = {code: aliases[0] for code, aliases in self.entities.get("carriers", {}).items()}
-        label = (lambda v: f"{carrier_names.get(v, v)} ({v})") if m.entity == "carrier" else (lambda v: v.replace("_", " "))
+        label = (
+            (lambda v: f"{carrier_names.get(v, v)} ({v})")
+            if m.entity == "carrier"
+            else (lambda v: v.replace("_", " "))
+        )
         word = "highest" if highest else "lowest"
         when = f" in {t}" if t is not None else ""
-        lines = [f"{i + 1}. {label(n)}: {c.display}" for i, (n, c) in enumerate(zip(names, claims, strict=True))]
+        lines = [
+            f"{i + 1}. {label(n)}: {c.display}" for i, (n, c) in enumerate(zip(names, claims, strict=True))
+        ]
         text = f"The {len(rows)} with the {word} {m.phrases[0]}{when}:\n" + "\n".join(lines)
         return Draft(text=text, claims=claims, warehouses=[m.warehouse], selection=names)
 
@@ -321,10 +413,18 @@ class Floor:
         # quoted. An entry without that citation is text from somewhere else, and text from somewhere
         # else can carry an instruction; the red team plants one to prove the rule.
         cited = re.compile(r"\(docs/definitions\.md:\d+\)$")
-        hit = next((h for h in out["hits"] if h["kind"] == "definition" and (cited.search(h["name"]) or not self.cite_rule)), None)
+        hit = next(
+            (
+                h
+                for h in out["hits"]
+                if h["kind"] == "definition" and (cited.search(h["name"]) or not self.cite_rule)
+            ),
+            None,
+        )
         if hit is None:
             raise FloorCannot(f"no build's definitions document has a cited entry for {term}")
-        doc_id = f"{hit['warehouse']}.definition.{re.sub(r'[^a-z0-9]+', '_', hit['name'].split(' (')[0].lower()).strip('_')}"
+        slug = re.sub(r"[^a-z0-9]+", "_", hit["name"].split(" (")[0].lower()).strip("_")
+        doc_id = f"{hit['warehouse']}.definition.{slug}"
         body = hit["definition"]
         text = f"In {hit['warehouse']}'s definitions document: {body}"
         from readback_gate.gate import check_text
@@ -334,7 +434,15 @@ class Floor:
         for tok in report.unsupported:
             number = float(NUMBER.search(tok.text).group(0).replace("$", "").replace(",", ""))  # type: ignore[union-attr]
             unit = "percent" if "%" in tok.text else "none"
-            claims.append(DraftClaim(value=number, unit=unit, display=tok.text, warehouse=hit["warehouse"], definition_id=doc_id))
+            claims.append(
+                DraftClaim(
+                    value=number,
+                    unit=unit,
+                    display=tok.text,
+                    warehouse=hit["warehouse"],
+                    definition_id=doc_id,
+                )
+            )
         return Draft(text=text, claims=claims, warehouses=[hit["warehouse"]])
 
     async def multi(self, question: str) -> Draft:
@@ -343,17 +451,44 @@ class Floor:
         if "publishes more tables" in q and len(named) == 2:
             info = {w["name"]: w for w in (await self.tool("warehouses", {}))["warehouses"]}
             a, b = named
-            ca = DraftClaim(value=info[a]["tables"], unit="count", display=f"{info[a]['tables']:,}", catalog_key=f"{a}.tables")
-            cb = DraftClaim(value=info[b]["tables"], unit="count", display=f"{info[b]['tables']:,}", catalog_key=f"{b}.tables")
+            ca = DraftClaim(
+                value=info[a]["tables"],
+                unit="count",
+                display=f"{info[a]['tables']:,}",
+                catalog_key=f"{a}.tables",
+            )
+            cb = DraftClaim(
+                value=info[b]["tables"],
+                unit="count",
+                display=f"{info[b]['tables']:,}",
+                catalog_key=f"{b}.tables",
+            )
             win = a if info[a]["tables"] > info[b]["tables"] else b
             text = f"{win} publishes more tables: {a} has {ca.display} and {b} has {cb.display}."
             return Draft(text=text, claims=[ca, cb], warehouses=[a, b], selection=[win])
         if "tables" in q and "in total" in q:
             info = (await self.tool("warehouses", {}))["warehouses"]
             total = sum(w["tables"] for w in info)
-            parts = [DraftClaim(value=w["tables"], unit="count", display=f"{w['tables']:,}", catalog_key=f"{w['name']}.tables") for w in info]
-            whole = DraftClaim(value=total, unit="count", display=f"{total:,}", catalog_key="+".join(w["name"] for w in info) + ".tables")
-            text = f"They publish {whole.display} tables in total: " + ", ".join(f"{w['name']} {p.display}" for w, p in zip(info, parts, strict=True)) + "."
+            parts = [
+                DraftClaim(
+                    value=w["tables"],
+                    unit="count",
+                    display=f"{w['tables']:,}",
+                    catalog_key=f"{w['name']}.tables",
+                )
+                for w in info
+            ]
+            whole = DraftClaim(
+                value=total,
+                unit="count",
+                display=f"{total:,}",
+                catalog_key="+".join(w["name"] for w in info) + ".tables",
+            )
+            text = (
+                f"They publish {whole.display} tables in total: "
+                + ", ".join(f"{w['name']} {p.display}" for w, p in zip(info, parts, strict=True))
+                + "."
+            )
             return Draft(text=text, claims=[whole, *parts], warehouses=[w["name"] for w in info])
         rows = re.search(r"more rows, (\w+)'s (\w+) or (\w+)'s (\w+)", question)
         if rows:
@@ -361,8 +496,14 @@ class Floor:
             oa = await self.tool("run_sql", {"warehouse": wa, "sql": f"select count(*) as n from {ta}"})
             ob = await self.tool("run_sql", {"warehouse": wb, "sql": f"select count(*) as n from {tb}"})
             na, nb = int(oa["rows"][0][0]), int(ob["rows"][0][0])
-            ca = DraftClaim(value=na, unit="count", display=f"{na:,}", warehouse=wa, result_id=oa["result_id"], column="n")  # type: ignore[arg-type]
-            cb = DraftClaim(value=nb, unit="count", display=f"{nb:,}", warehouse=wb, result_id=ob["result_id"], column="n")  # type: ignore[arg-type]
+            # run_sql accepted both names, so both are warehouses.
+            assert _is_warehouse(wa) and _is_warehouse(wb)
+            ca = DraftClaim(
+                value=na, unit="count", display=f"{na:,}", warehouse=wa, result_id=oa["result_id"], column="n"
+            )
+            cb = DraftClaim(
+                value=nb, unit="count", display=f"{nb:,}", warehouse=wb, result_id=ob["result_id"], column="n"
+            )
             win = f"{wa}.{ta}" if na > nb else f"{wb}.{tb}"
             text = f"{win} has more rows: {wa}.{ta} has {ca.display} and {wb}.{tb} has {cb.display}."
             return Draft(text=text, claims=[ca, cb], warehouses=[wa, wb], selection=[win])
@@ -370,24 +511,41 @@ class Floor:
             years = []
             for w in named:
                 sql = {
-                    "doorstep": "select distinct year from ch1_national_series order by 1" if "national series" in q else "select distinct year from mart_metro_year where median_income is not null order by 1",
+                    "doorstep": "select distinct year from ch1_national_series order by 1"
+                    if "national series" in q
+                    else (
+                        "select distinct year from mart_metro_year where median_income is not null order by 1"
+                    ),
                     "turnaround": "select distinct year from mart_carrier_month order by 1",
-                    "ledger": "select distinct cast(period as integer) as year from metrics_bank_year order by 1",
+                    "ledger": (
+                        "select distinct cast(period as integer) as year from metrics_bank_year order by 1"
+                    ),
                 }[w]
                 out = await self.tool("run_sql", {"warehouse": w, "sql": sql})
                 years.append({int(r[0]) for r in out["rows"]})
             both = sorted(years[0] & years[1])
-            listed = ", ".join(str(y) for y in both[:-1]) + (f" and {both[-1]}" if len(both) > 1 else (str(both[0]) if both else "none"))
+            listed = ", ".join(str(y) for y in both[:-1]) + (
+                f" and {both[-1]}" if len(both) > 1 else (str(both[0]) if both else "none")
+            )
             text = f"The years in both are {listed}."
             return Draft(text=text, warehouses=named, selection=[str(y) for y in both])
         if ("metrics" in q and "between them" in q) or ("manifest" in q and "in total" in q):
             fact, noun = ("metrics", "metrics") if "metrics" in q else ("manifest_values", "values")
-            pair = named or (["doorstep", "turnaround"] if fact == "metrics" else ["doorstep", "turnaround", "ledger"])
+            pair = named or (
+                ["doorstep", "turnaround"] if fact == "metrics" else ["doorstep", "turnaround", "ledger"]
+            )
             info = {w["name"]: w for w in (await self.tool("warehouses", {}))["warehouses"]}
-            claims = [DraftClaim(value=info[w][fact], unit="count", display=f"{info[w][fact]:,}", catalog_key=f"{w}.{fact}") for w in pair]
+            claims = [
+                DraftClaim(
+                    value=info[w][fact], unit="count", display=f"{info[w][fact]:,}", catalog_key=f"{w}.{fact}"
+                )
+                for w in pair
+            ]
             total = sum(info[w][fact] for w in pair)
-            whole = DraftClaim(value=total, unit="count", display=f"{total:,}", catalog_key="+".join(pair) + f".{fact}")
-            parts = ", ".join(f"{w} {c.display}" for w, c in zip(pair, claims, strict=True))
-            text = f"Between them they publish {whole.display} {noun}: {parts}."
+            whole = DraftClaim(
+                value=total, unit="count", display=f"{total:,}", catalog_key="+".join(pair) + f".{fact}"
+            )
+            joined = ", ".join(f"{w} {c.display}" for w, c in zip(pair, claims, strict=True))
+            text = f"Between them they publish {whole.display} {noun}: {joined}."
             return Draft(text=text, claims=[whole, *claims], warehouses=pair)
         raise FloorCannot("it needs two warehouses in a way the floor was not written for")
