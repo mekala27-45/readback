@@ -66,6 +66,17 @@ def strip_volatile(value: Any) -> Any:
     return value
 
 
+def timeless(table: dict[str, Any] | None) -> Any:
+    """A manifest table without its timing columns (a header ending in ms)."""
+    if table is None:
+        return None
+    keep = [i for i, c in enumerate(table["columns"]) if not str(c).endswith(" ms")]
+    return {
+        "columns": [table["columns"][i] for i in keep],
+        "rows": [[row[i] for i in keep] for row in table["rows"]],
+    }
+
+
 def manifest_drift(old: dict[str, Any], new: dict[str, Any]) -> tuple[list[str], list[str]]:
     drift, volatile = [], []
     for key in sorted(set(old["values"]) | set(new["values"])):
@@ -81,8 +92,8 @@ def manifest_drift(old: dict[str, Any], new: dict[str, Any]) -> tuple[list[str],
         else:
             drift.append(f"manifest {key}: {va!r} then {vb!r}")
     for key in sorted(set(old["tables"]) | set(new["tables"])):
-        ta = strip_volatile(old["tables"].get(key))
-        tb = strip_volatile(new["tables"].get(key))
+        ta = timeless(old["tables"].get(key))
+        tb = timeless(new["tables"].get(key))
         if ta != tb and key not in {"checklist"}:
             drift.append(f"manifest table {key}")
     return drift, volatile
