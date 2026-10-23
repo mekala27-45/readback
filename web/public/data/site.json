@@ -140,8 +140,8 @@
     ],
     [
      "16",
-     "not done",
-     "results/rederive.json: not run"
+     "done",
+     "results/rederive.json: no drift"
     ],
     [
      "17",
@@ -151,7 +151,7 @@
     [
      "18",
      "not done",
-     "coverage 85.4, mypy clean, ruff clean, commits 27, rederive not run"
+     "coverage 85.4, mypy clean, ruff clean, commits 29, rederive no drift"
     ]
    ]
   },
@@ -670,7 +670,7 @@
   }
  },
  "values": {
-  "build.commits": "27",
+  "build.commits": "29",
   "build.decisions": "27",
   "build.protocol_decisions": "5",
   "build.reversals": "2",
@@ -746,7 +746,7 @@
   "providers.reached": "none",
   "quality.coverage": "85.4%",
   "quality.tests": "156",
-  "rederive.status": "not run",
+  "rederive.status": "no drift",
   "redteam.floor.graded": "15",
   "redteam.floor.passed": "15"
  }

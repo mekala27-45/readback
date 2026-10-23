@@ -5,7 +5,7 @@ this file in CI and fails on any difference. Built 2026-10-23.
 
 ## The definition of done
 
-11 of the eighteen items are done.
+12 of the eighteen items are done.
 
 | Item | Status | Evidence |
 |---:|---|---|
@@ -24,9 +24,9 @@ this file in CI and fails on any difference. Built 2026-10-23.
 | 13 | not done | the desk on GitHub Pages, checked in a browser in results/live_check.json |
 | 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
-| 16 | not done | results/rederive.json: not run |
+| 16 | done | results/rederive.json: no drift |
 | 17 | done | DECISIONS.md has 27 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 27, rederive not run |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 29, rederive no drift |
 
 Stretch items (the apps extension, the agent card, the browser floor, the fourth warehouse, the
 editor manifests, the container hardening): not done, and not counted toward the list.

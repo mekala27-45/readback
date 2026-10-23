@@ -9,8 +9,8 @@ writes the SQL, and before the answer leaves, a gate made of plain code re-runs 
 about to say. A number that does not read back is repaired once, then refused. The live site
 answers with **floor** (no model run beats the floor on the development split).
 
-**Status: 11 of the eighteen items in the definition of done are done.** Not done yet:
-item 7, item 10, item 13, item 14, item 15, item 16, item 18. The
+**Status: 12 of the eighteen items in the definition of done are done.** Not done yet:
+item 7, item 10, item 13, item 14, item 15, item 18. The
 checklist below says what each is waiting on.
 
 | | |
@@ -110,9 +110,9 @@ because three builds spent a day each proving their numbers. ARCHITECTURE.md has
 | 13 | not done | the desk on GitHub Pages, checked in a browser in results/live_check.json |
 | 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
-| 16 | not done | results/rederive.json: not run |
+| 16 | done | results/rederive.json: no drift |
 | 17 | done | DECISIONS.md has 27 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 27, rederive not run |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 29, rederive no drift |
 
 ## Run it
 
