@@ -1,0 +1,4586 @@
+{
+ "recorded": true,
+ "recorded_at": "2026-10-23T19:28:57Z",
+ "provider": "floor",
+ "health": {
+  "status": "ok",
+  "version": "0.1.0",
+  "protocol_revision": "2026-07-28",
+  "database": "ok",
+  "provider": "floor",
+  "provider_reason": "the floor: no model",
+  "budgets": [
+   {
+    "provider": "gemini",
+    "model": "gemini-flash-lite-latest",
+    "eligible": false,
+    "reason": "no key in GEMINI_API_KEY",
+    "used_today": 0,
+    "daily_budget": 200
+   },
+   {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "eligible": false,
+    "reason": "no key in GROQ_API_KEY",
+    "used_today": 0,
+    "daily_budget": 1000
+   },
+   {
+    "provider": "openrouter",
+    "model": "openai/gpt-oss-20b:free",
+    "eligible": false,
+    "reason": "no key in OPENROUTER_API_KEY",
+    "used_today": 0,
+    "daily_budget": 50
+   },
+   {
+    "provider": "sambanova",
+    "model": "Meta-Llama-3.3-70B-Instruct",
+    "eligible": false,
+    "reason": "no key in SAMBANOVA_API_KEY",
+    "used_today": 0,
+    "daily_budget": 100
+   },
+   {
+    "provider": "ollama",
+    "model": "qwen2.5:7b",
+    "eligible": false,
+    "reason": "no key in READBACK_OLLAMA_URL",
+    "used_today": 0,
+    "daily_budget": 100000
+   },
+   {
+    "provider": "floor",
+    "model": "no model",
+    "eligible": true,
+    "reason": "eligible",
+    "used_today": 0,
+    "daily_budget": null
+   }
+  ],
+  "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+ },
+ "turns": [
+  {
+   "id": "D-lookup-04",
+   "question": "What was the price to income ratio in Minneapolis in 2016?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "354bf70c9f1447b688f209b78d7e5ed9",
+     "trace_id": "a47d07462f319e75235f883a61814885",
+     "redactions": {},
+     "family": "lookup",
+     "rule": "measure price_to_income",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "354bf70c9f1447b688f209b78d7e5ed9",
+     "trace_id": "a47d07462f319e75235f883a61814885",
+     "redactions": {},
+     "id": "t5",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "doorstep",
+      "sql": "select max(price_to_income) as value from doorstep.mart_metro_year where (kind = 'metropolitan') and cbsa_title = 'Minneapolis-St. Paul-Bloomington, MN-WI' and year = 2016"
+     },
+     "result_id": "r1.eyJjIjoiYTQ3ZDA3NDYyZjMxOWU3NTIzNWY4ODNhNjE4MTQ4ODUiLCJkIjoiN2IwNDZlNWM3MzYwZDEwNzM4YmU2Y2MxOWJhMTg3ZDY4NGQ5YjgxMmI1YjZmYTUxOWYxNmRlYTIzYTBhZGI2OSIsInMiOiJTRUxFQ1QgTUFYKHByaWNlX3RvX2luY29tZSkgQVMgdmFsdWUgRlJPTSBkb29yc3RlcC5tYXJ0X21ldHJvX3llYXIgV0hFUkUgKGtpbmQgPSAnbWV0cm9wb2xpdGFuJykgQU5EIGNic2FfdGl0bGUgPSAnTWlubmVhcG9saXMtU3QuIFBhdWwtQmxvb21pbmd0b24sIE1OLVdJJyBBTkQgeWVhciA9IDIwMTYgTElNSVQgNTAwIiwidyI6ImRvb3JzdGVwIn0.7542515cff4bb3a083ba887d",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "DOUBLE",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        3.3037311634182327
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "354bf70c9f1447b688f209b78d7e5ed9",
+     "trace_id": "a47d07462f319e75235f883a61814885",
+     "redactions": {},
+     "id": "t6",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 3.3,
+       "unit": "ratio",
+       "display": "3.3",
+       "warehouse": "doorstep",
+       "result_id": "r1.eyJjIjoiYTQ3ZDA3NDYyZjMxOWU3NTIzNWY4ODNhNjE4MTQ4ODUiLCJkIjoiN2IwNDZlNWM3MzYwZDEwNzM4YmU2Y2MxOWJhMTg3ZDY4NGQ5YjgxMmI1YjZmYTUxOWYxNmRlYTIzYTBhZGI2OSIsInMiOiJTRUxFQ1QgTUFYKHByaWNlX3RvX2luY29tZSkgQVMgdmFsdWUgRlJPTSBkb29yc3RlcC5tYXJ0X21ldHJvX3llYXIgV0hFUkUgKGtpbmQgPSAnbWV0cm9wb2xpdGFuJykgQU5EIGNic2FfdGl0bGUgPSAnTWlubmVhcG9saXMtU3QuIFBhdWwtQmxvb21pbmd0b24sIE1OLVdJJyBBTkQgeWVhciA9IDIwMTYgTElNSVQgNTAwIiwidyI6ImRvb3JzdGVwIn0.7542515cff4bb3a083ba887d",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "ratio"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "354bf70c9f1447b688f209b78d7e5ed9",
+     "trace_id": "a47d07462f319e75235f883a61814885",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        53,
+        56
+       ],
+       "verdict": "agree",
+       "reason": "within 0.05 ratio (the display rounding of the claim)",
+       "evidence": 3.3037311634182327,
+       "tolerance": 0.05
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "354bf70c9f1447b688f209b78d7e5ed9",
+     "trace_id": "a47d07462f319e75235f883a61814885",
+     "redactions": {},
+     "answer": {
+      "id": "0694b6955cbe4c7195bfe5e3e3217803",
+      "question": "What was the price to income ratio in Minneapolis in 2016?",
+      "family": "lookup",
+      "text": "The price to income ratio in Minneapolis in 2016 was 3.3.",
+      "claims": [
+       {
+        "value": 3.3,
+        "unit": "ratio",
+        "display": "3.3",
+        "warehouse": "doorstep",
+        "result_id": "r1.eyJjIjoiYTQ3ZDA3NDYyZjMxOWU3NTIzNWY4ODNhNjE4MTQ4ODUiLCJkIjoiN2IwNDZlNWM3MzYwZDEwNzM4YmU2Y2MxOWJhMTg3ZDY4NGQ5YjgxMmI1YjZmYTUxOWYxNmRlYTIzYTBhZGI2OSIsInMiOiJTRUxFQ1QgTUFYKHByaWNlX3RvX2luY29tZSkgQVMgdmFsdWUgRlJPTSBkb29yc3RlcC5tYXJ0X21ldHJvX3llYXIgV0hFUkUgKGtpbmQgPSAnbWV0cm9wb2xpdGFuJykgQU5EIGNic2FfdGl0bGUgPSAnTWlubmVhcG9saXMtU3QuIFBhdWwtQmxvb21pbmd0b24sIE1OLVdJJyBBTkQgeWVhciA9IDIwMTYgTElNSVQgNTAwIiwidyI6ImRvb3JzdGVwIn0.7542515cff4bb3a083ba887d",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "ratio",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         53,
+         56
+        ],
+        "verdict": "agree",
+        "evidence": 3.3037311634182327,
+        "tolerance": 0.05,
+        "reason": "within 0.05 ratio (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "doorstep"
+      ],
+      "selection": [
+       "Minneapolis-St. Paul-Bloomington, MN-WI"
+      ],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 150.2,
+      "tool_calls": 2,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "readback"
+      ],
+      "trace_id": "a47d07462f319e75235f883a61814885",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 2,
+       "exempt": 1,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 1,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "0694b6955cbe4c7195bfe5e3e3217803"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "T-lookup-01",
+   "question": "What was Spirit's on time rate in 2018?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "51a45046919342d59e6aee0638b3fec5",
+     "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+     "redactions": {},
+     "family": "lookup",
+     "rule": "measure on_time_rate",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "51a45046919342d59e6aee0638b3fec5",
+     "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+     "redactions": {},
+     "id": "t1",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "turnaround",
+      "sql": "select sum(on_time) / sum(flown) as value from turnaround.mart_carrier_month where carrier = 'NK' and year = 2018"
+     },
+     "result_id": "r1.eyJjIjoiNWY2YWZjMzVmOTY5YjhkNTAwY2EzOTMyZmFlNTk1ZjAiLCJkIjoiMTQwOWZkZGI3ODU5MTNlNzVjZWMwYjcwMmE4NzIzYjlhNTE4ZGZmOTcyMTY4MGVmYzU0MmY3MWZlZDg2ZGRlYyIsInMiOiJTRUxFQ1QgU1VNKG9uX3RpbWUpIC8gU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnTksnIEFORCB5ZWFyID0gMjAxOCBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.598a8d1048a2f793cf5bea02",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "DOUBLE",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        0.8203343498211096
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "51a45046919342d59e6aee0638b3fec5",
+     "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+     "redactions": {},
+     "id": "t2",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 82.0,
+       "unit": "percent",
+       "display": "82.0%",
+       "warehouse": "turnaround",
+       "result_id": "r1.eyJjIjoiNWY2YWZjMzVmOTY5YjhkNTAwY2EzOTMyZmFlNTk1ZjAiLCJkIjoiMTQwOWZkZGI3ODU5MTNlNzVjZWMwYjcwMmE4NzIzYjlhNTE4ZGZmOTcyMTY4MGVmYzU0MmY3MWZlZDg2ZGRlYyIsInMiOiJTRUxFQ1QgU1VNKG9uX3RpbWUpIC8gU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnTksnIEFORCB5ZWFyID0gMjAxOCBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.598a8d1048a2f793cf5bea02",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "fraction"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "51a45046919342d59e6aee0638b3fec5",
+     "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        40,
+        45
+       ],
+       "verdict": "agree",
+       "reason": "within 0.05 percent (the display rounding of the claim)",
+       "evidence": 82.03343498211096,
+       "tolerance": 0.05
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "51a45046919342d59e6aee0638b3fec5",
+     "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+     "redactions": {},
+     "answer": {
+      "id": "28786d180eb64d15a27b9fbb324dfd58",
+      "question": "What was Spirit's on time rate in 2018?",
+      "family": "lookup",
+      "text": "The on time rate for Spirit in 2018 was 82.0%.",
+      "claims": [
+       {
+        "value": 82.0,
+        "unit": "percent",
+        "display": "82.0%",
+        "warehouse": "turnaround",
+        "result_id": "r1.eyJjIjoiNWY2YWZjMzVmOTY5YjhkNTAwY2EzOTMyZmFlNTk1ZjAiLCJkIjoiMTQwOWZkZGI3ODU5MTNlNzVjZWMwYjcwMmE4NzIzYjlhNTE4ZGZmOTcyMTY4MGVmYzU0MmY3MWZlZDg2ZGRlYyIsInMiOiJTRUxFQ1QgU1VNKG9uX3RpbWUpIC8gU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnTksnIEFORCB5ZWFyID0gMjAxOCBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.598a8d1048a2f793cf5bea02",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "fraction",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         40,
+         45
+        ],
+        "verdict": "agree",
+        "evidence": 82.03343498211096,
+        "tolerance": 0.05,
+        "reason": "within 0.05 percent (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "turnaround"
+      ],
+      "selection": [
+       "NK"
+      ],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 46.6,
+      "tool_calls": 2,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "readback"
+      ],
+      "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 2,
+       "exempt": 1,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 1,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "28786d180eb64d15a27b9fbb324dfd58"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "L-lookup-04",
+   "question": "What was the net income at Harborline Bank in 2024Q2?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "05235ab8c2ae4f938c5e10a9895dd785",
+     "trace_id": "d2de58a74199c6d550c69c2129529199",
+     "redactions": {},
+     "family": "lookup",
+     "rule": "measure net_income",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "05235ab8c2ae4f938c5e10a9895dd785",
+     "trace_id": "d2de58a74199c6d550c69c2129529199",
+     "redactions": {},
+     "id": "t1",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "ledger",
+      "sql": "select max(net_income) as value from ledger.metrics_bank_quarter where period = '2024Q2'"
+     },
+     "result_id": "r1.eyJjIjoiZDJkZTU4YTc0MTk5YzZkNTUwYzY5YzIxMjk1MjkxOTkiLCJkIjoiZTc0YTQ3ZWRmNGNmYzVlMDM4NjkxMDk2YWRiMDIyOGMyMDIzNDlkYzIyY2Y2OWVmYmE2MjI1NmY2NjBlZjczYyIsInMiOiJTRUxFQ1QgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCA9ICcyMDI0UTInIExJTUlUIDUwMCIsInciOiJsZWRnZXIifQ.0db12a8ceea11bb6940d6c6f",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "DOUBLE",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        978280.15
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "05235ab8c2ae4f938c5e10a9895dd785",
+     "trace_id": "d2de58a74199c6d550c69c2129529199",
+     "redactions": {},
+     "id": "t2",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 978280.0,
+       "unit": "dollars",
+       "display": "$978,280",
+       "warehouse": "ledger",
+       "result_id": "r1.eyJjIjoiZDJkZTU4YTc0MTk5YzZkNTUwYzY5YzIxMjk1MjkxOTkiLCJkIjoiZTc0YTQ3ZWRmNGNmYzVlMDM4NjkxMDk2YWRiMDIyOGMyMDIzNDlkYzIyY2Y2OWVmYmE2MjI1NmY2NjBlZjczYyIsInMiOiJTRUxFQ1QgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCA9ICcyMDI0UTInIExJTUlUIDUwMCIsInciOiJsZWRnZXIifQ.0db12a8ceea11bb6940d6c6f",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "dollars"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "05235ab8c2ae4f938c5e10a9895dd785",
+     "trace_id": "d2de58a74199c6d550c69c2129529199",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        48,
+        56
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 dollars (the display rounding of the claim)",
+       "evidence": 978280.15,
+       "tolerance": 0.5
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "05235ab8c2ae4f938c5e10a9895dd785",
+     "trace_id": "d2de58a74199c6d550c69c2129529199",
+     "redactions": {},
+     "answer": {
+      "id": "a170db15c0b442099a5249acbac2ef86",
+      "question": "What was the net income at Harborline Bank in 2024Q2?",
+      "family": "lookup",
+      "text": "The net income at Harborline Bank in 2024Q2 was $978,280.",
+      "claims": [
+       {
+        "value": 978280.0,
+        "unit": "dollars",
+        "display": "$978,280",
+        "warehouse": "ledger",
+        "result_id": "r1.eyJjIjoiZDJkZTU4YTc0MTk5YzZkNTUwYzY5YzIxMjk1MjkxOTkiLCJkIjoiZTc0YTQ3ZWRmNGNmYzVlMDM4NjkxMDk2YWRiMDIyOGMyMDIzNDlkYzIyY2Y2OWVmYmE2MjI1NmY2NjBlZjczYyIsInMiOiJTRUxFQ1QgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCA9ICcyMDI0UTInIExJTUlUIDUwMCIsInciOiJsZWRnZXIifQ.0db12a8ceea11bb6940d6c6f",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "dollars",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         48,
+         56
+        ],
+        "verdict": "agree",
+        "evidence": 978280.15,
+        "tolerance": 0.5,
+        "reason": "within 0.5 dollars (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "ledger"
+      ],
+      "selection": [],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 42.3,
+      "tool_calls": 2,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "readback"
+      ],
+      "trace_id": "d2de58a74199c6d550c69c2129529199",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 1,
+       "exempt": 0,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 1,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "a170db15c0b442099a5249acbac2ef86"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "D-comparison-01",
+   "question": "Which had the higher mortgage payment as a share of income in 2006, Philadelphia or New York?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "fe45629740ac422ca01027107f8c6fe7",
+     "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+     "redactions": {},
+     "family": "comparison",
+     "rule": "measure payment_share",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "fe45629740ac422ca01027107f8c6fe7",
+     "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+     "redactions": {},
+     "id": "t1",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "doorstep",
+      "sql": "select max(payment_share) as value from doorstep.mart_metro_year where (kind = 'metropolitan') and cbsa_title = 'Philadelphia-Camden-Wilmington, PA-NJ-DE-MD' and year = 2006"
+     },
+     "result_id": "r1.eyJjIjoiMjllYzJkZDEyM2RhOTdjNjE4YmZkNjBmNGUzOTk4YzMiLCJkIjoiNTg4YWNjNDY2MmU1ZTViZWViMzY5Y2Q5MWVhMDQ5NTJiZGQ4MjA2MWM4ZDJkM2I2NTEwNDBhOWJjMWU2MzJmMSIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ1BoaWxhZGVscGhpYS1DYW1kZW4tV2lsbWluZ3RvbiwgUEEtTkotREUtTUQnIEFORCB5ZWFyID0gMjAwNiBMSU1JVCA1MDAiLCJ3IjoiZG9vcnN0ZXAifQ.225d44e85fe749372a403399",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "DOUBLE",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        0.30264703448904556
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "fe45629740ac422ca01027107f8c6fe7",
+     "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+     "redactions": {},
+     "id": "t2",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "doorstep",
+      "sql": "select max(payment_share) as value from doorstep.mart_metro_year where (kind = 'metropolitan') and cbsa_title = 'New York-Newark-Jersey City, NY-NJ' and year = 2006"
+     },
+     "result_id": "r1.eyJjIjoiMjllYzJkZDEyM2RhOTdjNjE4YmZkNjBmNGUzOTk4YzMiLCJkIjoiOTM5NDBmZTYzYjVhYWRhM2JlMTRmNjBkZjEwMDNmZWJjYmE1ZGZjYWRhMzY1ZTBkZGMyMmRmNWQ0OGFmMmI2NyIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ05ldyBZb3JrLU5ld2Fyay1KZXJzZXkgQ2l0eSwgTlktTkonIEFORCB5ZWFyID0gMjAwNiBMSU1JVCA1MDAiLCJ3IjoiZG9vcnN0ZXAifQ.7f2b734ebe78669d74119378",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "DOUBLE",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        0.5361998086497326
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "fe45629740ac422ca01027107f8c6fe7",
+     "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+     "redactions": {},
+     "id": "t3",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 53.6,
+       "unit": "percent",
+       "display": "53.6%",
+       "warehouse": "doorstep",
+       "result_id": "r1.eyJjIjoiMjllYzJkZDEyM2RhOTdjNjE4YmZkNjBmNGUzOTk4YzMiLCJkIjoiOTM5NDBmZTYzYjVhYWRhM2JlMTRmNjBkZjEwMDNmZWJjYmE1ZGZjYWRhMzY1ZTBkZGMyMmRmNWQ0OGFmMmI2NyIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ05ldyBZb3JrLU5ld2Fyay1KZXJzZXkgQ2l0eSwgTlktTkonIEFORCB5ZWFyID0gMjAwNiBMSU1JVCA1MDAiLCJ3IjoiZG9vcnN0ZXAifQ.7f2b734ebe78669d74119378",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "fraction"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "tool",
+     "thread_id": "fe45629740ac422ca01027107f8c6fe7",
+     "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+     "redactions": {},
+     "id": "t4",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 30.3,
+       "unit": "percent",
+       "display": "30.3%",
+       "warehouse": "doorstep",
+       "result_id": "r1.eyJjIjoiMjllYzJkZDEyM2RhOTdjNjE4YmZkNjBmNGUzOTk4YzMiLCJkIjoiNTg4YWNjNDY2MmU1ZTViZWViMzY5Y2Q5MWVhMDQ5NTJiZGQ4MjA2MWM4ZDJkM2I2NTEwNDBhOWJjMWU2MzJmMSIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ1BoaWxhZGVscGhpYS1DYW1kZW4tV2lsbWluZ3RvbiwgUEEtTkotREUtTUQnIEFORCB5ZWFyID0gMjAwNiBMSU1JVCA1MDAiLCJ3IjoiZG9vcnN0ZXAifQ.225d44e85fe749372a403399",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "fraction"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "fe45629740ac422ca01027107f8c6fe7",
+     "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        46,
+        52
+       ],
+       "verdict": "agree",
+       "reason": "within 0.05 percent (the display rounding of the claim)",
+       "evidence": 53.61998086497326,
+       "tolerance": 0.05
+      },
+      {
+       "index": 1,
+       "span": [
+        62,
+        67
+       ],
+       "verdict": "agree",
+       "reason": "within 0.05 percent (the display rounding of the claim)",
+       "evidence": 30.264703448904555,
+       "tolerance": 0.05
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "fe45629740ac422ca01027107f8c6fe7",
+     "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+     "redactions": {},
+     "answer": {
+      "id": "ce702ef84e4146468dd7f143a433e770",
+      "question": "Which had the higher mortgage payment as a share of income in 2006, Philadelphia or New York?",
+      "family": "comparison",
+      "text": "New York had the higher payment share in 2006: 53.6%, against 30.3% for Philadelphia.",
+      "claims": [
+       {
+        "value": 53.6,
+        "unit": "percent",
+        "display": "53.6%",
+        "warehouse": "doorstep",
+        "result_id": "r1.eyJjIjoiMjllYzJkZDEyM2RhOTdjNjE4YmZkNjBmNGUzOTk4YzMiLCJkIjoiOTM5NDBmZTYzYjVhYWRhM2JlMTRmNjBkZjEwMDNmZWJjYmE1ZGZjYWRhMzY1ZTBkZGMyMmRmNWQ0OGFmMmI2NyIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ05ldyBZb3JrLU5ld2Fyay1KZXJzZXkgQ2l0eSwgTlktTkonIEFORCB5ZWFyID0gMjAwNiBMSU1JVCA1MDAiLCJ3IjoiZG9vcnN0ZXAifQ.7f2b734ebe78669d74119378",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "fraction",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         46,
+         52
+        ],
+        "verdict": "agree",
+        "evidence": 53.61998086497326,
+        "tolerance": 0.05,
+        "reason": "within 0.05 percent (the display rounding of the claim)"
+       },
+       {
+        "value": 30.3,
+        "unit": "percent",
+        "display": "30.3%",
+        "warehouse": "doorstep",
+        "result_id": "r1.eyJjIjoiMjllYzJkZDEyM2RhOTdjNjE4YmZkNjBmNGUzOTk4YzMiLCJkIjoiNTg4YWNjNDY2MmU1ZTViZWViMzY5Y2Q5MWVhMDQ5NTJiZGQ4MjA2MWM4ZDJkM2I2NTEwNDBhOWJjMWU2MzJmMSIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ1BoaWxhZGVscGhpYS1DYW1kZW4tV2lsbWluZ3RvbiwgUEEtTkotREUtTUQnIEFORCB5ZWFyID0gMjAwNiBMSU1JVCA1MDAiLCJ3IjoiZG9vcnN0ZXAifQ.225d44e85fe749372a403399",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "fraction",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         62,
+         67
+        ],
+        "verdict": "agree",
+        "evidence": 30.264703448904555,
+        "tolerance": 0.05,
+        "reason": "within 0.05 percent (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "doorstep"
+      ],
+      "selection": [
+       "New York-Newark-Jersey City, NY-NJ"
+      ],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 166.6,
+      "tool_calls": 4,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "run_sql",
+       "readback",
+       "readback"
+      ],
+      "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 3,
+       "exempt": 1,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 2,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "ce702ef84e4146468dd7f143a433e770"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "T-trend-04",
+   "question": "From 2015 to 2025, did American's number of flights flown go up or down?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "2ac41836c99845d1ae8d2aa894df4435",
+     "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+     "redactions": {},
+     "family": "trend",
+     "rule": "measure flights_flown",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "2ac41836c99845d1ae8d2aa894df4435",
+     "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+     "redactions": {},
+     "id": "t1",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "turnaround",
+      "sql": "select sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AA' and year = 2015"
+     },
+     "result_id": "r1.eyJjIjoiNDhkZGIwNjcyNTEwZTJkMWQxYTU5MjBjOTJlNDUzN2EiLCJkIjoiZDQ2NTFlMTdjN2ZmYWZmN2ZlNDAxMjA0MzNkYTc4MGU1MmU1ZTMzN2Q4NDRlZmYxOTg5ODhiMDBmYTE5YjNiOCIsInMiOiJTRUxFQ1QgU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnQUEnIEFORCB5ZWFyID0gMjAxNSBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.c3132cbbffaa071e5f27dff3",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "HUGEINT",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        712935
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "2ac41836c99845d1ae8d2aa894df4435",
+     "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+     "redactions": {},
+     "id": "t2",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "turnaround",
+      "sql": "select sum(flown) as value from turnaround.mart_carrier_month where carrier = 'AA' and year = 2025"
+     },
+     "result_id": "r1.eyJjIjoiNDhkZGIwNjcyNTEwZTJkMWQxYTU5MjBjOTJlNDUzN2EiLCJkIjoiOGYxNzM5MDRlOTAxZmE4NTM0ZGU1MGE0NGIyODA2MzEyZWU4MTQzYWY5MmJkNDgyMDljMzgwNmUzYTE5MzlkMSIsInMiOiJTRUxFQ1QgU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnQUEnIEFORCB5ZWFyID0gMjAyNSBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.a7b6447de2d86dae310f5e2f",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "HUGEINT",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        952841
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "2ac41836c99845d1ae8d2aa894df4435",
+     "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+     "redactions": {},
+     "id": "t3",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 712935.0,
+       "unit": "count",
+       "display": "712,935",
+       "warehouse": "turnaround",
+       "result_id": "r1.eyJjIjoiNDhkZGIwNjcyNTEwZTJkMWQxYTU5MjBjOTJlNDUzN2EiLCJkIjoiZDQ2NTFlMTdjN2ZmYWZmN2ZlNDAxMjA0MzNkYTc4MGU1MmU1ZTMzN2Q4NDRlZmYxOTg5ODhiMDBmYTE5YjNiOCIsInMiOiJTRUxFQ1QgU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnQUEnIEFORCB5ZWFyID0gMjAxNSBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.c3132cbbffaa071e5f27dff3",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "count"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "tool",
+     "thread_id": "2ac41836c99845d1ae8d2aa894df4435",
+     "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+     "redactions": {},
+     "id": "t4",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 952841.0,
+       "unit": "count",
+       "display": "952,841",
+       "warehouse": "turnaround",
+       "result_id": "r1.eyJjIjoiNDhkZGIwNjcyNTEwZTJkMWQxYTU5MjBjOTJlNDUzN2EiLCJkIjoiOGYxNzM5MDRlOTAxZmE4NTM0ZGU1MGE0NGIyODA2MzEyZWU4MTQzYWY5MmJkNDgyMDljMzgwNmUzYTE5MzlkMSIsInMiOiJTRUxFQ1QgU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnQUEnIEFORCB5ZWFyID0gMjAyNSBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.a7b6447de2d86dae310f5e2f",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "count"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "2ac41836c99845d1ae8d2aa894df4435",
+     "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        51,
+        58
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 count (the display rounding of the claim)",
+       "evidence": 712935.0,
+       "tolerance": 0.5
+      },
+      {
+       "index": 1,
+       "span": [
+        70,
+        77
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 count (the display rounding of the claim)",
+       "evidence": 952841.0,
+       "tolerance": 0.5
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "2ac41836c99845d1ae8d2aa894df4435",
+     "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+     "redactions": {},
+     "answer": {
+      "id": "db1e554bdc624ba2bf31382dfc389c9a",
+      "question": "From 2015 to 2025, did American's number of flights flown go up or down?",
+      "family": "trend",
+      "text": "The number of flights flown for American rose from 712,935 in 2015 to 952,841 in 2025.",
+      "claims": [
+       {
+        "value": 712935.0,
+        "unit": "count",
+        "display": "712,935",
+        "warehouse": "turnaround",
+        "result_id": "r1.eyJjIjoiNDhkZGIwNjcyNTEwZTJkMWQxYTU5MjBjOTJlNDUzN2EiLCJkIjoiZDQ2NTFlMTdjN2ZmYWZmN2ZlNDAxMjA0MzNkYTc4MGU1MmU1ZTMzN2Q4NDRlZmYxOTg5ODhiMDBmYTE5YjNiOCIsInMiOiJTRUxFQ1QgU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnQUEnIEFORCB5ZWFyID0gMjAxNSBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.c3132cbbffaa071e5f27dff3",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "count",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         51,
+         58
+        ],
+        "verdict": "agree",
+        "evidence": 712935.0,
+        "tolerance": 0.5,
+        "reason": "within 0.5 count (the display rounding of the claim)"
+       },
+       {
+        "value": 952841.0,
+        "unit": "count",
+        "display": "952,841",
+        "warehouse": "turnaround",
+        "result_id": "r1.eyJjIjoiNDhkZGIwNjcyNTEwZTJkMWQxYTU5MjBjOTJlNDUzN2EiLCJkIjoiOGYxNzM5MDRlOTAxZmE4NTM0ZGU1MGE0NGIyODA2MzEyZWU4MTQzYWY5MmJkNDgyMDljMzgwNmUzYTE5MzlkMSIsInMiOiJTRUxFQ1QgU1VNKGZsb3duKSBBUyB2YWx1ZSBGUk9NIHR1cm5hcm91bmQubWFydF9jYXJyaWVyX21vbnRoIFdIRVJFIGNhcnJpZXIgPSAnQUEnIEFORCB5ZWFyID0gMjAyNSBMSU1JVCA1MDAiLCJ3IjoidHVybmFyb3VuZCJ9.a7b6447de2d86dae310f5e2f",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "count",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         70,
+         77
+        ],
+        "verdict": "agree",
+        "evidence": 952841.0,
+        "tolerance": 0.5,
+        "reason": "within 0.5 count (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "turnaround"
+      ],
+      "selection": [],
+      "direction": "rose",
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 70.8,
+      "tool_calls": 4,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "run_sql",
+       "readback",
+       "readback"
+      ],
+      "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 4,
+       "exempt": 2,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 2,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "db1e554bdc624ba2bf31382dfc389c9a"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "L-topk-01",
+   "question": "Which 3 full quarters had the highest net income at Harborline Bank?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "439375d9b97b4537af4f3623069617bd",
+     "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+     "redactions": {},
+     "family": "top_k",
+     "rule": "measure net_income",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "439375d9b97b4537af4f3623069617bd",
+     "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+     "redactions": {},
+     "id": "t1",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "ledger",
+      "sql": "select period as entity, max(net_income) as value from ledger.metrics_bank_quarter where period in ('2023Q4', '2024Q1', '2024Q2', '2024Q3', '2024Q4', '2025Q1', '2025Q2', '2025Q3', '2025Q4', '2026Q1', '2026Q2') group by period order by value desc, entity limit 3"
+     },
+     "result_id": "r1.eyJjIjoiZmRjNjg0NTE1YzNkNWIyNTY0YTY0NzllYWZjOTlkMDEiLCJkIjoiNjUzZDQyMTVmZGZhMTZlM2NjYmE2OTUxNWNjMzgxZWQ4NGI1NTQzNTEyOTczYzVmOGM1NDZhMTM5NTE5NDBhMCIsInMiOiJTRUxFQ1QgcGVyaW9kIEFTIGVudGl0eSwgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCBJTiAoJzIwMjNRNCcsICcyMDI0UTEnLCAnMjAyNFEyJywgJzIwMjRRMycsICcyMDI0UTQnLCAnMjAyNVExJywgJzIwMjVRMicsICcyMDI1UTMnLCAnMjAyNVE0JywgJzIwMjZRMScsICcyMDI2UTInKSBHUk9VUCBCWSBwZXJpb2QgT1JERVIgQlkgdmFsdWUgREVTQywgZW50aXR5IExJTUlUIDMiLCJ3IjoibGVkZ2VyIn0.1f0d0df52253d784ebbfc7b7",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "entity",
+        "type": "VARCHAR",
+        "unit": null
+       },
+       {
+        "name": "value",
+        "type": "DOUBLE",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        "2026Q2",
+        4361569.56
+       ],
+       [
+        "2025Q3",
+        2906830.28
+       ],
+       [
+        "2026Q1",
+        2529455.56
+       ]
+      ],
+      "row_count": 11
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "439375d9b97b4537af4f3623069617bd",
+     "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+     "redactions": {},
+     "id": "t2",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 4361570.0,
+       "unit": "dollars",
+       "display": "$4,361,570",
+       "warehouse": "ledger",
+       "result_id": "r1.eyJjIjoiZmRjNjg0NTE1YzNkNWIyNTY0YTY0NzllYWZjOTlkMDEiLCJkIjoiNjUzZDQyMTVmZGZhMTZlM2NjYmE2OTUxNWNjMzgxZWQ4NGI1NTQzNTEyOTczYzVmOGM1NDZhMTM5NTE5NDBhMCIsInMiOiJTRUxFQ1QgcGVyaW9kIEFTIGVudGl0eSwgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCBJTiAoJzIwMjNRNCcsICcyMDI0UTEnLCAnMjAyNFEyJywgJzIwMjRRMycsICcyMDI0UTQnLCAnMjAyNVExJywgJzIwMjVRMicsICcyMDI1UTMnLCAnMjAyNVE0JywgJzIwMjZRMScsICcyMDI2UTInKSBHUk9VUCBCWSBwZXJpb2QgT1JERVIgQlkgdmFsdWUgREVTQywgZW50aXR5IExJTUlUIDMiLCJ3IjoibGVkZ2VyIn0.1f0d0df52253d784ebbfc7b7",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "dollars"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "tool",
+     "thread_id": "439375d9b97b4537af4f3623069617bd",
+     "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+     "redactions": {},
+     "id": "t3",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 2906830.0,
+       "unit": "dollars",
+       "display": "$2,906,830",
+       "warehouse": "ledger",
+       "result_id": "r1.eyJjIjoiZmRjNjg0NTE1YzNkNWIyNTY0YTY0NzllYWZjOTlkMDEiLCJkIjoiNjUzZDQyMTVmZGZhMTZlM2NjYmE2OTUxNWNjMzgxZWQ4NGI1NTQzNTEyOTczYzVmOGM1NDZhMTM5NTE5NDBhMCIsInMiOiJTRUxFQ1QgcGVyaW9kIEFTIGVudGl0eSwgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCBJTiAoJzIwMjNRNCcsICcyMDI0UTEnLCAnMjAyNFEyJywgJzIwMjRRMycsICcyMDI0UTQnLCAnMjAyNVExJywgJzIwMjVRMicsICcyMDI1UTMnLCAnMjAyNVE0JywgJzIwMjZRMScsICcyMDI2UTInKSBHUk9VUCBCWSBwZXJpb2QgT1JERVIgQlkgdmFsdWUgREVTQywgZW50aXR5IExJTUlUIDMiLCJ3IjoibGVkZ2VyIn0.1f0d0df52253d784ebbfc7b7",
+       "column": "value",
+       "row": 1,
+       "evidence_unit": "dollars"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "tool",
+     "thread_id": "439375d9b97b4537af4f3623069617bd",
+     "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+     "redactions": {},
+     "id": "t4",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 2529456.0,
+       "unit": "dollars",
+       "display": "$2,529,456",
+       "warehouse": "ledger",
+       "result_id": "r1.eyJjIjoiZmRjNjg0NTE1YzNkNWIyNTY0YTY0NzllYWZjOTlkMDEiLCJkIjoiNjUzZDQyMTVmZGZhMTZlM2NjYmE2OTUxNWNjMzgxZWQ4NGI1NTQzNTEyOTczYzVmOGM1NDZhMTM5NTE5NDBhMCIsInMiOiJTRUxFQ1QgcGVyaW9kIEFTIGVudGl0eSwgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCBJTiAoJzIwMjNRNCcsICcyMDI0UTEnLCAnMjAyNFEyJywgJzIwMjRRMycsICcyMDI0UTQnLCAnMjAyNVExJywgJzIwMjVRMicsICcyMDI1UTMnLCAnMjAyNVE0JywgJzIwMjZRMScsICcyMDI2UTInKSBHUk9VUCBCWSBwZXJpb2QgT1JERVIgQlkgdmFsdWUgREVTQywgZW50aXR5IExJTUlUIDMiLCJ3IjoibGVkZ2VyIn0.1f0d0df52253d784ebbfc7b7",
+       "column": "value",
+       "row": 2,
+       "evidence_unit": "dollars"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "439375d9b97b4537af4f3623069617bd",
+     "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        46,
+        56
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 dollars (the display rounding of the claim)",
+       "evidence": 4361569.56,
+       "tolerance": 0.5
+      },
+      {
+       "index": 1,
+       "span": [
+        68,
+        78
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 dollars (the display rounding of the claim)",
+       "evidence": 2906830.28,
+       "tolerance": 0.5
+      },
+      {
+       "index": 2,
+       "span": [
+        90,
+        100
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 dollars (the display rounding of the claim)",
+       "evidence": 2529455.56,
+       "tolerance": 0.5
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "439375d9b97b4537af4f3623069617bd",
+     "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+     "redactions": {},
+     "answer": {
+      "id": "5478436791c84ae48dcb2e913f3aef2b",
+      "question": "Which 3 full quarters had the highest net income at Harborline Bank?",
+      "family": "top_k",
+      "text": "The 3 with the highest net income:\n1. 2026Q2: $4,361,570\n2. 2025Q3: $2,906,830\n3. 2026Q1: $2,529,456",
+      "claims": [
+       {
+        "value": 4361570.0,
+        "unit": "dollars",
+        "display": "$4,361,570",
+        "warehouse": "ledger",
+        "result_id": "r1.eyJjIjoiZmRjNjg0NTE1YzNkNWIyNTY0YTY0NzllYWZjOTlkMDEiLCJkIjoiNjUzZDQyMTVmZGZhMTZlM2NjYmE2OTUxNWNjMzgxZWQ4NGI1NTQzNTEyOTczYzVmOGM1NDZhMTM5NTE5NDBhMCIsInMiOiJTRUxFQ1QgcGVyaW9kIEFTIGVudGl0eSwgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCBJTiAoJzIwMjNRNCcsICcyMDI0UTEnLCAnMjAyNFEyJywgJzIwMjRRMycsICcyMDI0UTQnLCAnMjAyNVExJywgJzIwMjVRMicsICcyMDI1UTMnLCAnMjAyNVE0JywgJzIwMjZRMScsICcyMDI2UTInKSBHUk9VUCBCWSBwZXJpb2QgT1JERVIgQlkgdmFsdWUgREVTQywgZW50aXR5IExJTUlUIDMiLCJ3IjoibGVkZ2VyIn0.1f0d0df52253d784ebbfc7b7",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "dollars",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         46,
+         56
+        ],
+        "verdict": "agree",
+        "evidence": 4361569.56,
+        "tolerance": 0.5,
+        "reason": "within 0.5 dollars (the display rounding of the claim)"
+       },
+       {
+        "value": 2906830.0,
+        "unit": "dollars",
+        "display": "$2,906,830",
+        "warehouse": "ledger",
+        "result_id": "r1.eyJjIjoiZmRjNjg0NTE1YzNkNWIyNTY0YTY0NzllYWZjOTlkMDEiLCJkIjoiNjUzZDQyMTVmZGZhMTZlM2NjYmE2OTUxNWNjMzgxZWQ4NGI1NTQzNTEyOTczYzVmOGM1NDZhMTM5NTE5NDBhMCIsInMiOiJTRUxFQ1QgcGVyaW9kIEFTIGVudGl0eSwgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCBJTiAoJzIwMjNRNCcsICcyMDI0UTEnLCAnMjAyNFEyJywgJzIwMjRRMycsICcyMDI0UTQnLCAnMjAyNVExJywgJzIwMjVRMicsICcyMDI1UTMnLCAnMjAyNVE0JywgJzIwMjZRMScsICcyMDI2UTInKSBHUk9VUCBCWSBwZXJpb2QgT1JERVIgQlkgdmFsdWUgREVTQywgZW50aXR5IExJTUlUIDMiLCJ3IjoibGVkZ2VyIn0.1f0d0df52253d784ebbfc7b7",
+        "column": "value",
+        "row": 1,
+        "evidence_unit": "dollars",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         68,
+         78
+        ],
+        "verdict": "agree",
+        "evidence": 2906830.28,
+        "tolerance": 0.5,
+        "reason": "within 0.5 dollars (the display rounding of the claim)"
+       },
+       {
+        "value": 2529456.0,
+        "unit": "dollars",
+        "display": "$2,529,456",
+        "warehouse": "ledger",
+        "result_id": "r1.eyJjIjoiZmRjNjg0NTE1YzNkNWIyNTY0YTY0NzllYWZjOTlkMDEiLCJkIjoiNjUzZDQyMTVmZGZhMTZlM2NjYmE2OTUxNWNjMzgxZWQ4NGI1NTQzNTEyOTczYzVmOGM1NDZhMTM5NTE5NDBhMCIsInMiOiJTRUxFQ1QgcGVyaW9kIEFTIGVudGl0eSwgTUFYKG5ldF9pbmNvbWUpIEFTIHZhbHVlIEZST00gbGVkZ2VyLm1ldHJpY3NfYmFua19xdWFydGVyIFdIRVJFIHBlcmlvZCBJTiAoJzIwMjNRNCcsICcyMDI0UTEnLCAnMjAyNFEyJywgJzIwMjRRMycsICcyMDI0UTQnLCAnMjAyNVExJywgJzIwMjVRMicsICcyMDI1UTMnLCAnMjAyNVE0JywgJzIwMjZRMScsICcyMDI2UTInKSBHUk9VUCBCWSBwZXJpb2QgT1JERVIgQlkgdmFsdWUgREVTQywgZW50aXR5IExJTUlUIDMiLCJ3IjoibGVkZ2VyIn0.1f0d0df52253d784ebbfc7b7",
+        "column": "value",
+        "row": 2,
+        "evidence_unit": "dollars",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         90,
+         100
+        ],
+        "verdict": "agree",
+        "evidence": 2529455.56,
+        "tolerance": 0.5,
+        "reason": "within 0.5 dollars (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "ledger"
+      ],
+      "selection": [
+       "2026Q2",
+       "2025Q3",
+       "2026Q1"
+      ],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 102.6,
+      "tool_calls": 4,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "readback",
+       "readback",
+       "readback"
+      ],
+      "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 7,
+       "exempt": 4,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 3,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "5478436791c84ae48dcb2e913f3aef2b"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "D-definition-05",
+   "question": "What does doorstep mean by cost burdened?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "140c3f914a9943bba8d740c9af2a093e",
+     "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+     "redactions": {},
+     "family": "definition",
+     "rule": "definition cue",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "140c3f914a9943bba8d740c9af2a093e",
+     "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+     "redactions": {},
+     "id": "t1",
+     "tool": "search_catalog",
+     "ok": true,
+     "args": {
+      "query": "cost burdened",
+      "k": 5,
+      "kind": "definition",
+      "warehouse": "doorstep"
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "tool",
+     "thread_id": "140c3f914a9943bba8d740c9af2a093e",
+     "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+     "redactions": {},
+     "id": "t2",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 30.0,
+       "unit": "percent",
+       "display": "30%",
+       "warehouse": "doorstep",
+       "row": 0,
+       "definition_id": "doorstep.definition.cost_burdened_severely_burdened"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "tool",
+     "thread_id": "140c3f914a9943bba8d740c9af2a093e",
+     "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+     "redactions": {},
+     "id": "t3",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 50.0,
+       "unit": "percent",
+       "display": "50%",
+       "warehouse": "doorstep",
+       "row": 0,
+       "definition_id": "doorstep.definition.cost_burdened_severely_burdened"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "140c3f914a9943bba8d740c9af2a093e",
+     "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        59,
+        62
+       ],
+       "verdict": "agree",
+       "reason": "Cost burdened, severely burdened (docs/definitions.md:23) prints 30%",
+       "evidence": 30.0,
+       "tolerance": 0.0
+      },
+      {
+       "index": 1,
+       "span": [
+        67,
+        70
+       ],
+       "verdict": "agree",
+       "reason": "Cost burdened, severely burdened (docs/definitions.md:23) prints 50%",
+       "evidence": 50.0,
+       "tolerance": 0.0
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "140c3f914a9943bba8d740c9af2a093e",
+     "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+     "redactions": {},
+     "answer": {
+      "id": "24cbc2c4a6274fcb8ecc61b738748830",
+      "question": "What does doorstep mean by cost burdened?",
+      "family": "definition",
+      "text": "In doorstep's definitions document: Gross rent at or above 30% and 50% of household income, from table B25070, over renters with a computed share; by household income group from table B25074. Owners with a mortgage: selected monthly owner costs at or above the line, table B25091. Metric layer: renter_burdened_share.",
+      "claims": [
+       {
+        "value": 30.0,
+        "unit": "percent",
+        "display": "30%",
+        "warehouse": "doorstep",
+        "result_id": null,
+        "column": null,
+        "row": 0,
+        "evidence_unit": null,
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": "doorstep.definition.cost_burdened_severely_burdened",
+        "sql": null,
+        "span": [
+         59,
+         62
+        ],
+        "verdict": "agree",
+        "evidence": 30.0,
+        "tolerance": 0.0,
+        "reason": "Cost burdened, severely burdened (docs/definitions.md:23) prints 30%"
+       },
+       {
+        "value": 50.0,
+        "unit": "percent",
+        "display": "50%",
+        "warehouse": "doorstep",
+        "result_id": null,
+        "column": null,
+        "row": 0,
+        "evidence_unit": null,
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": "doorstep.definition.cost_burdened_severely_burdened",
+        "sql": null,
+        "span": [
+         67,
+         70
+        ],
+        "verdict": "agree",
+        "evidence": 50.0,
+        "tolerance": 0.0,
+        "reason": "Cost burdened, severely burdened (docs/definitions.md:23) prints 50%"
+       }
+      ],
+      "warehouses": [
+       "doorstep"
+      ],
+      "selection": [],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 323.2,
+      "tool_calls": 3,
+      "model_calls": 0,
+      "tools_called": [
+       "search_catalog",
+       "readback",
+       "readback"
+      ],
+      "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 2,
+       "exempt": 0,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 2,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "24cbc2c4a6274fcb8ecc61b738748830"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "M-multi-06",
+   "question": "Which has more rows, doorstep's ch5_ranking or ledger's f11_reconciliation?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+     "redactions": {},
+     "family": "multi",
+     "rule": "multi cue",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "tool",
+     "thread_id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+     "redactions": {},
+     "id": "t1",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "doorstep",
+      "sql": "select count(*) as n from ch5_ranking"
+     },
+     "result_id": "r1.eyJjIjoiM2E2M2U2ZjFmYTJjNDY3NTFjNWM2MzJhYjM3NDdmY2QiLCJkIjoiNzIxZmQxNzY0NmE4OTEzNjU2NGY1YTFlZTQ3NGM5YmNiNmQ5NDJjZTY2ZDA0NmE0OGY3YTkzODQ4NTcxMTY5MSIsInMiOiJTRUxFQ1QgQ09VTlQoKikgQVMgbiBGUk9NIGRvb3JzdGVwLmNoNV9yYW5raW5nIExJTUlUIDUwMCIsInciOiJkb29yc3RlcCJ9.e3b6d4f0d73c729def9a5ef7",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "n",
+        "type": "BIGINT",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        382
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+     "redactions": {},
+     "id": "t2",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "ledger",
+      "sql": "select count(*) as n from f11_reconciliation"
+     },
+     "result_id": "r1.eyJjIjoiM2E2M2U2ZjFmYTJjNDY3NTFjNWM2MzJhYjM3NDdmY2QiLCJkIjoiYjgwMjZmNWYwYTUzYzAzYjUzMGU5NjZhMjM2YWMyNDc1ZTJiYzI2MzgwMjk0OWFmMjA2NWUxMzJkZGU0Yjc1ZiIsInMiOiJTRUxFQ1QgQ09VTlQoKikgQVMgbiBGUk9NIGxlZGdlci5mMTFfcmVjb25jaWxpYXRpb24gTElNSVQgNTAwIiwidyI6ImxlZGdlciJ9.565bfb63cfda14623077adc8",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "n",
+        "type": "BIGINT",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        792
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+     "redactions": {},
+     "id": "t3",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 382.0,
+       "unit": "count",
+       "display": "382",
+       "warehouse": "doorstep",
+       "result_id": "r1.eyJjIjoiM2E2M2U2ZjFmYTJjNDY3NTFjNWM2MzJhYjM3NDdmY2QiLCJkIjoiNzIxZmQxNzY0NmE4OTEzNjU2NGY1YTFlZTQ3NGM5YmNiNmQ5NDJjZTY2ZDA0NmE0OGY3YTkzODQ4NTcxMTY5MSIsInMiOiJTRUxFQ1QgQ09VTlQoKikgQVMgbiBGUk9NIGRvb3JzdGVwLmNoNV9yYW5raW5nIExJTUlUIDUwMCIsInciOiJkb29yc3RlcCJ9.e3b6d4f0d73c729def9a5ef7",
+       "column": "n",
+       "row": 0
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "tool",
+     "thread_id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+     "redactions": {},
+     "id": "t4",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 792.0,
+       "unit": "count",
+       "display": "792",
+       "warehouse": "ledger",
+       "result_id": "r1.eyJjIjoiM2E2M2U2ZjFmYTJjNDY3NTFjNWM2MzJhYjM3NDdmY2QiLCJkIjoiYjgwMjZmNWYwYTUzYzAzYjUzMGU5NjZhMjM2YWMyNDc1ZTJiYzI2MzgwMjk0OWFmMjA2NWUxMzJkZGU0Yjc1ZiIsInMiOiJTRUxFQ1QgQ09VTlQoKikgQVMgbiBGUk9NIGxlZGdlci5mMTFfcmVjb25jaWxpYXRpb24gTElNSVQgNTAwIiwidyI6ImxlZGdlciJ9.565bfb63cfda14623077adc8",
+       "column": "n",
+       "row": 0
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        66,
+        69
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 count (the display rounding of the claim)",
+       "evidence": 382.0,
+       "tolerance": 0.5
+      },
+      {
+       "index": 1,
+       "span": [
+        104,
+        107
+       ],
+       "verdict": "agree",
+       "reason": "within 0.5 count (the display rounding of the claim)",
+       "evidence": 792.0,
+       "tolerance": 0.5
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+     "redactions": {},
+     "answer": {
+      "id": "1d38f883c6be4acf90070d175847c1d1",
+      "question": "Which has more rows, doorstep's ch5_ranking or ledger's f11_reconciliation?",
+      "family": "multi",
+      "text": "ledger.f11_reconciliation has more rows: doorstep.ch5_ranking has 382 and ledger.f11_reconciliation has 792.",
+      "claims": [
+       {
+        "value": 382.0,
+        "unit": "count",
+        "display": "382",
+        "warehouse": "doorstep",
+        "result_id": "r1.eyJjIjoiM2E2M2U2ZjFmYTJjNDY3NTFjNWM2MzJhYjM3NDdmY2QiLCJkIjoiNzIxZmQxNzY0NmE4OTEzNjU2NGY1YTFlZTQ3NGM5YmNiNmQ5NDJjZTY2ZDA0NmE0OGY3YTkzODQ4NTcxMTY5MSIsInMiOiJTRUxFQ1QgQ09VTlQoKikgQVMgbiBGUk9NIGRvb3JzdGVwLmNoNV9yYW5raW5nIExJTUlUIDUwMCIsInciOiJkb29yc3RlcCJ9.e3b6d4f0d73c729def9a5ef7",
+        "column": "n",
+        "row": 0,
+        "evidence_unit": null,
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         66,
+         69
+        ],
+        "verdict": "agree",
+        "evidence": 382.0,
+        "tolerance": 0.5,
+        "reason": "within 0.5 count (the display rounding of the claim)"
+       },
+       {
+        "value": 792.0,
+        "unit": "count",
+        "display": "792",
+        "warehouse": "ledger",
+        "result_id": "r1.eyJjIjoiM2E2M2U2ZjFmYTJjNDY3NTFjNWM2MzJhYjM3NDdmY2QiLCJkIjoiYjgwMjZmNWYwYTUzYzAzYjUzMGU5NjZhMjM2YWMyNDc1ZTJiYzI2MzgwMjk0OWFmMjA2NWUxMzJkZGU0Yjc1ZiIsInMiOiJTRUxFQ1QgQ09VTlQoKikgQVMgbiBGUk9NIGxlZGdlci5mMTFfcmVjb25jaWxpYXRpb24gTElNSVQgNTAwIiwidyI6ImxlZGdlciJ9.565bfb63cfda14623077adc8",
+        "column": "n",
+        "row": 0,
+        "evidence_unit": null,
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         104,
+         107
+        ],
+        "verdict": "agree",
+        "evidence": 792.0,
+        "tolerance": 0.5,
+        "reason": "within 0.5 count (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "doorstep",
+       "ledger"
+      ],
+      "selection": [
+       "ledger.f11_reconciliation"
+      ],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 77.5,
+      "tool_calls": 4,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "run_sql",
+       "readback",
+       "readback"
+      ],
+      "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 2,
+       "exempt": 0,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 2,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "1d38f883c6be4acf90070d175847c1d1"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "R-refusal-02",
+   "question": "How much did marginal say the email channel returned per dollar?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "664f356327b94c4b820138c2242bc38a",
+     "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+     "redactions": {},
+     "family": "refusal",
+     "rule": "refusal rule",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "answer",
+     "thread_id": "664f356327b94c4b820138c2242bc38a",
+     "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+     "redactions": {},
+     "answer": {
+      "id": "193576c593f743f79d5f34113eb9683e",
+      "question": "How much did marginal say the email channel returned per dollar?",
+      "family": "refusal",
+      "text": "That is outside what readback can answer. It answers questions about the published tables of doorstep, turnaround and ledger, and never about an individual, a forecast or advice. This question was refused because it asks about another build in the series, not doorstep, turnaround or ledger.",
+      "claims": [],
+      "warehouses": [],
+      "selection": [],
+      "direction": null,
+      "verdict": "refused",
+      "refusal_reason": "it asks about another build in the series, not doorstep, turnaround or ledger",
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 3.1,
+      "tool_calls": 0,
+      "model_calls": 0,
+      "tools_called": [],
+      "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 0,
+       "exempt": 0,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 0,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "193576c593f743f79d5f34113eb9683e"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  },
+  {
+   "id": "ambiguous-portland",
+   "question": "What was the payment share in Portland in 2019?",
+   "events": [
+    {
+     "event": "classified",
+     "thread_id": "18b58cadfde4430b81d90a81c561bd08",
+     "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+     "redactions": {},
+     "family": "lookup",
+     "rule": "measure payment_share",
+     "provider": "floor",
+     "reason": "the floor: no model"
+    },
+    {
+     "event": "interrupt",
+     "thread_id": "18b58cadfde4430b81d90a81c561bd08",
+     "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+     "redactions": {},
+     "kind": "metro",
+     "name": "Portland",
+     "candidates": [
+      "Portland-Vancouver-Hillsboro, OR-WA",
+      "Portland-South Portland, ME"
+     ]
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ],
+   "choice": "Portland-Vancouver-Hillsboro, OR-WA",
+   "resume": [
+    {
+     "event": "tool",
+     "thread_id": "18b58cadfde4430b81d90a81c561bd08",
+     "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+     "redactions": {},
+     "id": "t1",
+     "tool": "run_sql",
+     "ok": true,
+     "args": {
+      "warehouse": "doorstep",
+      "sql": "select max(payment_share) as value from doorstep.mart_metro_year where (kind = 'metropolitan') and cbsa_title = 'Portland-Vancouver-Hillsboro, OR-WA' and year = 2019"
+     },
+     "result_id": "r1.eyJjIjoiYjBlODFlZjEzNmE3ZDJhM2U1ZjI3NWIwYTNiNjU2MjEiLCJkIjoiN2RmMDM0NTZiN2MxNzMwZDFiNWVlOWM4NjgyMGJmMTBiN2M5OWVjOTJkMGU5ZWQzZGZjZTM4ZmI4OTRlMDM0NyIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ1BvcnRsYW5kLVZhbmNvdXZlci1IaWxsc2Jvcm8sIE9SLVdBJyBBTkQgeWVhciA9IDIwMTkgTElNSVQgNTAwIiwidyI6ImRvb3JzdGVwIn0.9d25e0d8cefa68b5e9f33612",
+     "error": null,
+     "preview": {
+      "columns": [
+       {
+        "name": "value",
+        "type": "DOUBLE",
+        "unit": null
+       }
+      ],
+      "rows": [
+       [
+        0.2665088014656028
+       ]
+      ],
+      "row_count": 1
+     }
+    },
+    {
+     "event": "tool",
+     "thread_id": "18b58cadfde4430b81d90a81c561bd08",
+     "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+     "redactions": {},
+     "id": "t2",
+     "tool": "readback",
+     "ok": true,
+     "args": {
+      "claim": {
+       "value": 26.7,
+       "unit": "percent",
+       "display": "26.7%",
+       "warehouse": "doorstep",
+       "result_id": "r1.eyJjIjoiYjBlODFlZjEzNmE3ZDJhM2U1ZjI3NWIwYTNiNjU2MjEiLCJkIjoiN2RmMDM0NTZiN2MxNzMwZDFiNWVlOWM4NjgyMGJmMTBiN2M5OWVjOTJkMGU5ZWQzZGZjZTM4ZmI4OTRlMDM0NyIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ1BvcnRsYW5kLVZhbmNvdXZlci1IaWxsc2Jvcm8sIE9SLVdBJyBBTkQgeWVhciA9IDIwMTkgTElNSVQgNTAwIiwidyI6ImRvb3JzdGVwIn0.9d25e0d8cefa68b5e9f33612",
+       "column": "value",
+       "row": 0,
+       "evidence_unit": "fraction"
+      }
+     },
+     "result_id": null,
+     "error": null,
+     "preview": null
+    },
+    {
+     "event": "gate",
+     "thread_id": "18b58cadfde4430b81d90a81c561bd08",
+     "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+     "redactions": {},
+     "passed": true,
+     "claims": [
+      {
+       "index": 0,
+       "span": [
+        69,
+        74
+       ],
+       "verdict": "agree",
+       "reason": "within 0.05 percent (the display rounding of the claim)",
+       "evidence": 26.65088014656028,
+       "tolerance": 0.05
+      }
+     ],
+     "unsupported": 0
+    },
+    {
+     "event": "answer",
+     "thread_id": "18b58cadfde4430b81d90a81c561bd08",
+     "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+     "redactions": {},
+     "answer": {
+      "id": "fcbef01ae53a47b78f46f536d1b82f20",
+      "question": "What was the payment share in Portland in 2019?",
+      "family": "lookup",
+      "text": "The payment share in Portland-Vancouver-Hillsboro, OR-WA in 2019 was 26.7%.",
+      "claims": [
+       {
+        "value": 26.7,
+        "unit": "percent",
+        "display": "26.7%",
+        "warehouse": "doorstep",
+        "result_id": "r1.eyJjIjoiYjBlODFlZjEzNmE3ZDJhM2U1ZjI3NWIwYTNiNjU2MjEiLCJkIjoiN2RmMDM0NTZiN2MxNzMwZDFiNWVlOWM4NjgyMGJmMTBiN2M5OWVjOTJkMGU5ZWQzZGZjZTM4ZmI4OTRlMDM0NyIsInMiOiJTRUxFQ1QgTUFYKHBheW1lbnRfc2hhcmUpIEFTIHZhbHVlIEZST00gZG9vcnN0ZXAubWFydF9tZXRyb195ZWFyIFdIRVJFIChraW5kID0gJ21ldHJvcG9saXRhbicpIEFORCBjYnNhX3RpdGxlID0gJ1BvcnRsYW5kLVZhbmNvdXZlci1IaWxsc2Jvcm8sIE9SLVdBJyBBTkQgeWVhciA9IDIwMTkgTElNSVQgNTAwIiwidyI6ImRvb3JzdGVwIn0.9d25e0d8cefa68b5e9f33612",
+        "column": "value",
+        "row": 0,
+        "evidence_unit": "fraction",
+        "manifest_key": null,
+        "catalog_key": null,
+        "definition_id": null,
+        "sql": null,
+        "span": [
+         69,
+         74
+        ],
+        "verdict": "agree",
+        "evidence": 26.65088014656028,
+        "tolerance": 0.05,
+        "reason": "within 0.05 percent (the display rounding of the claim)"
+       }
+      ],
+      "warehouses": [
+       "doorstep"
+      ],
+      "selection": [
+       "Portland-Vancouver-Hillsboro, OR-WA"
+      ],
+      "direction": null,
+      "verdict": "verified",
+      "refusal_reason": null,
+      "provider": "floor",
+      "model": "no model",
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "latency_ms": 382.3,
+      "tool_calls": 2,
+      "model_calls": 0,
+      "tools_called": [
+       "run_sql",
+       "readback"
+      ],
+      "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+      "prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+      "gate": {
+       "tokens": 2,
+       "exempt": 1,
+       "unsupported_before": 0,
+       "unsupported_after": 0,
+       "readback_calls": 1,
+       "caught": [],
+       "first_draft": null
+      },
+      "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice."
+     },
+     "answer_id": "fcbef01ae53a47b78f46f536d1b82f20"
+    },
+    {
+     "statement": "Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.",
+     "event": "done"
+    }
+   ]
+  }
+ ],
+ "traces": {
+  "27eb86856ceb64f8b2734483af8f9c01": [
+   {
+    "span_id": "e8b35e092a93d626",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "b27fba828fab1c19",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783734154705793,
+    "end_ns": 1792783734154842081,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "9e0c99d9ad5a84c8",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "b27fba828fab1c19",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783734154907767,
+    "end_ns": 1792783734154929196,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "005cf9b044ca0895",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "b27fba828fab1c19",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783734204162143,
+    "end_ns": 1792783734209533566,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "599c902e11d84234",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "005cf9b044ca0895",
+    "name": "server/discover",
+    "start_ns": 1792783734207923370,
+    "end_ns": 1792783734208199238,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "fdb57e517bbc0c85",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "b27fba828fab1c19",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783734209989420,
+    "end_ns": 1792783734216690410,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "cc6f7a555dd24f10",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "fdb57e517bbc0c85",
+    "name": "tools/list",
+    "start_ns": 1792783734212832529,
+    "end_ns": 1792783734213910245,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "ab3e0f833123fd59",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "b27fba828fab1c19",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783734218128942,
+    "end_ns": 1792783734574440942,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "140c3f914a9943bba8d740c9af2a093e",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "definition",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "3dddb085defa9476",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "ab3e0f833123fd59",
+    "name": "execute_tool search_catalog",
+    "start_ns": 1792783734252100864,
+    "end_ns": 1792783734539343430,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "search_catalog"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "079de20d072a3537",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "3dddb085defa9476",
+    "name": "MCP send tools/call search_catalog",
+    "start_ns": 1792783734252309299,
+    "end_ns": 1792783734530934680,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "bb3df0a25e05943c",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "079de20d072a3537",
+    "name": "tools/call search_catalog",
+    "start_ns": 1792783734255976511,
+    "end_ns": 1792783734529074296,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "search_catalog",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "3589630c072142af",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "ab3e0f833123fd59",
+    "name": "readback_gate",
+    "start_ns": 1792783734543515962,
+    "end_ns": 1792783734568991128,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 2,
+     "readback.gate.readback_calls": 2,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "b5b9399e7adb0330",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "3589630c072142af",
+    "name": "execute_tool readback",
+    "start_ns": 1792783734544030388,
+    "end_ns": 1792783734561775497,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "994f47996be7f064",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "b5b9399e7adb0330",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783734544692587,
+    "end_ns": 1792783734551164760,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "ade3e2cc6a6fbc19",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "994f47996be7f064",
+    "name": "tools/call readback",
+    "start_ns": 1792783734548085102,
+    "end_ns": 1792783734549231272,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "e8bbd2155c0d8bec",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "3589630c072142af",
+    "name": "execute_tool readback",
+    "start_ns": 1792783734562083046,
+    "end_ns": 1792783734568950077,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t3",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "bffc8475d2d78a16",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "e8bbd2155c0d8bec",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783734562364444,
+    "end_ns": 1792783734568628900,
+    "attributes": {
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   },
+   {
+    "span_id": "ea4efeae5ec1c680",
+    "trace_id": "27eb86856ceb64f8b2734483af8f9c01",
+    "parent_id": "bffc8475d2d78a16",
+    "name": "tools/call readback",
+    "start_ns": 1792783734565889796,
+    "end_ns": 1792783734567167451,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.577653"
+   }
+  ],
+  "29ec2dd123da97c618bfd60f4e3998c3": [
+   {
+    "span_id": "c972718878e5986a",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "d2a8fd92ccc1d05b",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783733253609744,
+    "end_ns": 1792783733253695701,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "045e5a564d197ff8",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "d2a8fd92ccc1d05b",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783733253762862,
+    "end_ns": 1792783733253782317,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "b18aed5e6c14df0c",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "d2a8fd92ccc1d05b",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783733295466097,
+    "end_ns": 1792783733302264876,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "58be9dc4441e7097",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "b18aed5e6c14df0c",
+    "name": "server/discover",
+    "start_ns": 1792783733300809234,
+    "end_ns": 1792783733301054097,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "dc5d2c0bf88027bc",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "d2a8fd92ccc1d05b",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783733302699292,
+    "end_ns": 1792783733308358281,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "42be9a46dfe4313a",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "dc5d2c0bf88027bc",
+    "name": "tools/list",
+    "start_ns": 1792783733305003129,
+    "end_ns": 1792783733306021364,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "1c90196eb21721ab",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "d2a8fd92ccc1d05b",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783733309802957,
+    "end_ns": 1792783733508542269,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "fe45629740ac422ca01027107f8c6fe7",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "comparison",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "d2b97ce6a0b2eaee",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "1c90196eb21721ab",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783733418209555,
+    "end_ns": 1792783733444610714,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "d00a27e152e0ae8e",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "d2b97ce6a0b2eaee",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783733418435847,
+    "end_ns": 1792783733436469634,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "ce6e056687d9a660",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "d00a27e152e0ae8e",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783733421371908,
+    "end_ns": 1792783733433831331,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "f9d734c6b7a10d93",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "1c90196eb21721ab",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783733444833324,
+    "end_ns": 1792783733458990227,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "59c55b95ba56f8b2",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "f9d734c6b7a10d93",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783733445052363,
+    "end_ns": 1792783733458448444,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "6918d723c8f5c333",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "59c55b95ba56f8b2",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783733448691414,
+    "end_ns": 1792783733456697404,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "c68ae35031839125",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "1c90196eb21721ab",
+    "name": "readback_gate",
+    "start_ns": 1792783733461133567,
+    "end_ns": 1792783733503140430,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 2,
+     "readback.gate.readback_calls": 2,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "39cec9cd6f90d38d",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "c68ae35031839125",
+    "name": "execute_tool readback",
+    "start_ns": 1792783733461709506,
+    "end_ns": 1792783733488422103,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t3",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "9e17a6f64506e96d",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "39cec9cd6f90d38d",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783733461874767,
+    "end_ns": 1792783733477824630,
+    "attributes": {
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "c0f211f8e2019897",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "9e17a6f64506e96d",
+    "name": "tools/call readback",
+    "start_ns": 1792783733464253447,
+    "end_ns": 1792783733475617081,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "00a4cf25aa411e14",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "c68ae35031839125",
+    "name": "execute_tool readback",
+    "start_ns": 1792783733488785729,
+    "end_ns": 1792783733503094093,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t4",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "07f26ea143d6ba26",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "00a4cf25aa411e14",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783733489074578,
+    "end_ns": 1792783733502559184,
+    "attributes": {
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   },
+   {
+    "span_id": "f3cc2e7b3fa08a74",
+    "trace_id": "29ec2dd123da97c618bfd60f4e3998c3",
+    "parent_id": "07f26ea143d6ba26",
+    "name": "tools/call readback",
+    "start_ns": 1792783733492701880,
+    "end_ns": 1792783733500899962,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.511136"
+   }
+  ],
+  "3a63e6f1fa2c46751c5c632ab3747fcd": [
+   {
+    "span_id": "857227ac2e819af5",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "5c301946c5238c45",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783734626164361,
+    "end_ns": 1792783734626254456,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "ef3e5e6e0db17f76",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "5c301946c5238c45",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783734626318922,
+    "end_ns": 1792783734626349673,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "fe0262748ad0f7c4",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "5c301946c5238c45",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783734683446639,
+    "end_ns": 1792783734688137396,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "cce7409d80f24940",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "fe0262748ad0f7c4",
+    "name": "server/discover",
+    "start_ns": 1792783734686657213,
+    "end_ns": 1792783734686948150,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "3b883e1ab395ef53",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "5c301946c5238c45",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783734688532931,
+    "end_ns": 1792783734693648971,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "82b7ca8a32a979c2",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "3b883e1ab395ef53",
+    "name": "tools/list",
+    "start_ns": 1792783734690294741,
+    "end_ns": 1792783734691283403,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "08e54c9ca4769e6c",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "5c301946c5238c45",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783734695117555,
+    "end_ns": 1792783734971139707,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "c1a559cad89341f8a0cb0ccb6c08c3a3",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "multi",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "e83c5259f935dba1",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "08e54c9ca4769e6c",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783734894425330,
+    "end_ns": 1792783734917886702,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "495a1551df5f3d89",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "e83c5259f935dba1",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783734894712443,
+    "end_ns": 1792783734905814284,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "772d12bd5a243393",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "495a1551df5f3d89",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783734897282665,
+    "end_ns": 1792783734903637535,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "5fc1ffbc1cefafbe",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "08e54c9ca4769e6c",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783734918099239,
+    "end_ns": 1792783734929245000,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "bd6746060ce2af35",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "5fc1ffbc1cefafbe",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783734918372653,
+    "end_ns": 1792783734928673337,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "55cdf858f84a12a5",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "bd6746060ce2af35",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783734920857834,
+    "end_ns": 1792783734926474342,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "6e3b1e228b5050c1",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "08e54c9ca4769e6c",
+    "name": "readback_gate",
+    "start_ns": 1792783734931414145,
+    "end_ns": 1792783734965214924,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 2,
+     "readback.gate.readback_calls": 2,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "8789f335ddfdffd4",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "6e3b1e228b5050c1",
+    "name": "execute_tool readback",
+    "start_ns": 1792783734931970470,
+    "end_ns": 1792783734953194827,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t3",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "e506dce80d082b77",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "8789f335ddfdffd4",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783734932185620,
+    "end_ns": 1792783734941146763,
+    "attributes": {
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "8a642b721081f0e2",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "e506dce80d082b77",
+    "name": "tools/call readback",
+    "start_ns": 1792783734934427647,
+    "end_ns": 1792783734939174323,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "6860b54d4220e37f",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "6e3b1e228b5050c1",
+    "name": "execute_tool readback",
+    "start_ns": 1792783734953504696,
+    "end_ns": 1792783734965177234,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t4",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "bea08f337f9b654e",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "6860b54d4220e37f",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783734953860930,
+    "end_ns": 1792783734964871108,
+    "attributes": {
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   },
+   {
+    "span_id": "f0b29ffb2e934795",
+    "trace_id": "3a63e6f1fa2c46751c5c632ab3747fcd",
+    "parent_id": "bea08f337f9b654e",
+    "name": "tools/call readback",
+    "start_ns": 1792783734957394867,
+    "end_ns": 1792783734963029509,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.974300"
+   }
+  ],
+  "48ddb0672510e2d1d1a5920c92e4537a": [
+   {
+    "span_id": "507681b307ed5212",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "c388a8cca06c8043",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783733591780487,
+    "end_ns": 1792783733591870653,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "8783445822baeb5a",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "c388a8cca06c8043",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783733591935037,
+    "end_ns": 1792783733591957606,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "5843ada7bef290ce",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "c388a8cca06c8043",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783733635872378,
+    "end_ns": 1792783733640685098,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "cd62f3320bddc1b1",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "5843ada7bef290ce",
+    "name": "server/discover",
+    "start_ns": 1792783733639217516,
+    "end_ns": 1792783733639491201,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "11336c450eeb1eab",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "c388a8cca06c8043",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783733641065990,
+    "end_ns": 1792783733646302569,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "a9065d0727627bd4",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "11336c450eeb1eab",
+    "name": "tools/list",
+    "start_ns": 1792783733643145436,
+    "end_ns": 1792783733644111190,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "ce47ba8203d19e9a",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "c388a8cca06c8043",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783733647917419,
+    "end_ns": 1792783733753942852,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "2ac41836c99845d1ae8d2aa894df4435",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "trend",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "c3084d4b1ddf4cdc",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "ce47ba8203d19e9a",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783733686653886,
+    "end_ns": 1792783733702892778,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "a4d1b0785cdc4c4e",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "c3084d4b1ddf4cdc",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783733686917262,
+    "end_ns": 1792783733696279316,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "32428ae42721bc56",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "a4d1b0785cdc4c4e",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783733689486901,
+    "end_ns": 1792783733694811896,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "8dd89f794ebe452a",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "ce47ba8203d19e9a",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783733703092384,
+    "end_ns": 1792783733714655220,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "7c8762bad95254ec",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "8dd89f794ebe452a",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783733703297000,
+    "end_ns": 1792783733714204971,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "a4f24a55d9f327ed",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "7c8762bad95254ec",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783733705933410,
+    "end_ns": 1792783733712542852,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "5dfaf359555d2268",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "ce47ba8203d19e9a",
+    "name": "readback_gate",
+    "start_ns": 1792783733716494093,
+    "end_ns": 1792783733746894541,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 2,
+     "readback.gate.readback_calls": 2,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "95494c3de7bb3986",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "5dfaf359555d2268",
+    "name": "execute_tool readback",
+    "start_ns": 1792783733716817079,
+    "end_ns": 1792783733732731375,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t3",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "738f2e663a42dd31",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "95494c3de7bb3986",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783733716975649,
+    "end_ns": 1792783733726354611,
+    "attributes": {
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "ad075f76c5327932",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "738f2e663a42dd31",
+    "name": "tools/call readback",
+    "start_ns": 1792783733719165807,
+    "end_ns": 1792783733724858085,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "54838350d2e98f8b",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "5dfaf359555d2268",
+    "name": "execute_tool readback",
+    "start_ns": 1792783733732979251,
+    "end_ns": 1792783733746827481,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t4",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "5585339a4758ba90",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "54838350d2e98f8b",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783733733188975,
+    "end_ns": 1792783733746213648,
+    "attributes": {
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   },
+   {
+    "span_id": "6e793995f879e02f",
+    "trace_id": "48ddb0672510e2d1d1a5920c92e4537a",
+    "parent_id": "5585339a4758ba90",
+    "name": "tools/call readback",
+    "start_ns": 1792783733735671992,
+    "end_ns": 1792783733744222559,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.758403"
+   }
+  ],
+  "5f6afc35f969b8d500ca3932fae595f0": [
+   {
+    "span_id": "c692ae8e5a611ebd",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "1a0f72df765479ce",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783732780721447,
+    "end_ns": 1792783732780818886,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "b383fbf79a4605e9",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "1a0f72df765479ce",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783732780882041,
+    "end_ns": 1792783732780905634,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "5bbf29329b3cbfed",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "1a0f72df765479ce",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783732864712165,
+    "end_ns": 1792783732872943289,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "f3e2285ae0b824d0",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "5bbf29329b3cbfed",
+    "name": "server/discover",
+    "start_ns": 1792783732870834358,
+    "end_ns": 1792783732871192899,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "a49d353e52e2c861",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "1a0f72df765479ce",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783732873617264,
+    "end_ns": 1792783732881963340,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "53b1923e2ecb7e67",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "a49d353e52e2c861",
+    "name": "tools/list",
+    "start_ns": 1792783732876523732,
+    "end_ns": 1792783732878134771,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "ab6d807b01beabf4",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "1a0f72df765479ce",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783732884685568,
+    "end_ns": 1792783732980327875,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "51a45046919342d59e6aee0638b3fec5",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "lookup",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "f8a905be85c70153",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "ab6d807b01beabf4",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783732937721639,
+    "end_ns": 1792783732955325425,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "63d279d82915f2ab",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "f8a905be85c70153",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783732937941989,
+    "end_ns": 1792783732948652669,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "31b58e561bfe8100",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "63d279d82915f2ab",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783732940513237,
+    "end_ns": 1792783732946789111,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "e2676f23a3acb24e",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "ab6d807b01beabf4",
+    "name": "readback_gate",
+    "start_ns": 1792783732957272963,
+    "end_ns": 1792783732974627225,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 1,
+     "readback.gate.readback_calls": 1,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "c1cf4673dc43bf8f",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "e2676f23a3acb24e",
+    "name": "execute_tool readback",
+    "start_ns": 1792783732957551505,
+    "end_ns": 1792783732974539113,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "dc341cf3eff2d901",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "c1cf4673dc43bf8f",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783732957762411,
+    "end_ns": 1792783732968349669,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   },
+   {
+    "span_id": "43dd6735a3da3f4c",
+    "trace_id": "5f6afc35f969b8d500ca3932fae595f0",
+    "parent_id": "dc341cf3eff2d901",
+    "name": "tools/call readback",
+    "start_ns": 1792783732960435740,
+    "end_ns": 1792783732966610663,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.982564"
+   }
+  ],
+  "a47d07462f319e75235f883a61814885": [
+   {
+    "span_id": "cee982222a4ae313",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783730182689173,
+    "end_ns": 1792783730182852425,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "404a3bb7955a99fd",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783730182954521,
+    "end_ns": 1792783730182988772,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "314333a8b4e57eb6",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783730245252902,
+    "end_ns": 1792783730253402376,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "629a172c5748144e",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "314333a8b4e57eb6",
+    "name": "server/discover",
+    "start_ns": 1792783730251170299,
+    "end_ns": 1792783730251894726,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "7f555d66216ebe10",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783730256100471,
+    "end_ns": 1792783732072800209,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "fe6e729a708b136b",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "7f555d66216ebe10",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783730256956127,
+    "end_ns": 1792783732013978636,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "cc1eefa3c0d8aab5",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "fe6e729a708b136b",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783730259312961,
+    "end_ns": 1792783732011013798,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "bcc6202fc08a68bb",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "7f555d66216ebe10",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783732014465685,
+    "end_ns": 1792783732020169793,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "17ba2acb75b66efc",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "bcc6202fc08a68bb",
+    "name": "tools/list",
+    "start_ns": 1792783732016868688,
+    "end_ns": 1792783732017868706,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "87c0fe907ac01c59",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783732073132306,
+    "end_ns": 1792783732083662102,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "61a1897a95c2ae84",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "87c0fe907ac01c59",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783732073350869,
+    "end_ns": 1792783732083025260,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "43704282400a0d54",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "61a1897a95c2ae84",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783732076245861,
+    "end_ns": 1792783732081338648,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "e0297c084cf5efbd",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783732112525323,
+    "end_ns": 1792783732141794158,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t3",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "5747dce46d9f6593",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "e0297c084cf5efbd",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783732112802343,
+    "end_ns": 1792783732135853183,
+    "attributes": {
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "1affda75f075c59f",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "5747dce46d9f6593",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783732115311931,
+    "end_ns": 1792783732132569584,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "b31b18048caccdab",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783732142048244,
+    "end_ns": 1792783732165768026,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t4",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "05820bbcd988ee93",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "b31b18048caccdab",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783732142247171,
+    "end_ns": 1792783732160218994,
+    "attributes": {
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "c35c11df8188a22b",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "05820bbcd988ee93",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783732144925691,
+    "end_ns": 1792783732156721858,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "ff1a1834b05ea9fb",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783732484192864,
+    "end_ns": 1792783732493143747,
+    "attributes": {
+     "jsonrpc.request.id": "7",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "21142b0a55303a3d",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "ff1a1834b05ea9fb",
+    "name": "tools/list",
+    "start_ns": 1792783732487760870,
+    "end_ns": 1792783732489214153,
+    "attributes": {
+     "jsonrpc.request.id": "7",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "f06e96b850c2e620",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "d1fd99e7fe1c1d10",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783732496035720,
+    "end_ns": 1792783732692654069,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "354bf70c9f1447b688f209b78d7e5ed9",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "lookup",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "a747c70f0f20b946",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "f06e96b850c2e620",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783732633924210,
+    "end_ns": 1792783732652235346,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t5",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "aa15039c56e396b2",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "a747c70f0f20b946",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783732634515298,
+    "end_ns": 1792783732651723102,
+    "attributes": {
+     "jsonrpc.request.id": "8",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "02d5cb6cd84ae044",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "aa15039c56e396b2",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783732637850638,
+    "end_ns": 1792783732649682190,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "8",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "3d30faa1708f670b",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "f06e96b850c2e620",
+    "name": "readback_gate",
+    "start_ns": 1792783732654412425,
+    "end_ns": 1792783732683182679,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 1,
+     "readback.gate.readback_calls": 1,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "7cc05c51153a37ca",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "3d30faa1708f670b",
+    "name": "execute_tool readback",
+    "start_ns": 1792783732655093310,
+    "end_ns": 1792783732683066832,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t6",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "a2d020ab2fa6a208",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "7cc05c51153a37ca",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783732655277191,
+    "end_ns": 1792783732671894668,
+    "attributes": {
+     "jsonrpc.request.id": "9",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   },
+   {
+    "span_id": "8539018ea93ad17d",
+    "trace_id": "a47d07462f319e75235f883a61814885",
+    "parent_id": "a2d020ab2fa6a208",
+    "name": "tools/call readback",
+    "start_ns": 1792783732657671952,
+    "end_ns": 1792783732669529786,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "9",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:52.695846"
+   }
+  ],
+  "aefd97056f6ed57f7047298fdc90e8e8": [
+   {
+    "span_id": "19225bc6b071308a",
+    "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+    "parent_id": "b7af7228f70b4cbb",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783735056238110,
+    "end_ns": 1792783735056324417,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:55.174358"
+   },
+   {
+    "span_id": "dbca5be156b98b2e",
+    "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+    "parent_id": "b7af7228f70b4cbb",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783735056389449,
+    "end_ns": 1792783735056409289,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:55.174358"
+   },
+   {
+    "span_id": "09d0d0b6f0551e4f",
+    "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+    "parent_id": "b7af7228f70b4cbb",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783735121633696,
+    "end_ns": 1792783735126176644,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:55.174358"
+   },
+   {
+    "span_id": "234ee7f7af56286e",
+    "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+    "parent_id": "09d0d0b6f0551e4f",
+    "name": "server/discover",
+    "start_ns": 1792783735124823213,
+    "end_ns": 1792783735125044814,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:55.174358"
+   },
+   {
+    "span_id": "eb683e3a88827cf0",
+    "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+    "parent_id": "b7af7228f70b4cbb",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783735126572837,
+    "end_ns": 1792783735131499634,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:55.174358"
+   },
+   {
+    "span_id": "e5a0099fbe51903f",
+    "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+    "parent_id": "eb683e3a88827cf0",
+    "name": "tools/list",
+    "start_ns": 1792783735128365913,
+    "end_ns": 1792783735129262208,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:55.174358"
+   },
+   {
+    "span_id": "a1f0dbaebe489e5d",
+    "trace_id": "aefd97056f6ed57f7047298fdc90e8e8",
+    "parent_id": "b7af7228f70b4cbb",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783735132955203,
+    "end_ns": 1792783735171112398,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "664f356327b94c4b820138c2242bc38a",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "refusal",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "refused"
+    },
+    "created_at": "2026-10-23T19:28:55.174358"
+   }
+  ],
+  "b0e81ef136a7d2a3e5f275b0a3b65621": [
+   {
+    "span_id": "d58bed80cec93227",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": null,
+    "name": "POST /v1/chat",
+    "start_ns": 1792783735256513144,
+    "end_ns": 1792783735462008986,
+    "attributes": {
+     "http.request.method": "POST",
+     "http.response.status_code": 200,
+     "http.route": "/v1/chat",
+     "network.protocol.version": "1.1",
+     "server.address": "127.0.0.1",
+     "server.port": 58781,
+     "url.path": "/v1/chat",
+     "url.scheme": "http"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "1adbdf564829d4d1",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "d58bed80cec93227",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783735257226872,
+    "end_ns": 1792783735257312544,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:55.458081"
+   },
+   {
+    "span_id": "baba2100de90a44f",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "d58bed80cec93227",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783735257377819,
+    "end_ns": 1792783735257397062,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:55.458081"
+   },
+   {
+    "span_id": "499a7254a2a8b186",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "d58bed80cec93227",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783735311064605,
+    "end_ns": 1792783735317350584,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:55.458081"
+   },
+   {
+    "span_id": "0226116a83a8b742",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "499a7254a2a8b186",
+    "name": "server/discover",
+    "start_ns": 1792783735315473109,
+    "end_ns": 1792783735315821866,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:55.458081"
+   },
+   {
+    "span_id": "1d0899d050eafe03",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "d58bed80cec93227",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783735317945347,
+    "end_ns": 1792783735325375647,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:55.458081"
+   },
+   {
+    "span_id": "8c977d0bd4898558",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "1d0899d050eafe03",
+    "name": "tools/list",
+    "start_ns": 1792783735320466573,
+    "end_ns": 1792783735321985042,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:55.458081"
+   },
+   {
+    "span_id": "a42f9d85968b26bc",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "d58bed80cec93227",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783735327601750,
+    "end_ns": 1792783735454589772,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "18b58cadfde4430b81d90a81c561bd08",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "lookup",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model"
+    },
+    "created_at": "2026-10-23T19:28:55.458081"
+   },
+   {
+    "span_id": "102c61f639de7dcd",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "a42f9d85968b26bc",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783735594169470,
+    "end_ns": 1792783735759157226,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "18b58cadfde4430b81d90a81c561bd08",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "e24e9500de2df2d8",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "102c61f639de7dcd",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783735708638750,
+    "end_ns": 1792783735729469870,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "d91c50d109fa0eea",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "e24e9500de2df2d8",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783735708873785,
+    "end_ns": 1792783735721784553,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "f9b5aab6698bcce4",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "d91c50d109fa0eea",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783735712055008,
+    "end_ns": 1792783735719996622,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "d45e158fad00a630",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "102c61f639de7dcd",
+    "name": "readback_gate",
+    "start_ns": 1792783735731452465,
+    "end_ns": 1792783735752789483,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 1,
+     "readback.gate.readback_calls": 1,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "eca4eb6d3164c185",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "d45e158fad00a630",
+    "name": "execute_tool readback",
+    "start_ns": 1792783735732045114,
+    "end_ns": 1792783735752701955,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "bab2e7573d97165b",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "eca4eb6d3164c185",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783735732233971,
+    "end_ns": 1792783735744032105,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   },
+   {
+    "span_id": "c28614d092717eaa",
+    "trace_id": "b0e81ef136a7d2a3e5f275b0a3b65621",
+    "parent_id": "bab2e7573d97165b",
+    "name": "tools/call readback",
+    "start_ns": 1792783735734989262,
+    "end_ns": 1792783735742412864,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:55.762701"
+   }
+  ],
+  "d2de58a74199c6d550c69c2129529199": [
+   {
+    "span_id": "6fdffdfe9433a65c",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "6ad0c1d503d747de",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783733037694995,
+    "end_ns": 1792783733037779383,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "f692113f19bfcc32",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "6ad0c1d503d747de",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783733037840136,
+    "end_ns": 1792783733037859759,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "f77c714898294335",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "6ad0c1d503d747de",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783733101677900,
+    "end_ns": 1792783733108736083,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "fb48ef4f7a79a13d",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "f77c714898294335",
+    "name": "server/discover",
+    "start_ns": 1792783733106529651,
+    "end_ns": 1792783733106994715,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "ba010ca3cd409449",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "6ad0c1d503d747de",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783733109313403,
+    "end_ns": 1792783733116983468,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "7259ed87b87fef32",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "ba010ca3cd409449",
+    "name": "tools/list",
+    "start_ns": 1792783733112065417,
+    "end_ns": 1792783733113538345,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "7888a4385105986e",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "6ad0c1d503d747de",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783733119309035,
+    "end_ns": 1792783733202422553,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "05235ab8c2ae4f938c5e10a9895dd785",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "lookup",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "ca541f60baa39ae9",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "7888a4385105986e",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783733159995038,
+    "end_ns": 1792783733176723330,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "aa948562b0bfb3e9",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "ca541f60baa39ae9",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783733160186089,
+    "end_ns": 1792783733169895848,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "d9767815e4df46fe",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "aa948562b0bfb3e9",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783733162527999,
+    "end_ns": 1792783733168154897,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "cb386fd2b75ceb28",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "7888a4385105986e",
+    "name": "readback_gate",
+    "start_ns": 1792783733178913082,
+    "end_ns": 1792783733196031616,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 1,
+     "readback.gate.readback_calls": 1,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "052b278c75a2852d",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "cb386fd2b75ceb28",
+    "name": "execute_tool readback",
+    "start_ns": 1792783733179212691,
+    "end_ns": 1792783733195969656,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "673645ab7034cdf2",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "052b278c75a2852d",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783733179384540,
+    "end_ns": 1792783733189681457,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   },
+   {
+    "span_id": "cca424a13602b058",
+    "trace_id": "d2de58a74199c6d550c69c2129529199",
+    "parent_id": "673645ab7034cdf2",
+    "name": "tools/call readback",
+    "start_ns": 1792783733182043658,
+    "end_ns": 1792783733188061980,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:53.205644"
+   }
+  ],
+  "fdc684515c3d5b2564a6479eafc99d01": [
+   {
+    "span_id": "40893d546ee3fa18",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "602e80bf4bdff9a6",
+    "name": "fastapi.dependencies",
+    "start_ns": 1792783733825729066,
+    "end_ns": 1792783733825842165,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "d4bce340a752fb86",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "602e80bf4bdff9a6",
+    "name": "fastapi.endpoint",
+    "start_ns": 1792783733825927056,
+    "end_ns": 1792783733825954457,
+    "attributes": {
+     "code.function.name": "readback_api.app.create_app.<locals>.chat"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "3e515c76c5219dbe",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "602e80bf4bdff9a6",
+    "name": "MCP send server/discover",
+    "start_ns": 1792783733903423531,
+    "end_ns": 1792783733909109989,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "4f9ceda267f1e719",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "3e515c76c5219dbe",
+    "name": "server/discover",
+    "start_ns": 1792783733907063094,
+    "end_ns": 1792783733907344296,
+    "attributes": {
+     "jsonrpc.request.id": "1",
+     "mcp.method.name": "server/discover",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "77399110f3be1d54",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "602e80bf4bdff9a6",
+    "name": "MCP send tools/list",
+    "start_ns": 1792783733909505112,
+    "end_ns": 1792783733915210713,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "47fc2fbf017d5aee",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "77399110f3be1d54",
+    "name": "tools/list",
+    "start_ns": 1792783733911506164,
+    "end_ns": 1792783733912547358,
+    "attributes": {
+     "jsonrpc.request.id": "2",
+     "mcp.method.name": "tools/list",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "aeae5ad2233386a2",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "602e80bf4bdff9a6",
+    "name": "invoke_agent readback",
+    "start_ns": 1792783733916670382,
+    "end_ns": 1792783734052440852,
+    "attributes": {
+     "gen_ai.agent.name": "readback",
+     "gen_ai.conversation.id": "439375d9b97b4537af4f3623069617bd",
+     "gen_ai.operation.name": "invoke_agent",
+     "gen_ai.provider.name": "floor",
+     "readback.family": "top_k",
+     "readback.prompt_hash": "ac1dd3c9756cc1ac9a3c9bb2b49aab855440376e7b24abc0682101cf9524d9ba",
+     "readback.router.reason": "the floor: no model",
+     "readback.verdict": "verified"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "f10e4d455f091e7a",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "aeae5ad2233386a2",
+    "name": "execute_tool run_sql",
+    "start_ns": 1792783733952820753,
+    "end_ns": 1792783733983327919,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t1",
+     "gen_ai.tool.name": "run_sql"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "7a4e2f0d29da4f07",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "f10e4d455f091e7a",
+    "name": "MCP send tools/call run_sql",
+    "start_ns": 1792783733953128782,
+    "end_ns": 1792783733976464499,
+    "attributes": {
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "8eccbbc0c05e81f7",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "7a4e2f0d29da4f07",
+    "name": "tools/call run_sql",
+    "start_ns": 1792783733957045087,
+    "end_ns": 1792783733974121176,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "run_sql",
+     "jsonrpc.request.id": "3",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "d66d75d19b7a4d7e",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "aeae5ad2233386a2",
+    "name": "readback_gate",
+    "start_ns": 1792783733985353973,
+    "end_ns": 1792783734047127350,
+    "attributes": {
+     "gen_ai.operation.name": "readback_gate",
+     "readback.gate.claims": 3,
+     "readback.gate.readback_calls": 3,
+     "readback.gate.unsupported": 0,
+     "readback.gate.verdict": "pass"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "3fa1cff1e9b144a6",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "d66d75d19b7a4d7e",
+    "name": "execute_tool readback",
+    "start_ns": 1792783733985836730,
+    "end_ns": 1792783734012710452,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t2",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "1d706d3a7f4e64a9",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "3fa1cff1e9b144a6",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783733986020816,
+    "end_ns": 1792783734001130557,
+    "attributes": {
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "ed8228dab5cb89e5",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "1d706d3a7f4e64a9",
+    "name": "tools/call readback",
+    "start_ns": 1792783733988617114,
+    "end_ns": 1792783733999138453,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "4",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "57e09c36be5c01d9",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "d66d75d19b7a4d7e",
+    "name": "execute_tool readback",
+    "start_ns": 1792783734013045101,
+    "end_ns": 1792783734032534968,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t3",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "012ffca2b9fd9b08",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "57e09c36be5c01d9",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783734013332238,
+    "end_ns": 1792783734032091067,
+    "attributes": {
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "81fcdc7f48dd0c4e",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "012ffca2b9fd9b08",
+    "name": "tools/call readback",
+    "start_ns": 1792783734017315989,
+    "end_ns": 1792783734029642228,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "5",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "b97c9f43e2522800",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "d66d75d19b7a4d7e",
+    "name": "execute_tool readback",
+    "start_ns": 1792783734032838966,
+    "end_ns": 1792783734047076975,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.call.id": "t4",
+     "gen_ai.tool.name": "readback"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "a0d0797ef50762b5",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "b97c9f43e2522800",
+    "name": "MCP send tools/call readback",
+    "start_ns": 1792783734033080799,
+    "end_ns": 1792783734046677096,
+    "attributes": {
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   },
+   {
+    "span_id": "445ff546e5d9f1a4",
+    "trace_id": "fdc684515c3d5b2564a6479eafc99d01",
+    "parent_id": "a0d0797ef50762b5",
+    "name": "tools/call readback",
+    "start_ns": 1792783734036214968,
+    "end_ns": 1792783734045211420,
+    "attributes": {
+     "gen_ai.operation.name": "execute_tool",
+     "gen_ai.tool.name": "readback",
+     "jsonrpc.request.id": "6",
+     "mcp.method.name": "tools/call",
+     "mcp.protocol.version": "2026-07-28"
+    },
+    "created_at": "2026-10-23T19:28:54.055747"
+   }
+  ]
+ }
+}

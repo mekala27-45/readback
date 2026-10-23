@@ -54,6 +54,13 @@ async def tool_specs(client: Client) -> list[dict[str, Any]]:
     return [{"type": "function", "function": {"name": t.name, "description": t.description or "", "parameters": t.input_schema}} for t in tools]
 
 
+def preview(result: Any) -> dict[str, Any] | None:
+    """What a tool card on the desk shows: the columns and the first ten rows of a run_sql result."""
+    if not isinstance(result, dict) or "columns" not in result or "rows" not in result:
+        return None
+    return {"columns": result["columns"], "rows": result["rows"][:10], "row_count": result.get("row_count", len(result["rows"]))}
+
+
 @dataclass
 class Agent:
     """Everything a turn needs that outlives a turn: the ledger, the cassettes, the checkpointer."""
@@ -142,7 +149,7 @@ class Agent:
                         r = tools.records[sent]
                         sent += 1
                         yield {"event": "tool", **meta, "id": r.id, "tool": r.tool, "ok": r.ok, "args": r.args,
-                               "result_id": (r.result or {}).get("result_id"), "error": r.error}
+                               "result_id": (r.result or {}).get("result_id"), "error": r.error, "preview": preview(r.result)}
                     if node == "classify" and values:
                         yield {"event": "classified", **meta, "family": values.get("family"), "rule": values.get("rule"),
                                "provider": choice.provider.name, "reason": choice.reason}
