@@ -13,6 +13,7 @@ import json
 import os
 import tempfile
 import threading
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -68,9 +69,9 @@ def open_warehouse(
     lock = json.loads((root / "data" / "warehouses.lock.json").read_text(encoding="utf-8"))
     folder = Path(os.environ.get("READBACK_CACHE", tempfile.gettempdir())) / "readback"
     folder.mkdir(parents=True, exist_ok=True)
-    db = folder / f"views-{os.getpid()}-{threading.get_ident()}.duckdb"
-    if db.exists():
-        db.unlink()
+    # One file per connection. Two connections in one thread used to share a name, and DuckDB refuses
+    # a second connection to an open file with a different allow list (the red team's extra views).
+    db = folder / f"views-{os.getpid()}-{threading.get_ident()}-{uuid.uuid4().hex[:8]}.duckdb"
     extra = extra or {}
     _build_views(db, base, lock, extra)
     allowed = sorted(str(base / n / t["path"]) for n in WAREHOUSES for t in lock["warehouses"][n]["tables"])
