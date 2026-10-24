@@ -194,7 +194,7 @@ class Agent:
                     "caught": [],
                     "answer": None,
                     "unsupported_before": 0,
-                    "started": time.perf_counter(),
+                    "started": time.time(),  # wall clock: a resumed turn may finish in another process
                     "traceparent": carrier(),
                 }
             sent = 0

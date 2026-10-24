@@ -5,7 +5,7 @@ this file in CI and fails on any difference. Built 2026-10-23.
 
 ## The definition of done
 
-13 of the eighteen items are done.
+15 of the eighteen items are done.
 
 | Item | Status | Evidence |
 |---:|---|---|
@@ -21,12 +21,12 @@ this file in CI and fails on any difference. Built 2026-10-23.
 | 10 | not done | needs a model graded on the test split and the clarity judge, which need a key |
 | 11 | done | the default is floor: no model run beats the floor on the development split |
 | 12 | done | AGENTS.md, CLAUDE.md, .github/copilot-instructions.md, .mcp.json, three skills (results/skills.json), docs/SPEC.md, server.json, docs/connect.md |
-| 13 | not done | the desk on GitHub Pages, checked in a browser in results/live_check.json |
-| 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
+| 13 | done | the desk on GitHub Pages, checked in a browser in results/live_check.json |
+| 14 | done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | done | results/rederive.json: no drift |
-| 17 | done | DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 33, rederive no drift |
+| 17 | done | DECISIONS.md has 30 dated entries, 2 reversals, 6 protocol decisions; notebooks 01 to 03 |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 36, rederive no drift |
 
 Stretch items (the apps extension, the agent card, the browser floor, the fourth warehouse, the
 editor manifests, the container hardening): not done, and not counted toward the list.
@@ -142,7 +142,7 @@ The gate caught 0 unsupported numbers on the test split.
 
 Host vercel, https://readback-mcp.vercel.app, verified by
 AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC at 2026-10-24T01:48:18.5325518Z; its readback: 4.55% agree.
-Latency: not measured. The browser live check: not run. Providers the
+Latency: not measured. The browser live check: passed. Providers the
 probe reached with a key: none.
 
 ## Limitations

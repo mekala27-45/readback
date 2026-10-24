@@ -145,6 +145,11 @@
    "date": "2026-10-23",
    "html": "<p>The first deploy failed every request. Neon's default connection string names the pooler, and the\npooler refuses the search_path startup option that puts the tables in the readback schema. The\nconnection string is turned into the direct host's by dropping the -pooler suffix, with a test;\nthe direct host takes the option, and a demonstration with a handful of connections does not need\npooling. The same deploy showed every cold start rebuilding the twelve packages, because uv run\nat start re-synced without the live extra; the start command now runs the virtual environment's\nalembic and uvicorn directly.</p>\n",
    "title": "the live database is reached on Neon's direct host, not the pooler"
+  },
+  {
+   "date": "2026-10-23",
+   "html": "<p>The first live question on the desk came back empty. On Vercel the container listens on port 80, so\nthe agent's loopback client sent a Host header with no port, and the DNS rebinding protection only\nallowed the loopback names with a port. Every test had used a random high port and never saw it.\nThe bare loopback names are allowed now, with a test; the port is read when a turn starts rather\nthan at import; a turn that fails on the server now ends its stream with an error event, and the\ndesk says so when a stream closes without an answer, instead of showing nothing.</p>\n",
+   "title": "the agent's loopback client was refused by the server's own Host check (revision 2026-07-28)"
   }
  ],
  "skills": [

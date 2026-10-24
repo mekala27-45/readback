@@ -66,7 +66,7 @@ rederive:
 	$(PY) scripts/reset_and_rederive.py
 
 live-check:
-	$(PY) scripts/live_check.py
+	@echo "the live check is done in a browser and recorded by hand in results/live_check.json; see docs/runbook.md"
 
 load-test:
 	$(PY) scripts/load_test.py

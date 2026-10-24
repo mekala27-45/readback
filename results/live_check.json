@@ -1,0 +1,33 @@
+{
+ "status": "passed",
+ "checked_at": "2026-10-24T02:05:00Z",
+ "browser": "Chrome on Windows, the published site at https://mekala27-45.github.io/readback/",
+ "api": "https://readback-mcp.vercel.app, awake",
+ "desk": {
+  "source_line": "Live",
+  "question": "Was the NIM at Harborline Bank higher in 2023Q4 or in 2024Q4?",
+  "family": "comparison",
+  "chips": ["4.55% verified", "3.46% verified"],
+  "evidence_opened": "4.55%: read back 4.5533 percent, tolerance 0.005 percent, the SQL shown",
+  "no_model_badge": true,
+  "trace_link": "opened the waterfall from the live API"
+ },
+ "interrupt": {
+  "question": "What was the payment share in Portland in 2019?",
+  "choices": ["Portland-Vancouver-Hillsboro, OR-WA", "Portland-South Portland, ME"],
+  "chosen": "Portland-South Portland, ME",
+  "answer": "verified, one chip, resumed from the Postgres checkpoint",
+  "found": "the resumed turn showed a negative latency; fixed in the same commit as this file"
+ },
+ "pages": {
+  "traces/": "200, statement and pushback present",
+  "evals/": "200, statement and pushback present",
+  "catalog/": "200, statement and pushback present",
+  "connect/": "200, statement and pushback present",
+  "playbook/": "200, statement and pushback present",
+  "report/": "200, statement and pushback present"
+ },
+ "asleep": "not reproducible on the live host on demand; covered by the end to end suite, where the test server answers a first 503 and the desk falls back to the labeled recording",
+ "separate_client": "results/deploy/verification.json, PowerShell JSON-RPC, passed",
+ "hosts": "claude.ai, Claude Desktop and Cursor connections not yet made; they need the owner's accounts"
+}

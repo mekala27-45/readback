@@ -125,12 +125,12 @@
     ],
     [
      "13",
-     "not done",
+     "done",
      "the desk on GitHub Pages, checked in a browser in results/live_check.json"
     ],
     [
      "14",
-     "not done",
+     "done",
      "traces, evals, catalog, connect, playbook and report pages, in results/live_check.json"
     ],
     [
@@ -146,12 +146,12 @@
     [
      "17",
      "done",
-     "DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03"
+     "DECISIONS.md has 30 dated entries, 2 reversals, 6 protocol decisions; notebooks 01 to 03"
     ],
     [
      "18",
      "not done",
-     "coverage 85.4, mypy clean, ruff clean, commits 33, rederive no drift"
+     "coverage 85.4, mypy clean, ruff clean, commits 36, rederive no drift"
     ]
    ]
   },
@@ -670,9 +670,9 @@
   }
  },
  "values": {
-  "build.commits": "33",
-  "build.decisions": "29",
-  "build.protocol_decisions": "5",
+  "build.commits": "36",
+  "build.decisions": "30",
+  "build.protocol_decisions": "6",
   "build.reversals": "2",
   "catalog.columns": "1,533",
   "catalog.documents": "3,055",
@@ -736,7 +736,7 @@
   "golden.questions": "150",
   "golden.test": "100",
   "latency.status": "not measured",
-  "live.status": "not run",
+  "live.status": "passed",
   "mcp.conformance": "passed",
   "mcp.output_schemas": "7",
   "mcp.revision": "2026-07-28",

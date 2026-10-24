@@ -9,8 +9,8 @@ writes the SQL, and before the answer leaves, a gate made of plain code re-runs 
 about to say. A number that does not read back is repaired once, then refused. The live site
 answers with **floor** (no model run beats the floor on the development split).
 
-**Status: 13 of the eighteen items in the definition of done are done.** Not done yet:
-item 10, item 13, item 14, item 15, item 18. The
+**Status: 15 of the eighteen items in the definition of done are done.** Not done yet:
+item 10, item 15, item 18. The
 checklist below says what each is waiting on.
 
 | | |
@@ -107,12 +107,12 @@ because three builds spent a day each proving their numbers. ARCHITECTURE.md has
 | 10 | not done | needs a model graded on the test split and the clarity judge, which need a key |
 | 11 | done | the default is floor: no model run beats the floor on the development split |
 | 12 | done | AGENTS.md, CLAUDE.md, .github/copilot-instructions.md, .mcp.json, three skills (results/skills.json), docs/SPEC.md, server.json, docs/connect.md |
-| 13 | not done | the desk on GitHub Pages, checked in a browser in results/live_check.json |
-| 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
+| 13 | done | the desk on GitHub Pages, checked in a browser in results/live_check.json |
+| 14 | done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | done | results/rederive.json: no drift |
-| 17 | done | DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 33, rederive no drift |
+| 17 | done | DECISIONS.md has 30 dated entries, 2 reversals, 6 protocol decisions; notebooks 01 to 03 |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 36, rederive no drift |
 
 ## Run it
 

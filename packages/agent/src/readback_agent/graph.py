@@ -433,7 +433,7 @@ def _base(state: State, ctx: Context, verdict: str, text: str) -> dict[str, Any]
         "tokens_in": usage.input_tokens if usage else 0,
         "tokens_out": usage.output_tokens if usage else 0,
         "model_calls": usage.calls if usage else 0,
-        "latency_ms": round((time.perf_counter() - state.get("started", time.perf_counter())) * 1000, 1),
+        "latency_ms": round(max(0.0, time.time() - state.get("started", time.time())) * 1000, 1),
         "tool_calls": ctx.tools.calls,
         "tools_called": [r.tool for r in ctx.tools.records],
         "trace_id": format(span.get_span_context().trace_id, "032x"),
