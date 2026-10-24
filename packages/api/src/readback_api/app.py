@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import contextlib
 import json
+import logging
 import os
 import uuid
 from collections.abc import AsyncIterator
@@ -53,7 +54,9 @@ class ResumeIn(BaseModel):
 
 
 def allowed_hosts() -> list[str]:
-    hosts = ["127.0.0.1:*", "localhost:*", "[::1]:*", "testserver"]
+    # Bare loopback names too: on port 80 an HTTP client sends the Host header without a port, and the
+    # agent's own loopback client on Vercel was refused for it.
+    hosts = ["127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*", "[::1]", "[::1]:*", "testserver"]
     for h in os.environ.get("READBACK_PUBLIC_HOSTS", "readback-mcp.vercel.app").split(","):
         h = h.strip()
         if h:
@@ -137,25 +140,33 @@ def create_app(*, agent_transport: str | None = None) -> FastAPI:
     def mcp_client() -> Client:
         if transport == "memory":
             return Client(server)
-        return Client(f"http://127.0.0.1:{PORT}/mcp")
+        # The port is read when a turn starts, not at import, so the process's own PORT always wins.
+        return Client(f"http://127.0.0.1:{os.environ.get('PORT', PORT)}/mcp")
 
     async def events(
         question: str, thread_id: str | None, provider: str | None, resume: str | None
     ) -> AsyncIterator[bytes]:
         agent: Agent = state["agent"]
         traces: set[str] = set()
-        async with mcp_client() as client:
-            async for event in agent.stream(
-                client, question, thread_id=thread_id, provider=provider, resume=resume
-            ):
-                traces.add(event["trace_id"])
-                if event["event"] == "answer":
-                    answer_id = uuid.uuid4().hex
-                    event["answer"]["id"] = answer_id
-                    # The audit row is written, and committed, before the final event is sent.
-                    log.write_answer(answer_id, event["thread_id"], event["answer"])
-                    event["answer_id"] = answer_id
-                yield f"event: {event['event']}\ndata: {json.dumps(event, default=str)}\n\n".encode()
+        try:
+            async with mcp_client() as client:
+                async for event in agent.stream(
+                    client, question, thread_id=thread_id, provider=provider, resume=resume
+                ):
+                    traces.add(event["trace_id"])
+                    if event["event"] == "answer":
+                        answer_id = uuid.uuid4().hex
+                        event["answer"]["id"] = answer_id
+                        # The audit row is written, and committed, before the final event is sent.
+                        log.write_answer(answer_id, event["thread_id"], event["answer"])
+                        event["answer_id"] = answer_id
+                    yield f"event: {event['event']}\ndata: {json.dumps(event, default=str)}\n\n".encode()
+        except Exception as err:  # a turn that fails says so on the stream instead of ending empty
+            logging.getLogger("readback.api").exception("the turn failed")
+            message = {
+                "message": f"the turn failed on the server ({type(err).__name__}); nothing was answered"
+            }
+            yield f"event: error\ndata: {json.dumps(message)}\n\n".encode()
         # The turn's span closes when the stream ends; its spans are stored then.
         for trace_id in traces:
             log.write_spans(exporter.rows(trace_id))

@@ -103,7 +103,12 @@ export async function ask(question: string, threadId: string | null, onEvent: (e
         onEvent({ event: "error", message: body.error ?? `the API answered ${r.status}` });
         return source;
       }
-      await readStream(r, onEvent);
+      let ended = false;
+      await readStream(r, (e) => {
+        if (e.event === "answer" || e.event === "interrupt" || e.event === "error") ended = true;
+        onEvent(e);
+      });
+      if (!ended) onEvent({ event: "error", message: "The stream closed without an answer, so nothing was shown." });
     } catch (err) {
       onEvent({ event: "error", message: `the stream broke: ${(err as Error).message}` });
     }

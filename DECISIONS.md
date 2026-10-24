@@ -230,3 +230,12 @@ the direct host takes the option, and a demonstration with a handful of connecti
 pooling. The same deploy showed every cold start rebuilding the twelve packages, because uv run
 at start re-synced without the live extra; the start command now runs the virtual environment's
 alembic and uvicorn directly.
+
+## 2026-10-23: the agent's loopback client was refused by the server's own Host check (revision 2026-07-28)
+
+The first live question on the desk came back empty. On Vercel the container listens on port 80, so
+the agent's loopback client sent a Host header with no port, and the DNS rebinding protection only
+allowed the loopback names with a port. Every test had used a random high port and never saw it.
+The bare loopback names are allowed now, with a test; the port is read when a turn starts rather
+than at import; a turn that fails on the server now ends its stream with an error event, and the
+desk says so when a stream closes without an answer, instead of showing nothing.

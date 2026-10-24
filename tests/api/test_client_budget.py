@@ -37,3 +37,10 @@ def test_a_neon_pooled_string_becomes_direct(monkeypatch: pytest.MonkeyPatch) ->
     )
     monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@db.example.com:5432/x")
     assert db.database_url() == "postgresql+psycopg://u:p@db.example.com:5432/x"
+
+
+def test_loopback_without_a_port_is_an_allowed_host() -> None:
+    from readback_api.app import allowed_hosts
+
+    hosts = allowed_hosts()
+    assert "127.0.0.1" in hosts and "localhost" in hosts
