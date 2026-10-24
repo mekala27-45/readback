@@ -9,7 +9,7 @@ help:
 	@grep -E '^[a-z-]+:' Makefile | sed 's/:.*//' | sort | tr '\n' ' '; echo
 
 setup:
-	uv sync --frozen
+	uv sync --frozen --extra live
 
 fetch:
 	$(PY) scripts/fetch_warehouses.py

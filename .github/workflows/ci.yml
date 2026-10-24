@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: uv sync --frozen
+      - run: uv sync --frozen --extra live
       - name: The warehouses, by digest
         run: uv run python scripts/fetch_warehouses.py
       - name: Gates
