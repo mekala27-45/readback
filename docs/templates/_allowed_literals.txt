@@ -5,3 +5,6 @@ Apache 2.0
 CC BY 4.0
 mekala27-45
 SHA-256
+notebooks/01_the_tolerance
+notebooks/02_the_floor
+notebooks/03_the_injection
