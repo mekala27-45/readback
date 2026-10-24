@@ -1,0 +1,25 @@
+{
+ "base_url": "https://readback-mcp.vercel.app",
+ "client": "AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC",
+ "checked_at": "2026-10-24T01:48:18.5325518Z",
+ "transport": "streamable HTTP",
+ "supported_versions": [
+  "2026-07-28"
+ ],
+ "tools": [
+  "warehouses",
+  "describe",
+  "search_catalog",
+  "run_sql",
+  "published",
+  "readback",
+  "lookup"
+ ],
+ "output_schemas": 7,
+ "lists_identical": true,
+ "run_sql_rows": 1,
+ "readback_display": "4.55%",
+ "readback_verdict": "agree",
+ "statement_present": true,
+ "passed": true
+}

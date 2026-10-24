@@ -9,14 +9,14 @@ writes the SQL, and before the answer leaves, a gate made of plain code re-runs 
 about to say. A number that does not read back is repaired once, then refused. The live site
 answers with **floor** (no model run beats the floor on the development split).
 
-**Status: 12 of the eighteen items in the definition of done are done.** Not done yet:
-item 7, item 10, item 13, item 14, item 15, item 18. The
+**Status: 13 of the eighteen items in the definition of done are done.** Not done yet:
+item 10, item 13, item 14, item 15, item 18. The
 checklist below says what each is waiting on.
 
 | | |
 |---|---|
 | The desk | https://mekala27-45.github.io/readback/ |
-| The MCP endpoint | https://readback-mcp.vercel.app/mcp (not yet verified) |
+| The MCP endpoint | https://readback-mcp.vercel.app/mcp (verified) |
 | Connect a host | https://mekala27-45.github.io/readback/connect/ |
 | The scorecard | https://mekala27-45.github.io/readback/evals/ |
 
@@ -101,7 +101,7 @@ because three builds spent a day each proving their numbers. ARCHITECTURE.md has
 | 4 | done | tests/warehouse/test_guard.py, tests/mcp/test_tools.py (readback, lookup round trip), tests/api/test_client_budget.py |
 | 5 | done | providers/registry.yaml; tests/providers; the floor graded on both splits in results/evals/runs/floor.json |
 | 6 | done | tests/agent/test_graph.py; evals/registration.json holds the plan and prompt hashes |
-| 7 | not done | results/deploy/verification.json from no client yet |
+| 7 | done | results/deploy/verification.json from AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC |
 | 8 | done | tests/api/test_http.py; scripts/check_persistence.py wrote results/persistence.json |
 | 9 | done | results/traces/*.parquet; the /traces page renders the waterfall |
 | 10 | not done | needs a model graded on the test split and the clarity judge, which need a key |
@@ -112,7 +112,7 @@ because three builds spent a day each proving their numbers. ARCHITECTURE.md has
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | done | results/rederive.json: no drift |
 | 17 | done | DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 31, rederive no drift |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 33, rederive no drift |
 
 ## Run it
 

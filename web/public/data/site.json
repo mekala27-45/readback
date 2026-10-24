@@ -95,8 +95,8 @@
     ],
     [
      "7",
-     "not done",
-     "results/deploy/verification.json from no client yet"
+     "done",
+     "results/deploy/verification.json from AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC"
     ],
     [
      "8",
@@ -151,7 +151,7 @@
     [
      "18",
      "not done",
-     "coverage 85.4, mypy clean, ruff clean, commits 31, rederive no drift"
+     "coverage 85.4, mypy clean, ruff clean, commits 33, rederive no drift"
     ]
    ]
   },
@@ -670,7 +670,7 @@
   }
  },
  "values": {
-  "build.commits": "31",
+  "build.commits": "33",
   "build.decisions": "29",
   "build.protocol_decisions": "5",
   "build.reversals": "2",
@@ -700,11 +700,11 @@
   "data.turnaround.tables": "34",
   "data.turnaround.tag": "v0.1.0",
   "deploy.base_url": "https://readback-mcp.vercel.app",
-  "deploy.checked_at": "not run",
-  "deploy.client": "not run",
+  "deploy.checked_at": "2026-10-24T01:48:18.5325518Z",
+  "deploy.client": "AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC",
   "deploy.host": "vercel",
-  "deploy.readback": "not run",
-  "deploy.status": "not yet verified",
+  "deploy.readback": "4.55% agree",
+  "deploy.status": "verified",
   "eval.catches": "0",
   "eval.default_provider": "floor",
   "eval.default_reason": "no model run beats the floor on the development split",

@@ -5,7 +5,7 @@ this file in CI and fails on any difference. Built 2026-10-23.
 
 ## The definition of done
 
-12 of the eighteen items are done.
+13 of the eighteen items are done.
 
 | Item | Status | Evidence |
 |---:|---|---|
@@ -15,7 +15,7 @@ this file in CI and fails on any difference. Built 2026-10-23.
 | 4 | done | tests/warehouse/test_guard.py, tests/mcp/test_tools.py (readback, lookup round trip), tests/api/test_client_budget.py |
 | 5 | done | providers/registry.yaml; tests/providers; the floor graded on both splits in results/evals/runs/floor.json |
 | 6 | done | tests/agent/test_graph.py; evals/registration.json holds the plan and prompt hashes |
-| 7 | not done | results/deploy/verification.json from no client yet |
+| 7 | done | results/deploy/verification.json from AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC |
 | 8 | done | tests/api/test_http.py; scripts/check_persistence.py wrote results/persistence.json |
 | 9 | done | results/traces/*.parquet; the /traces page renders the waterfall |
 | 10 | not done | needs a model graded on the test split and the clarity judge, which need a key |
@@ -26,7 +26,7 @@ this file in CI and fails on any difference. Built 2026-10-23.
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | done | results/rederive.json: no drift |
 | 17 | done | DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 31, rederive no drift |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 33, rederive no drift |
 
 Stretch items (the apps extension, the agent card, the browser floor, the fourth warehouse, the
 editor manifests, the container hardening): not done, and not counted toward the list.
@@ -140,8 +140,8 @@ The gate caught 0 unsupported numbers on the test split.
 
 ## The live server
 
-Host vercel, https://readback-mcp.vercel.app, not yet verified by
-not run at not run; its readback: not run.
+Host vercel, https://readback-mcp.vercel.app, verified by
+AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC at 2026-10-24T01:48:18.5325518Z; its readback: 4.55% agree.
 Latency: not measured. The browser live check: not run. Providers the
 probe reached with a key: none.
 

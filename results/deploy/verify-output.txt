@@ -1,0 +1,31 @@
+client: AJAY, PowerShell 5.1.26100.9711, plain JSON-RPC (not the MCP SDK)
+server: https://readback-mcp.vercel.app/mcp
+discover: versions 2026-07-28, tools capability True, ttl 3600000 public
+tools: warehouses, describe, search_catalog, run_sql, published, readback, lookup; output schemas on 7 of 7; two lists identical: True
+run_sql: SELECT period, nim FROM ledger.metrics_bank_quarter WHERE period = '2024Q4' LIMIT 500 returned 1 row: 2024Q4, 0.045532716281156176
+readback: 4.55% against the warehouse: agree (within 0.005 percent (the display rounding of the claim))
+{
+    "base_url":  "https://readback-mcp.vercel.app",
+    "client":  "AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC",
+    "checked_at":  "2026-10-24T01:48:18.5325518Z",
+    "transport":  "streamable HTTP",
+    "supported_versions":  [
+                               "2026-07-28"
+                           ],
+    "tools":  [
+                  "warehouses",
+                  "describe",
+                  "search_catalog",
+                  "run_sql",
+                  "published",
+                  "readback",
+                  "lookup"
+              ],
+    "output_schemas":  7,
+    "lists_identical":  true,
+    "run_sql_rows":  1,
+    "readback_display":  "4.55%",
+    "readback_verdict":  "agree",
+    "statement_present":  true,
+    "passed":  true
+}

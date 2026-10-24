@@ -23,7 +23,7 @@ floor, the scorecard.
 | Shipped numbers read back | 100.0% of 174 |
 | Red team cases passed on the floor | 15 of 15 |
 | Protocol conformance | passed over in memory, stdio, streamable http |
-| The live endpoint | not yet verified |
+| The live endpoint | verified |
 
 ## Three findings
 

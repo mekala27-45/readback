@@ -1,0 +1,13 @@
+{
+ "host": "vercel",
+ "url": "https://readback-mcp.vercel.app",
+ "reached": true,
+ "status": "ok",
+ "database": "ok",
+ "protocol_revision": "2026-07-28",
+ "provider": "floor",
+ "first_ms": 7548,
+ "warm_ms": 1024,
+ "probed_at": "2026-10-24T01:48:11.8728054Z",
+ "client": "AJAY, Windows, PowerShell 5.1.26100.9711"
+}

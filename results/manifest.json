@@ -2,7 +2,7 @@
  "as_of": "2026-10-23",
  "values": {
   "build.commits": {
-   "value": 31,
+   "value": 33,
    "fmt": "int",
    "provenance": {
     "origin": "git",
@@ -332,7 +332,7 @@
    }
   },
   "deploy.checked_at": {
-   "value": "not run",
+   "value": "2026-10-24T01:48:18.5325518Z",
    "fmt": "text",
    "provenance": {
     "origin": "results/deploy/verification.json",
@@ -343,7 +343,7 @@
    }
   },
   "deploy.client": {
-   "value": "not run",
+   "value": "AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC",
    "fmt": "text",
    "provenance": {
     "origin": "results/deploy/verification.json",
@@ -365,7 +365,7 @@
    }
   },
   "deploy.readback": {
-   "value": "not run",
+   "value": "4.55% agree",
    "fmt": "text",
    "provenance": {
     "origin": "results/deploy/verification.json",
@@ -376,7 +376,7 @@
    }
   },
   "deploy.status": {
-   "value": "not yet verified",
+   "value": "verified",
    "fmt": "text",
    "provenance": {
     "origin": "results/deploy/verification.json",
@@ -972,8 +972,8 @@
     ],
     [
      7,
-     "not done",
-     "results/deploy/verification.json from no client yet"
+     "done",
+     "results/deploy/verification.json from AJAY, Windows, PowerShell 5.1.26100.9711, plain JSON-RPC"
     ],
     [
      8,
@@ -1028,7 +1028,7 @@
     [
      18,
      "not done",
-     "coverage 85.4, mypy clean, ruff clean, commits 31, rederive no drift"
+     "coverage 85.4, mypy clean, ruff clean, commits 33, rederive no drift"
     ]
    ],
    "provenance": {
