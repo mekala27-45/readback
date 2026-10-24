@@ -33,7 +33,7 @@ TEXT_SUFFIXES = {
     ".sh",
     ".example",
 }
-TEXT_NAMES = {"Makefile", "Dockerfile", "Dockerfile.vercel", "LICENSE", "NOTICE", ".gitignore"}
+TEXT_NAMES = {"Makefile", "Dockerfile.render", "Dockerfile.vercel", "LICENSE", "NOTICE", ".gitignore"}
 SKIP_PARTS = {
     "node_modules",
     ".next",

@@ -25,8 +25,8 @@ this file in CI and fails on any difference. Built 2026-10-23.
 | 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | done | results/rederive.json: no drift |
-| 17 | done | DECISIONS.md has 27 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 29, rederive no drift |
+| 17 | done | DECISIONS.md has 28 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 30, rederive no drift |
 
 Stretch items (the apps extension, the agent card, the browser floor, the fourth warehouse, the
 editor manifests, the container hardening): not done, and not counted toward the list.

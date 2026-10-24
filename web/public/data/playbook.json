@@ -135,6 +135,11 @@
    "date": "2026-10-23",
    "html": "<p>The red team test that disables the citation rule, to prove the marker check fails without it, ran\nthrough the same function the CLI uses, and that function wrote results/evals/redteam/floor.json.\nA full test run therefore left the committed result at the disabled run's count, and a notebook\ncaught it by reading the file. run_redteam now writes only when asked, the tests pass write=False,\nand the disabled test checks the committed file is byte identical afterwards.</p>\n",
    "title": "the test suite overwrote the committed red team result"
+  },
+  {
+   "date": "2026-10-23",
+   "html": "<p>The import screen for Vercel's container preset asks for no file name, and this repository had two\nimages: the Render fallback on port 8080 as Dockerfile, and the Vercel image on port 80\nas Dockerfile.vercel. doorstep has no plain Dockerfile, so its import could not pick the wrong one. Rather than find out\nfrom a failed deploy which one the preset takes, the fallback is now Dockerfile.render, render.yaml\npoints at it, and the only image the preset can find is the one meant for it.</p>\n",
+   "title": "the fallback image is Dockerfile.render, so Vercel builds the right one"
   }
  ],
  "skills": [

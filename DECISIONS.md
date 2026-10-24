@@ -212,3 +212,11 @@ through the same function the CLI uses, and that function wrote results/evals/re
 A full test run therefore left the committed result at the disabled run's count, and a notebook
 caught it by reading the file. run_redteam now writes only when asked, the tests pass write=False,
 and the disabled test checks the committed file is byte identical afterwards.
+
+## 2026-10-23: the fallback image is Dockerfile.render, so Vercel builds the right one
+
+The import screen for Vercel's container preset asks for no file name, and this repository had two
+images: the Render fallback on port 8080 as Dockerfile, and the Vercel image on port 80
+as Dockerfile.vercel. doorstep has no plain Dockerfile, so its import could not pick the wrong one. Rather than find out
+from a failed deploy which one the preset takes, the fallback is now Dockerfile.render, render.yaml
+points at it, and the only image the preset can find is the one meant for it.

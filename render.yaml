@@ -1,11 +1,11 @@
-# The fallback host: a Render free web service from the Dockerfile, created only if the hosting
+# The fallback host: a Render free web service from Dockerfile.render, created only if the hosting
 # probe says Vercel cannot serve the container. The same environment variables as the Vercel project.
 services:
   - type: web
     name: readback-mcp
     runtime: docker
     plan: free
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./Dockerfile.render
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
