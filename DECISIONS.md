@@ -220,3 +220,13 @@ images: the Render fallback on port 8080 as Dockerfile, and the Vercel image on 
 as Dockerfile.vercel. doorstep has no plain Dockerfile, so its import could not pick the wrong one. Rather than find out
 from a failed deploy which one the preset takes, the fallback is now Dockerfile.render, render.yaml
 points at it, and the only image the preset can find is the one meant for it.
+
+## 2026-10-23: the live database is reached on Neon's direct host, not the pooler
+
+The first deploy failed every request. Neon's default connection string names the pooler, and the
+pooler refuses the search_path startup option that puts the tables in the readback schema. The
+connection string is turned into the direct host's by dropping the -pooler suffix, with a test;
+the direct host takes the option, and a demonstration with a handful of connections does not need
+pooling. The same deploy showed every cold start rebuilding the twelve packages, because uv run
+at start re-synced without the live extra; the start command now runs the virtual environment's
+alembic and uvicorn directly.

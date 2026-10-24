@@ -62,6 +62,17 @@ client_budget = sa.Table(
 SPAN_RETENTION = dt.timedelta(days=7)
 
 
+def direct(url: str) -> str:
+    """Neon's pooled host refuses the search_path startup option this schema relies on.
+
+    The connection string Neon offers by default names the pooler (an endpoint host ending in
+    -pooler). The direct host is the same name without that suffix, and it accepts the option, so a
+    pooled string is turned into a direct one. A demo with a handful of connections does not need
+    the pooler.
+    """
+    return url.replace("-pooler.", ".", 1) if ".neon.tech" in url else url
+
+
 def database_url() -> str:
     url = os.environ.get("DATABASE_URL", "").strip()
     if url:
@@ -69,7 +80,7 @@ def database_url() -> str:
             url = "postgresql+psycopg://" + url[len("postgres://") :]
         elif url.startswith("postgresql://"):
             url = "postgresql+psycopg://" + url[len("postgresql://") :]
-        return url
+        return direct(url)
     path = Path(os.environ.get("READBACK_SQLITE", Path(tempfile.gettempdir()) / "readback.sqlite"))
     return f"sqlite+pysqlite:///{path}"
 

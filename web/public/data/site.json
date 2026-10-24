@@ -146,12 +146,12 @@
     [
      "17",
      "done",
-     "DECISIONS.md has 28 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03"
+     "DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03"
     ],
     [
      "18",
      "not done",
-     "coverage 85.4, mypy clean, ruff clean, commits 30, rederive no drift"
+     "coverage 85.4, mypy clean, ruff clean, commits 31, rederive no drift"
     ]
    ]
   },
@@ -670,8 +670,8 @@
   }
  },
  "values": {
-  "build.commits": "30",
-  "build.decisions": "28",
+  "build.commits": "31",
+  "build.decisions": "29",
   "build.protocol_decisions": "5",
   "build.reversals": "2",
   "catalog.columns": "1,533",

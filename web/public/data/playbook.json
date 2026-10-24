@@ -140,6 +140,11 @@
    "date": "2026-10-23",
    "html": "<p>The import screen for Vercel's container preset asks for no file name, and this repository had two\nimages: the Render fallback on port 8080 as Dockerfile, and the Vercel image on port 80\nas Dockerfile.vercel. doorstep has no plain Dockerfile, so its import could not pick the wrong one. Rather than find out\nfrom a failed deploy which one the preset takes, the fallback is now Dockerfile.render, render.yaml\npoints at it, and the only image the preset can find is the one meant for it.</p>\n",
    "title": "the fallback image is Dockerfile.render, so Vercel builds the right one"
+  },
+  {
+   "date": "2026-10-23",
+   "html": "<p>The first deploy failed every request. Neon's default connection string names the pooler, and the\npooler refuses the search_path startup option that puts the tables in the readback schema. The\nconnection string is turned into the direct host's by dropping the -pooler suffix, with a test;\nthe direct host takes the option, and a demonstration with a handful of connections does not need\npooling. The same deploy showed every cold start rebuilding the twelve packages, because uv run\nat start re-synced without the live extra; the start command now runs the virtual environment's\nalembic and uvicorn directly.</p>\n",
+   "title": "the live database is reached on Neon's direct host, not the pooler"
   }
  ],
  "skills": [

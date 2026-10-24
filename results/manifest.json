@@ -2,7 +2,7 @@
  "as_of": "2026-10-23",
  "values": {
   "build.commits": {
-   "value": 30,
+   "value": 31,
    "fmt": "int",
    "provenance": {
     "origin": "git",
@@ -13,7 +13,7 @@
    }
   },
   "build.decisions": {
-   "value": 28,
+   "value": 29,
    "fmt": "int",
    "provenance": {
     "origin": "DECISIONS.md",
@@ -1023,12 +1023,12 @@
     [
      17,
      "done",
-     "DECISIONS.md has 28 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03"
+     "DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03"
     ],
     [
      18,
      "not done",
-     "coverage 85.4, mypy clean, ruff clean, commits 30, rederive no drift"
+     "coverage 85.4, mypy clean, ruff clean, commits 31, rederive no drift"
     ]
    ],
    "provenance": {

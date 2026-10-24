@@ -111,8 +111,8 @@ because three builds spent a day each proving their numbers. ARCHITECTURE.md has
 | 14 | not done | traces, evals, catalog, connect, playbook and report pages, in results/live_check.json |
 | 15 | not done | results/latency.json with the cold start; results/live_check.json |
 | 16 | done | results/rederive.json: no drift |
-| 17 | done | DECISIONS.md has 28 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
-| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 30, rederive no drift |
+| 17 | done | DECISIONS.md has 29 dated entries, 2 reversals, 5 protocol decisions; notebooks 01 to 03 |
+| 18 | not done | coverage 85.4, mypy clean, ruff clean, commits 31, rederive no drift |
 
 ## Run it
 
