@@ -57,12 +57,29 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet; then echo "nothing new"; exit 0; fi
+          # A live eval is new cassettes or new graded rows. On a day when no provider has a key, or
+          # every budget is spent, nothing is recorded and the documents differ from main only in
+          # the build date and the commit count, which is not worth a pull request. git diff alone
+          # cannot tell: new cassettes are untracked files, which it does not see.
+          recorded=$(git status --porcelain -- evals/cassettes results/evals/runs)
+          if [ -z "$recorded" ]; then
+            echo "::notice title=live eval::nothing recorded today: no provider had a key, or every budget was spent"
+            exit 0
+          fi
           branch="live-eval/$(date -u +%Y-%m-%d)"
           git config user.name "readback live eval"
           git config user.email "actions@users.noreply.github.com"
           git checkout -b "$branch"
-          git add -A evals/cassettes results README.md RESULTS.md docs report web/public/data
+          # Only the paths that exist: git add stops with exit 128 on a pathspec that matches
+          # nothing, which is how this step failed every day before the first cassette.
+          paths=()
+          for p in evals/cassettes results README.md RESULTS.md docs report web/public/data; do
+            if [ -e "$p" ]; then paths+=("$p"); fi
+          done
+          git add -A -- "${paths[@]}"
           git commit -m "chore(evals): live eval for $(date -u +%Y-%m-%d)"
           git push origin "$branch"
-          gh pr create --title "Live eval, $(date -u +%Y-%m-%d)" --body "The next slice of the golden set for each provider with a key, recorded inside its budget. Read the scorecard diff and the gate catches before merging; CI replays the new cassettes."
+          if ! gh pr create --title "Live eval, $(date -u +%Y-%m-%d)" --body "The next slice of the golden set for each provider with a key, recorded inside its budget. Read the scorecard diff and the gate catches before merging; CI replays the new cassettes."; then
+            echo "::error title=live eval::the recordings are on branch $branch, but the pull request was refused. If the message above says GitHub Actions may not create pull requests, allow it under Settings, Actions, General, Workflow permissions, or open the pull request from the branch by hand."
+            exit 1
+          fi
