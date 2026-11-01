@@ -3,9 +3,9 @@
 The README, RESULTS, the briefing, the scorecard pages and the site read their figures from
 results/manifest.json and nothing else. Each entry carries a format code (so it prints one way
 everywhere) and a provenance: the step that produced it, the population, and the source, which is
-one of the three warehouses, the golden set, the cassettes, the live host, or the build itself.
+one of the four warehouses, the golden set, the cassettes, the live host, or the build itself.
 
-The same reader opens the manifests of doorstep, turnaround and ledger, which share the shape.
+The same reader opens the manifests of doorstep, turnaround, ledger and friction, which share the shape.
 """
 
 from __future__ import annotations
@@ -220,7 +220,7 @@ def write(manifest: Manifest, path: Path) -> None:
 
 
 def load_source(path: Path) -> dict[str, Any]:
-    """A manifest of one of the three builds, as published. Its provenance shape differs per build."""
+    """A manifest of one of the four builds, as published. Its provenance shape differs per build."""
     data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
     for key in ("values", "tables", "figures"):
         if key not in data:

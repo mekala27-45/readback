@@ -102,3 +102,11 @@ def test_the_readback_is_symmetric_in_unit_conversion(fraction: float) -> None:
 
 def test_tokens_keep_their_sign_and_suffix() -> None:
     assert [t.text for t in tokens("-2.2 min, $1,234 and 5.60%")] == ["-2.2 min", "$1,234", "5.60%"]
+
+
+def test_a_rate_per_1000_is_one_token_and_reads_back_at_its_display_rounding() -> None:
+    r = check_text("The champion stepped up 8.65 per 1,000 good customers.", [("8.65 per 1,000", 8.65)])
+    assert [t.text for t in r.tokens] == ["8.65 per 1,000"] and not r.unsupported
+    assert compare(0.00865, "fraction", 0.008648, "fraction", display="8.65 per 1,000").verdict == "agree"
+    assert compare(0.00866, "fraction", 0.008648, "fraction", display="8.65 per 1,000").verdict == "disagree"
+    assert compare(8.65, "per thousand", 0.008648, "fraction", display="8.65 per 1,000").verdict == "agree"

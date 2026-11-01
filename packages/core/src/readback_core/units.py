@@ -1,12 +1,13 @@
 """Units and published rounding, read from a format code.
 
-Every manifest value in the three builds carries a format code (pct1, usd0, min1 and so on). The
+Every manifest value in the four builds carries a format code (pct1, usd0, min1 and so on). The
 code fixes two things the readback needs: the unit the raw value is stored in, and the rounding step
 of the published figure in that unit. The tolerance of the gate is half a step.
 
 A value stored as a fraction (a share, a rate of flights, a difference of two shares) is printed in
 percent or in percentage points; the stored unit is still the fraction, and a claim made in percent
-is converted only when both sides say so.
+is converted only when both sides say so. A rate of good customers asked to do something is stored
+as a fraction too and printed per 1,000 (friction's per1k codes).
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ Unit = Literal[
     "share of flights",
     "basis points",
     "ratio",
+    "per thousand",
     "none",
 ]
 
@@ -45,6 +47,7 @@ UNITS: tuple[Unit, ...] = (
     "share of flights",
     "basis points",
     "ratio",
+    "per thousand",
     "none",
 )
 
@@ -108,6 +111,8 @@ SPECS: dict[str, FormatSpec] = {
     "ratio1": _spec("ratio", 0.1),
     "ratio2": _spec("ratio", 0.01),
     "rate2": _spec("percent", 0.01),
+    "per1k1": _spec("fraction", 0.0001),
+    "per1k2": _spec("fraction", 0.00001),
     "srate2": _spec("percent", 0.01),
     "quarter": FormatSpec("none", None, numeric=False),
     "year": FormatSpec("years", 1.0, numeric=False),
@@ -126,7 +131,8 @@ class UnitMismatch(ValueError):
 
 
 def convert(value: float, from_unit: str, to_unit: str) -> float:
-    """Convert between units the catalog allows: a fraction and a percent, and nothing else.
+    """Convert between units the catalog allows: a fraction and a percent, basis points or a rate per
+    thousand, and nothing else.
 
     The same unit converts to itself. Anything else raises, so a share is never compared with a
     dollar amount and a fraction is never silently read as a percent.
@@ -143,6 +149,10 @@ def convert(value: float, from_unit: str, to_unit: str) -> float:
         return value / 10_000.0
     if from_unit in FRACTIONAL and to_unit == "basis points":
         return value * 10_000.0
+    if from_unit == "per thousand" and to_unit in FRACTIONAL:
+        return value / 1_000.0
+    if from_unit in FRACTIONAL and to_unit == "per thousand":
+        return value * 1_000.0
     raise UnitMismatch(f"cannot compare a value in {from_unit} with one in {to_unit}")
 
 

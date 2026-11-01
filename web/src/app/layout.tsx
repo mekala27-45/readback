@@ -11,7 +11,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "readback: every number read back", template: "%s | readback" },
   description:
-    "An analyst agent over three published warehouses, served as an MCP server, where every number is read back to the warehouse before you see it.",
+    "An analyst agent over four published warehouses, served as an MCP server, where every number is read back to the warehouse before you see it.",
 };
 
 export const viewport: Viewport = {

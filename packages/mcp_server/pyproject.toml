@@ -1,7 +1,7 @@
 [project]
 name = "readback-mcp-server"
 version = "0.1.0"
-description = "The MCP server over the three warehouses"
+description = "The MCP server over the four warehouses"
 requires-python = ">=3.12,<3.13"
 license = "Apache-2.0"
 dependencies = [

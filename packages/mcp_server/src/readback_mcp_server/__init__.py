@@ -1,1 +1,1 @@
-"""The MCP server over the three warehouses."""
+"""The MCP server over the four warehouses."""

@@ -1,10 +1,11 @@
-"""Write data/warehouses.lock.json from the three repositories at their tags.
+"""Write data/warehouses.lock.json from the four repositories at their tags.
 
 Run once when a tag moves. It lists the files each build publishes at its tag, takes the SHA-256 of
 each blob, and records the tag, the commit and the table name each file is served as. The fetch
 reads this file and nothing else, so what the server can query is fixed by a committed list.
 
-    python scripts/lock_warehouses.py --doorstep ../doorstep --turnaround ../turnaround --ledger ../ledger
+    python scripts/lock_warehouses.py --doorstep ../doorstep --turnaround ../turnaround --ledger ../ledger \
+        --friction ../friction
 """
 
 from __future__ import annotations
@@ -19,6 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OWNER = "mekala27-45"
 TAG = "v0.1.0"
+# A warehouse released later is locked at its own tag.
+TAGS = {"friction": "v0.2.0"}
 
 # What each build publishes, as git pathspecs at the tag, and how a path becomes a table name.
 RULES: dict[str, dict[str, object]] = {
@@ -59,13 +62,26 @@ RULES: dict[str, dict[str, object]] = {
         "skip": set(),
         "documents": ["results/manifest.json", "docs/definitions.md", "metrics/bank.yaml", "LICENSE"],
     },
+    "friction": {
+        # The BI extracts of the payments decisions; the dictionary and the metric definitions beside
+        # them are documents, as the other builds' are.
+        "tables": ["results/bi/csv/*.csv"],
+        "skip": set(),
+        "documents": [
+            "results/manifest.json",
+            "docs/definitions.md",
+            "results/bi/dictionary.csv",
+            "results/bi/metrics_definitions.csv",
+            "LICENSE",
+        ],
+    },
 }
 
 
 def table_name(warehouse: str, path: str) -> str:
     p = Path(path)
     stem = p.stem.lower().replace("-", "_")
-    if warehouse in {"doorstep", "turnaround"}:
+    if warehouse in {"doorstep", "turnaround", "friction"}:
         return stem if p.suffix == ".parquet" else f"export_{stem}"
     parts = list(p.parts[1:-1])  # drop results/
     if parts[:2] == ["exports", "extracts"]:
@@ -77,17 +93,18 @@ def git(repo: Path, *args: str) -> str:
     return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, text=True).stdout
 
 
-def blob_sha256(repo: Path, path: str) -> tuple[str, int]:
+def blob_sha256(repo: Path, path: str, tag: str = TAG) -> tuple[str, int]:
     data = subprocess.run(
-        ["git", "-C", str(repo), "show", f"{TAG}:{path}"], check=True, capture_output=True
+        ["git", "-C", str(repo), "show", f"{tag}:{path}"], check=True, capture_output=True
     ).stdout
     return hashlib.sha256(data).hexdigest(), len(data)
 
 
 def lock_one(name: str, repo: Path) -> dict[str, object]:
     rules = RULES[name]
-    commit = git(repo, "rev-parse", f"{TAG}^{{commit}}").strip()
-    listed = git(repo, "ls-tree", "-r", "--name-only", TAG).splitlines()
+    tag = TAGS.get(name, TAG)
+    commit = git(repo, "rev-parse", f"{tag}^{{commit}}").strip()
+    listed = git(repo, "ls-tree", "-r", "--name-only", tag).splitlines()
     import fnmatch
 
     tables = []
@@ -98,7 +115,7 @@ def lock_one(name: str, repo: Path) -> dict[str, object]:
             fnmatch.fnmatchcase(path, pat) and path.count("/") == pat.count("/") for pat in rules["tables"]
         ):  # type: ignore[attr-defined]
             continue
-        digest, size = blob_sha256(repo, path)
+        digest, size = blob_sha256(repo, path, tag)
         tables.append({"path": path, "table": table_name(name, path), "sha256": digest, "bytes": size})
     names = [t["table"] for t in tables]
     if len(names) != len(set(names)):
@@ -106,12 +123,12 @@ def lock_one(name: str, repo: Path) -> dict[str, object]:
     documents = []
     for path in rules["documents"]:  # type: ignore[attr-defined]
         if path not in listed:
-            raise SystemExit(f"{name}: {path} is not in the repository at {TAG}")
-        digest, size = blob_sha256(repo, path)
+            raise SystemExit(f"{name}: {path} is not in the repository at {tag}")
+        digest, size = blob_sha256(repo, path, tag)
         documents.append({"path": path, "sha256": digest, "bytes": size})
     return {
         "repository": f"https://github.com/{OWNER}/{name}",
-        "tag": TAG,
+        "tag": tag,
         "commit": commit,
         "tables": sorted(tables, key=lambda t: str(t["table"])),
         "documents": documents,
@@ -121,10 +138,21 @@ def lock_one(name: str, repo: Path) -> dict[str, object]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     for name in RULES:
-        parser.add_argument(f"--{name}", type=Path, required=True)
+        parser.add_argument(f"--{name}", type=Path)
+    parser.add_argument("--only", choices=sorted(RULES), help="lock one warehouse; keep the others as locked")
     args = parser.parse_args()
-    lock = {"version": 1, "warehouses": {name: lock_one(name, getattr(args, name)) for name in RULES}}
     out = ROOT / "data" / "warehouses.lock.json"
+    names = [args.only] if args.only else list(RULES)
+    for name in names:
+        if getattr(args, name) is None:
+            raise SystemExit(f"--{name} is needed: the path of its repository")
+    lock = (
+        json.loads(out.read_text(encoding="utf-8"))
+        if args.only and out.exists()
+        else {"version": 1, "warehouses": {}}
+    )
+    for name in names:
+        lock["warehouses"][name] = lock_one(name, getattr(args, name))
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(lock, indent=1) + "\n", encoding="utf-8")
     for name, w in lock["warehouses"].items():  # type: ignore[attr-defined]

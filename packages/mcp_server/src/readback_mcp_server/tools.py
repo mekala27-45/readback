@@ -47,7 +47,7 @@ class ToolRefusal(ValueError):
 def _check_warehouse(state: State, warehouse: str) -> None:
     if warehouse not in state.catalogs:
         raise ToolRefusal(
-            f"there is no warehouse {warehouse!r}; the three are doorstep, turnaround and ledger"
+            f"there is no warehouse {warehouse!r}; the four are doorstep, turnaround, ledger and friction"
         )
 
 

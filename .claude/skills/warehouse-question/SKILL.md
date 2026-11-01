@@ -1,10 +1,10 @@
 ---
 name: warehouse-question
-description: Answer a question about the doorstep, turnaround or ledger warehouses through the readback MCP tools, with every number read back before it is stated. Use when a task needs a figure from the three warehouses.
+description: Answer a question about the doorstep, turnaround, ledger or friction warehouses through the readback MCP tools, with every number read back before it is stated. Use when a task needs a figure from the four warehouses.
 license: Apache-2.0
 ---
 
-# Answer a question against the three warehouses
+# Answer a question against the four warehouses
 
 1. **Place it.** If you do not know which warehouse holds it, call `warehouses`. Refuse, without
    calling another tool, a question about another build, one person, a forecast or advice.

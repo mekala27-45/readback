@@ -70,7 +70,8 @@ READ_ONLY = ToolAnnotations(
     read_only_hint=True, destructive_hint=False, idempotent_hint=True, open_world_hint=False
 )
 INSTRUCTIONS = (
-    "Three published warehouses (doorstep, turnaround, ledger), read only. Find a number with search_catalog "
+    "Four published warehouses (doorstep, turnaround, ledger, friction), read only. Find a number with "
+    "search_catalog "
     "and describe, get it with run_sql or published, and call readback on every number before you say it."
 )
 
@@ -118,7 +119,7 @@ def build_server(state: State | None = None) -> MCPServer:
     server = MCPServer(
         "readback",
         title="readback",
-        description="An analyst's tools over three published warehouses, with a readback for every number.",
+        description="An analyst's tools over four published warehouses, with a readback for every number.",
         instructions=INSTRUCTIONS,
         website_url="https://mekala27-45.github.io/readback/",
         version=VERSION,

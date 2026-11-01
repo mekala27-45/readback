@@ -96,3 +96,26 @@ measures:
   - {id: rule_alerts, warehouse: ledger, table: f05_rule_scorecard, entity: aml_rule, entity_column: rule,
      time: none, time_column: null, expr: "max(alerts)", fmt: int, unit: count,
      phrases: ["number of alerts", "count of alerts", "alerts raised by the rule"]}
+
+  # friction, the payments desk by quarter, from the decisions extract. A rate per 1,000 is stored as
+  # a fraction of good decisions, as friction stores it, and no phrase the answer prints has a digit.
+  - {id: fraud_capture, warehouse: friction, table: export_decisions_daily, entity: desk, entity_column: null,
+     time: quarter, time_column: "strftime(day, '%Y') || 'Q' || quarter(day)",
+     expr: "sum(fraud_cents) filter (where verdict <> 'approve') / sum(fraud_cents)", fmt: pct1, unit: fraction,
+     phrases: ["capture of fraud dollars", "share of fraud dollars stopped", "fraud capture"], higher: better}
+  - {id: step_up_rate, warehouse: friction, table: export_decisions_daily, entity: desk, entity_column: null,
+     time: quarter, time_column: "strftime(day, '%Y') || 'Q' || quarter(day)",
+     expr: "sum(decisions - frauds) filter (where verdict = 'step_up') / sum(decisions - frauds)", fmt: per1k2,
+     unit: fraction, phrases: ["step up rate of good customers", "step ups per 1,000 good", "step up rate"]}
+  - {id: decline_rate, warehouse: friction, table: export_decisions_daily, entity: desk, entity_column: null,
+     time: quarter, time_column: "strftime(day, '%Y') || 'Q' || quarter(day)",
+     expr: "sum(decisions - frauds) filter (where verdict = 'decline') / sum(decisions - frauds)", fmt: per1k2,
+     unit: fraction, phrases: ["decline rate of good customers", "declines per 1,000 good", "good customers declined"]}
+  - {id: fraud_dollars, warehouse: friction, table: export_decisions_daily, entity: desk, entity_column: null,
+     time: quarter, time_column: "strftime(day, '%Y') || 'Q' || quarter(day)",
+     expr: "sum(fraud_cents) / 100", fmt: usd0, unit: dollars,
+     phrases: ["amount of confirmed fraud", "fraud dollars", "dollars of confirmed fraud"]}
+  - {id: payment_decisions, warehouse: friction, table: export_decisions_daily, entity: desk, entity_column: null,
+     time: quarter, time_column: "strftime(day, '%Y') || 'Q' || quarter(day)",
+     expr: "sum(decisions)", fmt: int, unit: count,
+     phrases: ["number of payment decisions", "payment decisions", "card payments decided"]}

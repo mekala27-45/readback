@@ -8,7 +8,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 from readback_core.statements import STATEMENT
 
-WarehouseName = Literal["doorstep", "turnaround", "ledger"]
+WarehouseName = Literal["doorstep", "turnaround", "ledger", "friction"]
 
 
 class Out(BaseModel):

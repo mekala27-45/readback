@@ -1,8 +1,8 @@
-"""Build the catalog of the three warehouses from the fetched tables and documents.
+"""Build the catalog of the four warehouses from the fetched tables and documents.
 
 What it writes, all under catalog/:
   <warehouse>.yaml        one entry per table and column, and the metrics
-  manifest_index.parquet  every value of the three manifests with its unit and rounding
+  manifest_index.parquet  every value of the four manifests with its unit and rounding
   index.parquet           the BM25 documents
   quarantine.json         every rule that fired, by warehouse, named and counted
 
@@ -62,18 +62,20 @@ STATED_GRAINS = {
     ("doorstep", "grain_acs"): ["year", "cbsa_code", "table", "variable"],
     ("doorstep", "mart_borrowers_income"): ["year", "cbsa_code", "lei", "income_bin"],
 }
-AS_OF = {"doorstep": "2026Q2", "turnaround": "2026-07", "ledger": "2026-08-31"}
+AS_OF = {"doorstep": "2026Q2", "turnaround": "2026-07", "ledger": "2026-08-31", "friction": "2020-02-28"}
 COVERS = {
     "doorstep": (
         "393 metros from 2000 to 2026Q2 in the price index, census years 2005 to 2024, HMDA 2018 to 2025"
     ),
     "turnaround": "every scheduled domestic flight from January 2015 to July 2026, summarized",
     "ledger": "the fictional Harborline Bank, September 2023 to August 2026, with New Jersey HMDA",
+    "friction": "synthetic card payments decided by a fraud model, July 2019 to February 2020 (TabFormer)",
 }
 METRIC_MART = {
     "doorstep": "mart_metro_year",
     "turnaround": "mart_carrier_month",
     "ledger": "metrics_bank_quarter",
+    "friction": "export_decisions_daily",
 }
 
 
@@ -205,6 +207,7 @@ def load_sources(root: Path, warehouse: str) -> Sources:
     dict_path = {
         "doorstep": base / "exports/csv/data_dictionary.csv",
         "turnaround": base / "exports/csv/dictionary.csv",
+        "friction": base / "results/bi/dictionary.csv",
     }.get(warehouse)
     dictionary = _load_dictionary(dict_path) if dict_path else {}
     return Sources(
@@ -302,12 +305,14 @@ def build_warehouse(
                     f"{name} in {Path(t['path']).name}: "
                     f"{dict_row.get('population') or dict_row.get('source')}"
                 )
-                citation = Citation(
-                    file=Path(t["path"]).parent.as_posix()
+                dict_file = (
+                    "results/bi/dictionary.csv"  # friction's sits beside its csv folder
+                    if warehouse == "friction"
+                    else Path(t["path"]).parent.as_posix()
                     + "/"
-                    + ("data_dictionary.csv" if warehouse == "doorstep" else "dictionary.csv"),
-                    line=0,
+                    + ("data_dictionary.csv" if warehouse == "doorstep" else "dictionary.csv")
                 )
+                citation = Citation(file=dict_file, line=0)
                 dsource = "dictionary"
             elif found is not None:
                 definition, citation, dsource = found
@@ -393,8 +398,13 @@ def build_metrics(
     mart = METRIC_MART[warehouse]
     mart_entry = next(t for t in tables if t.name == mart)
     found: list[tuple[str, str, str, Citation]] = []
-    if warehouse in {"doorstep", "turnaround"}:
-        path = base / "exports/csv/metrics_definitions.csv"
+    if warehouse in {"doorstep", "turnaround", "friction"}:
+        defs = (
+            "results/bi/metrics_definitions.csv"
+            if warehouse == "friction"
+            else "exports/csv/metrics_definitions.csv"
+        )
+        path = base / defs
         with path.open(encoding="utf-8", newline="") as handle:
             reader = csv.reader(handle)
             next(reader)
@@ -405,7 +415,7 @@ def build_metrics(
                         name,
                         f"select {over_mart} as value from {mart}",
                         f"{name}, over the mart",
-                        Citation(file="exports/csv/metrics_definitions.csv", line=i),
+                        Citation(file=defs, line=i),
                     )
                 )
     else:
@@ -527,7 +537,7 @@ def humanize(name: str) -> str:
 def definition_docs(root: Path) -> list[Doc]:
     """Each entry of each build's definitions document, whole paragraph, cited by line."""
     docs: list[Doc] = []
-    for warehouse in ("doorstep", "turnaround", "ledger"):
+    for warehouse in ("doorstep", "turnaround", "ledger", "friction"):
         text = (root / "data/warehouses" / warehouse / "docs/definitions.md").read_text(encoding="utf-8")
         seen: set[str] = set()
         for e in parse(text):
@@ -661,7 +671,7 @@ def build(root: Path) -> dict[str, Any]:
     linked = {(r.warehouse, r.key) for r in manifest if r.key.startswith("chart.")}
     for r in manifest:
         if (r.warehouse, r.key) not in linked and r.value is not None:
-            # The three manifests record the step that produced a value, not the table it was read from.
+            # The four manifests record the step that produced a value, not the table it was read from.
             quarantine.append(
                 QuarantineRow(
                     warehouse=r.warehouse,

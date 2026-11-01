@@ -1,7 +1,7 @@
 """The comparison at the heart of the readback: a claimed value against the warehouse's value.
 
 The claim is compared in its own unit, after the one conversion the catalog allows (a fraction and a
-percent, or basis points). The tolerance is half a unit of a rounding:
+percent, basis points, or a rate per thousand). The tolerance is half a unit of a rounding:
 
   - against a manifest key, the published rounding of that value (pct1 is a tenth of a point);
   - against a query result, the display rounding of the claim itself (a claim shown as 26.5% is
@@ -84,6 +84,9 @@ def compare(
             and ("%" in display or "pts" in display or "percent" in display)
         ):
             step /= 100.0
+        # A rate held as a fraction but shown per 1,000 rounds per 1,000: 8.65 per 1,000 is 0.00001.
+        elif claim_unit in FRACTIONAL and display and "per 1,000" in display:
+            step /= 1000.0
         source = "the display rounding of the claim"
     tolerance = step * scale
     difference = abs(claim - in_claim_unit)

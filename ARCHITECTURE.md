@@ -1,12 +1,12 @@
 # Architecture
 
-readback is one Python workspace and one static site. The workspace holds an MCP server over three
+readback is one Python workspace and one static site. The workspace holds an MCP server over four
 read only warehouses, an agent that is a client of that server, a gate that re-runs every number the
 agent is about to say, and the evaluation that grades all of it against answers known in advance.
 The site is a desk for asking questions, and pages for the traces, the scorecard and the catalog.
 
 ```
-  doorstep, turnaround, ledger at their pinned tags    (fetched, checked by SHA-256, read only)
+  doorstep, turnaround, ledger, friction at their tags  (fetched, checked by SHA-256, read only)
         |
         v  catalog/        units, cited definitions, synonyms, a lexical index, the quarantine
         v  warehouse       DuckDB: a file of views over the parquet, opened read only, the SQL guard in front
@@ -60,7 +60,7 @@ clears the floor's.
 ## Why the known truth is the manifests
 
 Three builds spent a day each proving their numbers, and each published a manifest of the values its
-documents state. This build reads those values and does not pretend to know better. The golden set
+documents state; friction, the fourth, joined later and publishes one of the same shape. This build reads those values and does not pretend to know better. The golden set
 takes its answers from the manifests and from SQL over the same tables, written before the agent
 existed; the first ten were run by hand against the real tables before anything else was built on
 them.

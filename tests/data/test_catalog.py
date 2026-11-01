@@ -10,6 +10,7 @@ import yaml
 
 from readback_catalog.index import Doc, Index, Synonyms
 from readback_catalog.model import WarehouseCatalog
+from readback_core.formats import format_value
 from readback_core.units import UNITS, UnitMismatch, convert
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -95,3 +96,12 @@ def test_a_fraction_against_a_percent_converts_and_a_dollar_does_not() -> None:
     assert convert(26.5, "percent", "fraction") == pytest.approx(0.265)
     with pytest.raises(UnitMismatch):
         convert(0.265, "fraction", "dollars")
+
+
+def test_a_rate_per_thousand_converts_with_a_fraction_and_prints_as_friction_prints_it() -> None:
+    assert convert(0.00865, "fraction", "per thousand") == pytest.approx(8.65)
+    assert convert(8.65, "per thousand", "fraction") == pytest.approx(0.00865)
+    with pytest.raises(UnitMismatch):
+        convert(8.65, "per thousand", "percent")
+    assert format_value(0.008648, "per1k2") == "8.65 per 1,000"
+    assert format_value(0.0012, "per1k1") == "1.2 per 1,000"

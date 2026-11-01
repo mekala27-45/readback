@@ -27,8 +27,10 @@ The plan fixes, in advance:
 
 {{ v('golden.questions') }} questions whose answers were known before the agent existed: lookups,
 comparisons, trends, top k lists, definitions, multi warehouse questions and refusals, across the
-three warehouses. The known values come from the builds' manifests and from SQL over the same
-tables. Before anything was built on them, the first ten were run by hand against the real tables;
+three warehouses the plan was registered with: doorstep, turnaround and ledger. friction joined
+after the registration and has no golden question, so the scorecard says nothing about it; the
+floor's answers about it are checked by tests/agent/test_friction.py instead. The known values come
+from the builds' manifests and from SQL over the same tables. Before anything was built on them, the first ten were run by hand against the real tables;
 {{ v('golden.first_ten_agree') }} agreed.
 
 ## The graders

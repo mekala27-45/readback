@@ -79,6 +79,15 @@ def _points(decimals: int) -> FormatFn:
     return inner
 
 
+def _per_thousand(decimals: int) -> FormatFn:
+    """A rate stored as a fraction of good events, printed per 1,000 good events (friction)."""
+
+    def inner(value: float | int | str | None) -> str:
+        return f"{_plain(_num(value) * 1000.0, decimals)} per 1,000"
+
+    return inner
+
+
 def _plain_points(decimals: int) -> FormatFn:
     """A size in percentage points with no sign: an absolute error, a width."""
 
@@ -274,6 +283,8 @@ FORMATS: dict[str, FormatFn] = {
     "ratio1": fmt_ratio1,
     "ratio2": fmt_ratio2,
     "rate2": fmt_rate2,
+    "per1k1": _per_thousand(1),
+    "per1k2": _per_thousand(2),
     "srate2": fmt_srate2,
     "quarter": fmt_quarter,
     "year": fmt_year,

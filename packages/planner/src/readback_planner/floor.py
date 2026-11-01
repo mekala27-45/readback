@@ -26,6 +26,8 @@ from readback_core.units import FRACTIONAL
 from readback_planner.classify import Classification, classify
 
 CallTool = Callable[[str, dict[str, Any]], Awaitable[dict[str, Any]]]
+# How an answer names a measure read over a whole warehouse rather than one of its entities.
+WHOLE = {"bank": "at Harborline Bank", "desk": "at the friction payments desk"}
 FULL_QUARTERS = [
     f"{y}Q{q}" for y in (2023, 2024, 2025, 2026) for q in (1, 2, 3, 4) if "2023Q4" <= f"{y}Q{q}" <= "2026Q2"
 ]
@@ -35,11 +37,11 @@ TOP_K = re.compile(r"\bwhich (\d+)\b|\b(?:top|bottom) (\d+)\b", re.I)
 NUMBER = re.compile(r"[-+]?\$?\d[\d,]*(?:\.\d+)?")
 
 
-WarehouseName = Literal["doorstep", "turnaround", "ledger"]
+WarehouseName = Literal["doorstep", "turnaround", "ledger", "friction"]
 
 
 def _is_warehouse(name: str) -> TypeGuard[WarehouseName]:
-    return name in ("doorstep", "turnaround", "ledger")
+    return name in ("doorstep", "turnaround", "ledger", "friction")
 
 
 class FloorCannot(ValueError):
@@ -120,7 +122,11 @@ def _display(value: float, m: Measure) -> tuple[float, str, str]:
     """The value as the text shows it, its unit, and the display string."""
     shown = format_value(value, m.fmt)
     number = float(NUMBER.search(shown).group(0).replace("$", "").replace(",", ""))  # type: ignore[union-attr]
-    unit = "percent" if m.unit in FRACTIONAL and "%" in shown else m.unit
+    unit = m.unit
+    if m.unit in FRACTIONAL and "%" in shown:
+        unit = "percent"
+    elif m.unit in FRACTIONAL and "per 1,000" in shown:
+        unit = "per thousand"
     return number, unit, shown
 
 
@@ -289,18 +295,14 @@ class Floor:
         t = times[0] if times else None
         v, rid = await self.value(m, entity, t)
         c = self.claim(m, v, rid)
-        subject = (
-            self.where(m, mentions[0].text)
-            if entity
-            else ("at Harborline Bank" if m.entity == "bank" else "")
-        )
+        subject = self.where(m, mentions[0].text) if entity else WHOLE.get(m.entity, "")
         when = f" in {t}" if t is not None else ""
         text = f"The {m.phrases[0]} {subject}{when} was {c.display}.".replace("  ", " ").replace(" .", ".")
         return Draft(text=text, claims=[c], warehouses=[m.warehouse], selection=[entity] if entity else [])
 
     async def comparison(self, question: str, m: Measure, mentions: list[Mention]) -> Draft:
         times = self.times(question, m)
-        if m.entity in {"nation", "bank"}:
+        if m.entity in {"nation", "bank", "desk"}:
             if len(times) < 2:
                 raise FloorCannot("it does not give two times to compare")
             a, b = times[0], times[1]
@@ -308,7 +310,7 @@ class Floor:
             vb, rb = await self.value(m, None, b)
             ca, cb = self.claim(m, va, ra), self.claim(m, vb, rb)
             win, lose, cw, cl = (a, b, ca, cb) if va > vb else (b, a, cb, ca)
-            where = " at Harborline Bank" if m.entity == "bank" else ""
+            where = f" {WHOLE[m.entity]}" if m.entity in WHOLE else ""
             text = (
                 f"The {m.phrases[0]}{where} was higher in {win}: {cw.display} against {cl.display} in {lose}."
             )
@@ -349,7 +351,7 @@ class Floor:
         elif entity:
             subject = f"The {m.phrases[0]} {self.where(m, mentions[0].text)}"
         else:
-            subject = f"The {m.phrases[0]}"
+            subject = f"The {m.phrases[0]} {WHOLE.get(m.entity, '')}".rstrip()
         text = f"{subject} {direction} from {ca.display} in {a} to {cb.display} in {b}."
         return Draft(
             text=text[0].upper() + text[1:], claims=[ca, cb], warehouses=[m.warehouse], direction=direction
@@ -373,6 +375,8 @@ class Floor:
         elif m.entity == "carrier":
             having = "sum(flown) >= 500000" if re.search(r"half a million flights", question, re.I) else None
             sql = ranking_sql(m, t, k, highest, having=having)
+        elif m.entity == "desk":
+            raise FloorCannot("the friction payments desk has no entities to rank")
         elif m.entity == "airport":
             named = [x.value for x in mentions] or [str(a) for a in self.entities.get("airports", {})]
             sql = ranking_sql(
@@ -446,7 +450,11 @@ class Floor:
         return Draft(text=text, claims=claims, warehouses=[hit["warehouse"]])
 
     async def multi(self, question: str) -> Draft:
-        named = [w for w in ("doorstep", "turnaround", "ledger") if re.search(rf"\b{w}\b", question, re.I)]
+        named = [
+            w
+            for w in ("doorstep", "turnaround", "ledger", "friction")
+            if re.search(rf"\b{w}\b", question, re.I)
+        ]
         q = question.lower()
         if "publishes more tables" in q and len(named) == 2:
             info = {w["name"]: w for w in (await self.tool("warehouses", {}))["warehouses"]}
@@ -467,7 +475,9 @@ class Floor:
             text = f"{win} publishes more tables: {a} has {ca.display} and {b} has {cb.display}."
             return Draft(text=text, claims=[ca, cb], warehouses=[a, b], selection=[win])
         if "tables" in q and "in total" in q:
-            info = (await self.tool("warehouses", {}))["warehouses"]
+            # The warehouses the question names, or every one the server lists when it names none.
+            listed = (await self.tool("warehouses", {}))["warehouses"]
+            info = [w for w in listed if w["name"] in named] if named else listed
             total = sum(w["tables"] for w in info)
             parts = [
                 DraftClaim(

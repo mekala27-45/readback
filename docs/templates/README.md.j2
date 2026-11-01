@@ -2,11 +2,11 @@
 
 **Every number my agent says is read back to the warehouse before you see it.**
 
-readback is an analyst agent over three of my own data builds, served as an MCP server at protocol
+readback is an analyst agent over four of my own data builds, served as an MCP server at protocol
 revision 2026-07-28 and graded against answers that were already known. You ask a question about
-housing (doorstep), flights (turnaround) or a fictional bank (ledger); the agent finds the table,
-writes the SQL, and before the answer leaves, a gate made of plain code re-runs every number it is
-about to say. A number that does not read back is repaired once, then refused. The live site
+housing (doorstep), flights (turnaround), a fictional bank (ledger) or a card fraud desk on synthetic
+payments (friction); the agent finds the table, writes the SQL, and before the answer leaves, a gate
+made of plain code re-runs every number it is about to say. A number that does not read back is repaired once, then refused. The live site
 answers with **{{ v('eval.default_provider') }}** ({{ v('eval.default_reason') }}).
 
 {% if open_items() %}
@@ -26,7 +26,7 @@ checklist below says what each is waiting on.
 
 ## What it does, in numbers
 
-- **The warehouses.** {{ v('data.tables') }} published tables from doorstep, turnaround and ledger,
+- **The warehouses.** {{ v('data.tables') }} published tables from doorstep, turnaround, ledger and friction,
   fetched at their pinned tags and checked file by file against SHA-256 digests in the lock. Nothing
   is recomputed; the builds are the record.
 - **The catalog.** {{ v('catalog.measure_columns') }} measure columns, every one with a unit
@@ -50,9 +50,9 @@ checklist below says what each is waiting on.
 ## How it works
 
 ```
-  doorstep, turnaround, ledger at v0.1.0   (fetched by digest, read only)
+  doorstep, turnaround, ledger at v0.1.0, friction at v0.2.0   (fetched by digest, read only)
         v  catalog: units, cited definitions, synonyms, a lexical index, the quarantine
-        v  DuckDB, three read only schemas, the SQL guard in front
+        v  DuckDB, four read only schemas, the SQL guard in front
    MCP SERVER   warehouses  describe  search_catalog  run_sql  published  readback  lookup
         ^  the agent is a client of its own server (in memory in tests, HTTP in production)
    AGENT        classify  plan  act  gate  repair  refuse  interrupt  answer   (LangGraph)

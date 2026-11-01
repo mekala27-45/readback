@@ -5,7 +5,8 @@ CLAUDE.md and .github/copilot-instructions.md only point here.
 
 ## What this is
 
-readback is an analyst agent over three published warehouses (doorstep, turnaround, ledger),
+readback is an analyst agent over four published warehouses (doorstep, turnaround, ledger,
+friction),
 served as an MCP server at protocol revision 2026-07-28, where every number the agent says is read
 back to the warehouse before it is shown. docs/SPEC.md is the specification the build was run from;
 deviations from it are in DECISIONS.md.
@@ -14,7 +15,7 @@ deviations from it are in DECISIONS.md.
 
 ```
 uv sync                                  # Python 3.12, the twelve workspace packages
-uv run python scripts/fetch_warehouses.py   # the 177 files the lock names, checked by digest
+uv run python scripts/fetch_warehouses.py   # every file the lock names, checked by digest
 uv run python scripts/build_catalog.py      # only when the lock, the rules or the overrides change
 cd web && npm ci                          # only for the site
 ```
@@ -79,4 +80,4 @@ Conventional commits, one module at a time: `feat(mcp): ...`, `fix(gate): ...`, 
 through the tools with the readback rule), golden-question (add a golden question with its known
 truth), release-gate (every command before a tag).
 
-> Answers are drawn from the published tables of three portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0) and ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.
+> Answers are drawn from the published tables of four portfolio builds by Ajay Mekala: doorstep (public housing data from FHFA, the Census Bureau, HUD, the CFPB and Freddie Mac), turnaround (public flight data from the Bureau of Transportation Statistics, the FAA and OurAirports, with weather from Open-Meteo under CC BY 4.0), ledger (a fictional bank, Harborline, with public HMDA, CFPB, FDIC and macro series) and friction (synthetic card payments from the IBM TabFormer data set, decided by a fraud model). No person appears in any table, and questions are redacted before a model sees them. Every number is read back to the warehouse before it is shown. This is a portfolio demonstration, not financial, travel or lending advice.

@@ -27,7 +27,7 @@ from typing import Any, Literal
 TOKEN = re.compile(
     r"(?<![\w.])(?P<sign>[-+])?(?P<cur>\$)?\s?(?P<num>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)"
     r"(?P<suffix>\s?(?:%|percent\b|pts\b|percentage points\b|million\b|billion\b|thousand\b"
-    r"|[MBk]\b|min\b|minutes\b|x\b))?"
+    r"|[MBk]\b|min\b|minutes\b|x\b|per 1,000\b))?"
     r"(?![\w])"
 )
 QUARTER = re.compile(r"\b(?:19|20)\d\dQ[1-4]\b")
@@ -47,6 +47,7 @@ UNIT_WORDS = (
     "min",
     "minutes",
     "x",
+    "per 1,000",
 )
 
 Rule = Literal["year", "identifier", "ordinal", "list count"]

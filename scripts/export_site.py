@@ -100,7 +100,7 @@ def evals() -> None:
 def catalog() -> None:
     lock = read_json(ROOT / "data" / "warehouses.lock.json")
     warehouses = []
-    for name in ("doorstep", "turnaround", "ledger"):
+    for name in ("doorstep", "turnaround", "ledger", "friction"):
         c = yaml.safe_load((ROOT / "catalog" / f"{name}.yaml").read_text(encoding="utf-8"))
         entry = lock["warehouses"][name]
         warehouses.append(

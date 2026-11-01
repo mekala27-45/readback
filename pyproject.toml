@@ -1,7 +1,7 @@
 [project]
 name = "readback"
 version = "0.1.0"
-description = "An analyst agent over three warehouses, served as an MCP server at the 2026-07-28 revision, where every number it says is read back to the warehouse before you see it"
+description = "An analyst agent over four warehouses, served as an MCP server at the 2026-07-28 revision, where every number it says is read back to the warehouse before you see it"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 license = "Apache-2.0"

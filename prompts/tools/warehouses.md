@@ -1,1 +1,1 @@
-List the three warehouses (doorstep, turnaround, ledger) with the tag and commit each is pinned at, how many tables and rows each has, the period each covers, and the statement. Call this first when you do not know which warehouse a question belongs to.
+List the four warehouses (doorstep, turnaround, ledger, friction) with the tag and commit each is pinned at, how many tables and rows each has, the period each covers, and the statement. Call this first when you do not know which warehouse a question belongs to.

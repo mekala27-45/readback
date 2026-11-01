@@ -1,4 +1,4 @@
-"""The warehouse: DuckDB over the fetched tables, three schemas, nothing writable.
+"""The warehouse: DuckDB over the fetched tables, four schemas, nothing writable.
 
 Each warehouse is a schema of views over its fetched parquet and CSV files. The database itself is
 an in memory catalog of views and nothing else; after the views are created the connection is
@@ -20,7 +20,7 @@ from typing import Any
 import duckdb
 from readback_core import paths
 
-WAREHOUSES: tuple[str, ...] = ("doorstep", "turnaround", "ledger")
+WAREHOUSES: tuple[str, ...] = ("doorstep", "turnaround", "ledger", "friction")
 
 
 class WarehouseMissing(RuntimeError):
@@ -55,7 +55,7 @@ def _build_views(db: Path, base: Path, lock: dict[str, Any], extra: dict[tuple[s
 def open_warehouse(
     root: Path | None = None, base: Path | None = None, extra: dict[tuple[str, str], Path] | None = None
 ) -> duckdb.DuckDBPyConnection:
-    """A read only connection with the three schemas, locked against files, extensions and attachment.
+    """A read only connection with the four schemas, locked against files, extensions and attachment.
 
     `extra` adds views that are not in the lock; only the red team fixture uses it.
 

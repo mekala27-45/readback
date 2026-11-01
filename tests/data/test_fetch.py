@@ -52,8 +52,9 @@ def test_the_url_names_the_tag(tmp_path: Path) -> None:
     assert f.url_of(item) == "https://raw.githubusercontent.com/example/demo/v0.1.0/results/a.parquet"
 
 
-def test_the_committed_lock_names_three_warehouses_at_tags() -> None:
+def test_the_committed_lock_names_four_warehouses_at_tags() -> None:
     data = f.load_lock(Path(__file__).resolve().parents[2] / "data/warehouses.lock.json")
-    assert sorted(data["warehouses"]) == ["doorstep", "ledger", "turnaround"]
-    for w in data["warehouses"].values():
-        assert w["tag"] == "v0.1.0" and len(w["commit"]) == 40 and w["tables"]
+    assert sorted(data["warehouses"]) == ["doorstep", "friction", "ledger", "turnaround"]
+    for name, w in data["warehouses"].items():
+        tag = "v0.2.0" if name == "friction" else "v0.1.0"
+        assert w["tag"] == tag and len(w["commit"]) == 40 and w["tables"]

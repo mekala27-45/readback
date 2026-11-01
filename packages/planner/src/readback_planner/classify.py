@@ -65,7 +65,7 @@ REFUSALS: tuple[tuple[str, re.Pattern[str]], ...] = (
         ),
     ),
     (
-        "it is not a question about the three warehouses",
+        "it is not a question about the four warehouses",
         re.compile(r"\bignore (?:the|all|your)\b|\btell me a joke\b|\bsystem prompt\b|\bpretend\b", re.I),
     ),
 )
@@ -88,6 +88,11 @@ FAMILY_RULES: tuple[tuple[Family, re.Pattern[str]], ...] = (
     ("lookup", re.compile(r"^\s*(?:in [^,]+,\s*)?what (?:was|is|were)\b", re.I)),
 )
 WAREHOUSE_HINTS: dict[str, re.Pattern[str]] = {
+    "friction": re.compile(
+        r"\bfriction\b|\btabformer\b|\bcard (?:payments?|transactions?)\b|\bstep ups?\b"
+        r"|\breason codes?\b|\bchargebacks?\b",
+        re.I,
+    ),
     "ledger": re.compile(
         r"\bledger\b|\bharborline\b|\bbank\b|\bhmda\b|\baml\b|\bquarters?\b|\b20\d\dQ[1-4]\b", re.I
     ),
@@ -168,7 +173,11 @@ def classify(question: str, measures: list[Measure], *, airport_named: bool = Fa
     if family == "definition":
         return Classification(family, warehouse_hints(question)[:1], rule="definition cue")
     if family == "multi":
-        named = [w for w in ("doorstep", "turnaround", "ledger") if re.search(rf"\b{w}\b", question, re.I)]
+        named = [
+            w
+            for w in ("doorstep", "turnaround", "ledger", "friction")
+            if re.search(rf"\b{w}\b", question, re.I)
+        ]
         return Classification(family, named, rule="multi cue")
     measure = match_measure(question, measures, airport_named)
     if measure is None:

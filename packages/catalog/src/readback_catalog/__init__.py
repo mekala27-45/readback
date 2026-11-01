@@ -1,1 +1,1 @@
-"""The catalog of the three warehouses, the synonym table and the lexical index."""
+"""The catalog of the four warehouses, the synonym table and the lexical index."""

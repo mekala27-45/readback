@@ -1,7 +1,7 @@
 [project]
 name = "readback-catalog"
 version = "0.1.0"
-description = "The catalog of the three warehouses, the synonym table and the lexical index"
+description = "The catalog of the four warehouses, the synonym table and the lexical index"
 requires-python = ">=3.12,<3.13"
 license = "Apache-2.0"
 dependencies = [

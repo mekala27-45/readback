@@ -10,7 +10,7 @@ from readback_core.units import Unit
 
 Role = Literal["key", "time", "label", "measure"]
 DefinitionSource = Literal["dictionary", "definitions", "metrics", "hand edit"]
-WAREHOUSES: tuple[str, ...] = ("doorstep", "turnaround", "ledger")
+WAREHOUSES: tuple[str, ...] = ("doorstep", "turnaround", "ledger", "friction")
 
 
 class Citation(StrictModel):

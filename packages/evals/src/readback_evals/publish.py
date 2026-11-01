@@ -63,7 +63,7 @@ def assemble() -> Manifest:
     lock = _json("data/warehouses.lock.json")
     total_tables = 0
     rows = []
-    for name in ("doorstep", "turnaround", "ledger"):
+    for name in ("doorstep", "turnaround", "ledger", "friction"):
         w = lock["warehouses"][name]
         cat = yaml.safe_load((paths.catalog_dir() / f"{name}.yaml").read_text(encoding="utf-8"))
         n_rows = sum(t["rows"] for t in cat["tables"])
@@ -96,7 +96,7 @@ def assemble() -> Manifest:
         )
         total_tables += len(w["tables"])
         rows.append([name, w["tag"], w["commit"][:7], len(w["tables"]), n_rows, round(mb, 1), cat["covers"]])
-    v("data.tables", total_tables, "int", "data/warehouses.lock.json", "the three warehouses", "warehouses")
+    v("data.tables", total_tables, "int", "data/warehouses.lock.json", "the four warehouses", "warehouses")
     files = sum(len(w["tables"]) + len(w["documents"]) for w in lock["warehouses"].values())
     v("data.files", files, "int", "data/warehouses.lock.json", "every file the lock names", "warehouses")
     b.table(
@@ -105,14 +105,14 @@ def assemble() -> Manifest:
         ["text", "text", "text", "int", "int", "float1", "text"],
         rows,
         origin="data/warehouses.lock.json",
-        population="the three warehouses",
+        population="the four warehouses",
         source="warehouses",
     )
 
     # the catalog and its quarantine
     quarantine = _json("catalog/quarantine.json")
     measure_cols = unit_cols = def_cols = all_cols = metrics = 0
-    for name in ("doorstep", "turnaround", "ledger"):
+    for name in ("doorstep", "turnaround", "ledger", "friction"):
         cat = yaml.safe_load((paths.catalog_dir() / f"{name}.yaml").read_text(encoding="utf-8"))
         metrics += len(cat["metrics"])
         for t in cat["tables"]:
@@ -122,11 +122,11 @@ def assemble() -> Manifest:
                     measure_cols += 1
                     unit_cols += c["unit"] is not None
                     def_cols += c["definition"] is not None
-    v("catalog.columns", all_cols, "int", "catalog", "every column of the three warehouses", "catalog")
+    v("catalog.columns", all_cols, "int", "catalog", "every column of the four warehouses", "catalog")
     v("catalog.measure_columns", measure_cols, "int", "catalog", "every measure column", "catalog")
     v("catalog.with_unit", unit_cols, "int", "catalog", "measure columns with a unit", "catalog")
     v("catalog.with_definition", def_cols, "int", "catalog", "measure columns with a definition", "catalog")
-    v("catalog.metrics", metrics, "int", "catalog", "the metric layers of the three builds", "catalog")
+    v("catalog.metrics", metrics, "int", "catalog", "the metric layers of the four builds", "catalog")
     mi = pq.read_table(paths.catalog_dir() / "manifest_index.parquet")
     v(
         "catalog.manifest_values",

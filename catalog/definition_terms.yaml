@@ -44,3 +44,10 @@ ledger:
   - {term: "Case", columns: ["episodes", "episodes_found", "partial_episodes"]}
   - {term: "Break", columns: ["difference", "balance_from_postings", "reported_balance", "ledger", "subledger", "status"]}
   - {term: "Account", columns: ["accounts", "opened", "closed", "balance"]}
+friction:
+  - {term: "Decision", columns: ["decisions"]}
+  - {term: "Step up and decline", columns: ["verdict"]}
+  - {term: "Fraud and good", columns: ["frauds"]}
+  - {term: "Fraud dollars", columns: ["fraud_cents"]}
+  - {term: "Reason code", columns: ["code"]}
+  - {term: "Refused row", columns: ["rows_refused", "rule"]}

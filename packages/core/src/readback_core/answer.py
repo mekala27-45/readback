@@ -23,7 +23,7 @@ class DraftClaim(BaseModel):
     value: float = Field(description="the number as it appears in the text, in the unit given")
     unit: str = Field(description="percent, fraction, dollars, count, minutes, ratio, years, none ...")
     display: str = Field(description="the number exactly as written in the text, e.g. 40.4% or $329,620")
-    warehouse: Literal["doorstep", "turnaround", "ledger"] | None = None
+    warehouse: Literal["doorstep", "turnaround", "ledger", "friction"] | None = None
     result_id: str | None = None
     column: str | None = None
     row: int = 0
