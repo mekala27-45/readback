@@ -239,3 +239,24 @@ allowed the loopback names with a port. Every test had used a random high port a
 The bare loopback names are allowed now, with a test; the port is read when a turn starts rather
 than at import; a turn that fails on the server now ends its stream with an error event, and the
 desk says so when a stream closes without an answer, instead of showing nothing.
+
+## 2026-11-01: friction is the fourth warehouse, and the prompts change to say so (prompts 4a7a68a24b87)
+
+friction v0.2.0 publishes BI extracts of its payments desk: daily decisions by channel, daily counts
+by reason code, the reason code table and the quarantine. readback locks the CSV extracts at that tag
+and reads them like any other mart. The Power BI and Tableau files describe the same rows, so they are
+left out of the lock.
+
+The prompt registry moves from 71102b81e1fb to 4a7a68a24b87. Four prompt files change and nothing
+else: the system prompt and three tool descriptions now name four warehouses instead of three, and
+the readback tool says a fraction converts to a rate per 1,000 as well as to a percent or basis
+points. The plan hash does not change. The golden set stays as registered, over the first three
+warehouses; friction has no golden question, so its answers are graded by the gate and the floor,
+not by the golden split. A golden question for friction would need a new plan version, and this
+change is not that.
+
+friction states its rates per 1,000 events (step up and decline). The unit table gains per thousand
+with two steps, the gate reads a number followed by per 1,000 as one token, and a claim shown per
+1,000 is compared with its tolerance divided by 1,000. The floor gains the friction measures from
+catalog/measures.yaml with the payments desk as the only entity, so a ranking question over the desk
+is refused rather than answered with one row.
