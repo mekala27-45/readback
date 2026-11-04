@@ -20,6 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW = "https://raw.githubusercontent.com/{owner}/{repo}/{tag}/{path}"
@@ -93,7 +94,18 @@ def download(item: Item, base: Path, get: Any) -> str:
 def http_get(url: str) -> bytes | None:
     import httpx
 
-    response = httpx.get(url, timeout=120.0, follow_redirects=True)
+    headers = {}
+    if os.environ.get("READBACK_FETCH_TRANSPORT") == "github-api":
+        parsed = urlsplit(url)
+        if parsed.scheme != "https" or parsed.netloc != "raw.githubusercontent.com":
+            raise FetchError("Only GitHub source URLs can use the API transport")
+        owner, repo, ref, path = parsed.path.lstrip("/").split("/", 3)
+        url = f"https://api.github.com/repos/{owner}/{repo}/contents/{path}?ref={quote(ref, safe='')}"
+        headers["Accept"] = "application/vnd.github.raw+json"
+        token = os.environ.get("GITHUB_TOKEN")
+        if token:
+            headers["Authorization"] = "Bearer " + token
+    response = httpx.get(url, headers=headers, timeout=120.0, follow_redirects=True)
     if response.status_code == 404:
         return None
     response.raise_for_status()

@@ -17,6 +17,8 @@ jobs:
     env:
       READBACK_CASSETTES: replay
       PYTHONHASHSEED: "0"
+      READBACK_FETCH_TRANSPORT: github-api
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -56,6 +58,9 @@ jobs:
   mlspend:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      READBACK_FETCH_TRANSPORT: github-api
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
