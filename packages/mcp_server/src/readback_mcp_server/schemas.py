@@ -8,7 +8,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 from readback_core.statements import STATEMENT
 
-WarehouseName = Literal["doorstep", "turnaround", "ledger"]
+WarehouseName = Literal["doorstep", "turnaround", "ledger", "mlspend"]
 
 
 class Out(BaseModel):
@@ -44,7 +44,8 @@ class ColumnOut(BaseModel):
     unit: str | None
     definition: str | None
     cited: str | None = Field(
-        default=None, description="file:line of the definition in the build, when lifted"
+        default=None,
+        description="file:line of the definition in the build, when lifted",
     )
 
 
@@ -141,7 +142,8 @@ class Claim(BaseModel):
     column: str | None = Field(default=None, description="the result column the value is read from")
     row: int = Field(default=0, ge=0)
     evidence_unit: str | None = Field(
-        default=None, description="the unit of a computed result column the catalog does not know"
+        default=None,
+        description="the unit of a computed result column the catalog does not know",
     )
 
 

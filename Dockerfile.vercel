@@ -18,6 +18,11 @@ COPY catalog ./catalog
 COPY prompts ./prompts
 COPY providers ./providers
 COPY evals/plan.yaml evals/registration.json ./evals/
-RUN uv run --no-dev python scripts/fetch_warehouses.py --quiet
+RUN --mount=type=secret,id=github_token \
+    if [ -s /run/secrets/github_token ]; then \
+      GITHUB_TOKEN="$(cat /run/secrets/github_token)" READBACK_FETCH_TRANSPORT=github-api \
+      uv run --no-dev python scripts/fetch_warehouses.py --quiet; \
+    else uv run --no-dev python scripts/fetch_warehouses.py --quiet; fi
 EXPOSE 80
 CMD ["sh", "-c", "/app/.venv/bin/alembic upgrade head && exec /app/.venv/bin/uvicorn readback_api.main:app --host 0.0.0.0 --port ${PORT:-80} --proxy-headers --forwarded-allow-ips='*'"]
+

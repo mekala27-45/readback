@@ -22,9 +22,9 @@ from readback_catalog.index import Index, Synonyms
 from readback_catalog.measures import Measure
 from readback_catalog.measures import load as load_measures
 from readback_catalog.model import WarehouseCatalog
-from readback_core import paths
+from readback_core import paths, warehouse_lock
 from readback_core.hashing import sha256_text
-from readback_warehouse.connection import WAREHOUSES, Warehouse
+from readback_warehouse.connection import Warehouse
 
 
 class BadHandle(ValueError):
@@ -56,7 +56,7 @@ class State:
     @cached_property
     def catalogs(self) -> dict[str, WarehouseCatalog]:
         out = {}
-        for name in WAREHOUSES:
+        for name in warehouse_lock.names(self.root):
             raw = yaml.safe_load((self.root / "catalog" / f"{name}.yaml").read_text(encoding="utf-8"))
             out[name] = WarehouseCatalog.model_validate(raw)
         return out
@@ -85,7 +85,7 @@ class State:
     def manifest(self) -> dict[str, dict[str, ManifestEntry]]:
         import pyarrow.parquet as pq
 
-        out: dict[str, dict[str, ManifestEntry]] = {w: {} for w in WAREHOUSES}
+        out: dict[str, dict[str, ManifestEntry]] = {w: {} for w in warehouse_lock.names(self.root)}
         for row in pq.read_table(self.root / "catalog" / "manifest_index.parquet").to_pylist():
             out[row["warehouse"]][row["key"]] = ManifestEntry(**row)
         return out
@@ -96,8 +96,8 @@ class State:
         import sqlglot
         from sqlglot import exp
 
-        out: dict[str, dict[str, list[str]]] = {w: {} for w in WAREHOUSES}
-        for w in WAREHOUSES:
+        out: dict[str, dict[str, list[str]]] = {w: {} for w in warehouse_lock.names(self.root)}
+        for w in warehouse_lock.names(self.root):
             path = self.warehouse_dir / w / "results" / "manifest.json"
             if not path.exists():
                 continue
@@ -149,12 +149,14 @@ class State:
         configured = os.environ.get("READBACK_RESULT_KEY")
         if configured:
             return configured.encode()
-        lock = (self.root / "data" / "warehouses.lock.json").read_text(encoding="utf-8")
+        lock = json.dumps(warehouse_lock.load(self.root), sort_keys=True)
         return hashlib.sha256(("readback result handle " + sha256_text(lock)).encode()).digest()
 
     def mint(self, warehouse: str, sql: str, digest: str, chain: str) -> str:
         body = json.dumps(
-            {"w": warehouse, "s": sql, "d": digest, "c": chain}, separators=(",", ":"), sort_keys=True
+            {"w": warehouse, "s": sql, "d": digest, "c": chain},
+            separators=(",", ":"),
+            sort_keys=True,
         )
         payload = base64.urlsafe_b64encode(body.encode()).decode().rstrip("=")
         mac = hmac.new(self._handle_key, payload.encode(), hashlib.sha256).hexdigest()[:24]
