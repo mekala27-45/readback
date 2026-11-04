@@ -9,7 +9,7 @@ lets through. The guard in readback_warehouse.guard is the first line; this is t
 
 from __future__ import annotations
 
-import json
+import hashlib
 import os
 import tempfile
 import threading
@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 import duckdb
-from readback_core import paths
+from readback_core import paths, warehouse_lock
 
 WAREHOUSES: tuple[str, ...] = ("doorstep", "turnaround", "ledger")
 
@@ -37,12 +37,17 @@ def _reader(path: Path) -> str:
 def _build_views(db: Path, base: Path, lock: dict[str, Any], extra: dict[tuple[str, str], Path]) -> None:
     con = duckdb.connect(str(db))
     try:
-        for name in WAREHOUSES:
+        for name in sorted(lock["warehouses"]):
             con.execute(f'create schema if not exists "{name}"')
             for t in lock["warehouses"][name]["tables"]:
                 path = base / name / t["path"]
                 if not path.exists():
                     raise WarehouseMissing(f"{name}: {t['path']} is not on disk; run make fetch")
+                if "external_catalog" in lock["warehouses"][name]:
+                    if not path.resolve().is_relative_to((base / name).resolve()):
+                        raise WarehouseMissing("External warehouse path escapes its root")
+                    if hashlib.sha256(path.read_bytes()).hexdigest() != t["sha256"]:
+                        raise WarehouseMissing("External warehouse table differs from its lock")
                 con.execute(
                     f'create or replace view "{name}"."{t["table"]}" as select * from {_reader(path)}'
                 )
@@ -53,7 +58,9 @@ def _build_views(db: Path, base: Path, lock: dict[str, Any], extra: dict[tuple[s
 
 
 def open_warehouse(
-    root: Path | None = None, base: Path | None = None, extra: dict[tuple[str, str], Path] | None = None
+    root: Path | None = None,
+    base: Path | None = None,
+    extra: dict[tuple[str, str], Path] | None = None,
 ) -> duckdb.DuckDBPyConnection:
     """A read only connection with the three schemas, locked against files, extensions and attachment.
 
@@ -66,7 +73,7 @@ def open_warehouse(
     """
     root = root or paths.root()
     base = (base or paths.warehouses_dir()).resolve()
-    lock = json.loads((root / "data" / "warehouses.lock.json").read_text(encoding="utf-8"))
+    lock = warehouse_lock.load(root)
     folder = Path(os.environ.get("READBACK_CACHE", tempfile.gettempdir())) / "readback"
     folder.mkdir(parents=True, exist_ok=True)
     # One file per connection. Two connections in one thread used to share a name, and DuckDB refuses
@@ -74,7 +81,9 @@ def open_warehouse(
     db = folder / f"views-{os.getpid()}-{threading.get_ident()}-{uuid.uuid4().hex[:8]}.duckdb"
     extra = extra or {}
     _build_views(db, base, lock, extra)
-    allowed = sorted(str(base / n / t["path"]) for n in WAREHOUSES for t in lock["warehouses"][n]["tables"])
+    allowed = sorted(
+        str(base / n / t["path"]) for n in sorted(lock["warehouses"]) for t in lock["warehouses"][n]["tables"]
+    )
     allowed += sorted(str(p.resolve()) for p in extra.values())
     con = duckdb.connect(
         str(db),

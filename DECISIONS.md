@@ -239,3 +239,8 @@ allowed the loopback names with a port. Every test had used a random high port a
 The bare loopback names are allowed now, with a test; the port is read when a turn starts rather
 than at import; a turn that fails on the server now ends its stream with an error event, and the
 desk says so when a stream closes without an answer, instead of showing nothing.
+
+## 2026-11-04: optional MLSpend warehouse
+
+MLSpend publishes a simulated showback table and consumer catalog. The optional combined lock is generated from a pinned source checkout; the original lock and registered evaluation remain unchanged. Runtime discovery and the read-only connection use the selected lock. External catalogs must match locked bytes, table identities, column types, row counts and unique grains. External metric SQL is not executed. Guarded SQL and numeric readback remain required; the deterministic floor keeps its existing families. A separate integration job exercises the actual exported table and both refusal layers.
+

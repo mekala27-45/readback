@@ -53,6 +53,44 @@ jobs:
       - name: The notebooks
         run: uv run pytest --nbmake notebooks -q
 
+  mlspend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.12'
+      - run: uv sync --frozen
+      - name: Read the pinned source
+        id: source
+        run: |
+          python -c "import json,os; open(os.environ['GITHUB_OUTPUT'],'a').write('commit='+json.load(open('data/mlspend.source.json'))['commit']+'\n')"
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          repository: mekala27-45/mlspend
+          ref: ${{ steps.source.outputs.commit }}
+          path: .sources/mlspend
+          persist-credentials: false
+      - name: Generate combined lock and fetch verified files
+        env:
+          MLSPEND_COMMIT: ${{ steps.source.outputs.commit }}
+          READBACK_WAREHOUSE_LOCK: data/warehouses.mlspend.lock.json
+        run: |
+          uv run python scripts/add_mlspend.py --source .sources/mlspend --commit "$MLSPEND_COMMIT"
+          uv run python scripts/fetch_warehouses.py
+          uv run python scripts/build_catalog.py
+          uv run python scripts/check_mlspend.py | tee mlspend-integration.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mlspend-integration
+          path: |
+            mlspend-integration.json
+            data/warehouses.mlspend.lock.json
+            catalog/mlspend.yaml
+
   container:
     runs-on: ubuntu-latest
     steps:
@@ -63,3 +101,4 @@ jobs:
           docker run -d --name rb -p 8080:80 -e READBACK_SQLITE=/tmp/rb.sqlite readback
           for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8080/health && break; sleep 2; done
           curl -fsS http://127.0.0.1:8080/health | grep -q '"status":"ok"'
+

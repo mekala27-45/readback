@@ -14,9 +14,6 @@ from typing import Any, Literal
 from readback_core.formats import format_value
 from readback_core.units import spec
 from readback_gate.compare import compare
-from readback_warehouse.guard import Refused, guard
-from readback_warehouse.run import TimedOut, execute
-
 from readback_mcp_server.schemas import (
     Claim,
     ColumnOut,
@@ -34,6 +31,8 @@ from readback_mcp_server.schemas import (
     WarehousesOut,
 )
 from readback_mcp_server.state import BadHandle, State
+from readback_warehouse.guard import Refused, guard
+from readback_warehouse.run import TimedOut, execute
 
 SEARCH_CEILING = 20
 PUBLISHED_CEILING = 50
@@ -47,7 +46,7 @@ class ToolRefusal(ValueError):
 def _check_warehouse(state: State, warehouse: str) -> None:
     if warehouse not in state.catalogs:
         raise ToolRefusal(
-            f"there is no warehouse {warehouse!r}; the three are doorstep, turnaround and ledger"
+            f"there is no warehouse {warehouse!r}; consult the warehouses tool for the selected lock"
         )
 
 
@@ -109,7 +108,11 @@ def describe(state: State, warehouse: str, table: str) -> DescribeOut:
 
 
 def search_catalog(
-    state: State, query: str, k: int = 8, warehouse: str | None = None, kind: str | None = None
+    state: State,
+    query: str,
+    k: int = 8,
+    warehouse: str | None = None,
+    kind: str | None = None,
 ) -> SearchOut:
     if warehouse is not None:
         _check_warehouse(state, warehouse)
@@ -262,7 +265,10 @@ def _readback_definition(state: State, claim: Claim) -> ReadbackOut:
     """A number the build's own definitions document prints: agree when the document prints it."""
     from readback_gate.gate import tokens
 
-    doc = next((d for d in state.index.docs if d.id == claim.definition_id and d.kind == "definition"), None)
+    doc = next(
+        (d for d in state.index.docs if d.id == claim.definition_id and d.kind == "definition"),
+        None,
+    )
     if doc is None:
         return _refused(claim, f"there is no definition {claim.definition_id!r}")
     printed = [t.value for t in tokens(doc.definition or "")]
@@ -309,12 +315,19 @@ def readback(state: State, claim: Claim, chain: str) -> ReadbackOut:
     """Re-run or look up the evidence for one claim and compare it in the claim's unit."""
     sources = [
         s
-        for s in (claim.result_id, claim.sql, claim.manifest_key, claim.catalog_key, claim.definition_id)
+        for s in (
+            claim.result_id,
+            claim.sql,
+            claim.manifest_key,
+            claim.catalog_key,
+            claim.definition_id,
+        )
         if s
     ]
     if len(sources) != 1:
         return _refused(
-            claim, "a claim needs exactly one of result_id, sql, manifest_key, catalog_key or definition_id"
+            claim,
+            "a claim needs exactly one of result_id, sql, manifest_key, catalog_key or definition_id",
         )
     try:
         if claim.definition_id:
@@ -339,10 +352,19 @@ def readback(state: State, claim: Claim, chain: str) -> ReadbackOut:
                 return _refused(claim, "a manifest key needs its warehouse")
             entry = state.manifest[claim.warehouse].get(claim.manifest_key)
             if entry is None:
-                return _refused(claim, f"{claim.warehouse}'s manifest has no key {claim.manifest_key!r}")
+                return _refused(
+                    claim,
+                    f"{claim.warehouse}'s manifest has no key {claim.manifest_key!r}",
+                )
             if entry.value is None:
                 return _refused(claim, f"{claim.manifest_key} is text, not a number")
-            c = compare(claim.value, claim.unit, entry.value, entry.unit, published_step=entry.step)
+            c = compare(
+                claim.value,
+                claim.unit,
+                entry.value,
+                entry.unit,
+                published_step=entry.step,
+            )
             return ReadbackOut(
                 verdict=c.verdict,
                 claim=claim.value,
@@ -365,7 +387,10 @@ def readback(state: State, claim: Claim, chain: str) -> ReadbackOut:
         g = guard(sql, warehouse, state.tables(warehouse))
         r = execute(state.warehouse, g, count=False)
         if digest and r.digest != digest:
-            return _refused(claim, "re-running the result id returned different rows than the first run")
+            return _refused(
+                claim,
+                "re-running the result id returned different rows than the first run",
+            )
         column, cell = _cell(r.columns, r.rows, claim.column, claim.row)
     except (BadHandle, Refused, ToolRefusal, TimedOut) as err:
         return _refused(claim, str(err))
@@ -395,7 +420,16 @@ def readback(state: State, claim: Claim, chain: str) -> ReadbackOut:
 
 # lookup
 
-KINDS = ("metro", "carrier", "airport", "applicant_group", "aml_rule", "year", "quarter", "county")
+KINDS = (
+    "metro",
+    "carrier",
+    "airport",
+    "applicant_group",
+    "aml_rule",
+    "year",
+    "quarter",
+    "county",
+)
 KIND_WAREHOUSE = {
     "metro": "doorstep",
     "county": "ledger",
@@ -454,12 +488,16 @@ def candidates(state: State, kind: str, name: str) -> tuple[str | None, list[Loo
         if kind == "airport" and re.fullmatch(r"[A-Za-z]{3}", name.strip()):
             code = name.strip().upper()
             hit = state.warehouse.scalar(
-                "select count(*) from turnaround.mart_airport_day where airport = ?", [code]
+                "select count(*) from turnaround.mart_airport_day where airport = ?",
+                [code],
             )
             if hit:
                 return code, []
         pool = difflib.get_close_matches(
-            name, [a for v in names.values() for a in v] + [str(k) for k in names], n=5, cutoff=0.5
+            name,
+            [a for v in names.values() for a in v] + [str(k) for k in names],
+            n=5,
+            cutoff=0.5,
         )
         return None, [LookupCandidate(value=p, label=p) for p in pool]
     if kind == "year":
@@ -482,7 +520,11 @@ def candidates(state: State, kind: str, name: str) -> tuple[str | None, list[Loo
 
 
 def lookup_result(
-    kind: str, name: str, resolved: str | None, cands: list[LookupCandidate], asked: bool
+    kind: str,
+    name: str,
+    resolved: str | None,
+    cands: list[LookupCandidate],
+    asked: bool,
 ) -> LookupOut:
     return LookupOut(
         kind=kind,

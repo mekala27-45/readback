@@ -23,9 +23,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from readback_core.units import SPECS, Unit, spec
-
 from readback_catalog.definitions import Entry, by_term, parse
+from readback_catalog.external import load_external
 from readback_catalog.index import Doc, Index, Synonyms
 from readback_catalog.model import (
     Citation,
@@ -37,6 +36,8 @@ from readback_catalog.model import (
     TableEntry,
     WarehouseCatalog,
 )
+from readback_core import warehouse_lock
+from readback_core.units import SPECS, Unit, spec
 
 NUMERIC = (
     "TINYINT",
@@ -159,7 +160,11 @@ class Sources:
                     raise KeyError(
                         f"{self.warehouse}: definition_terms names {term!r}, absent from the document"
                     )
-                return entry.text, Citation(file="docs/definitions.md", line=entry.line), "definitions"
+                return (
+                    entry.text,
+                    Citation(file="docs/definitions.md", line=entry.line),
+                    "definitions",
+                )
         if n in self.overrides:
             return self.overrides[n], None, "hand edit"
         return None
@@ -233,10 +238,16 @@ def _grain(con: Any, rel: str, rows: int, keys: list[str]) -> tuple[list[str], b
 
 
 def build_warehouse(
-    root: Path, warehouse: str, lock: dict[str, Any], rules: Rules, quarantine: list[QuarantineRow]
+    root: Path,
+    warehouse: str,
+    lock: dict[str, Any],
+    rules: Rules,
+    quarantine: list[QuarantineRow],
 ) -> WarehouseCatalog:
     import duckdb
 
+    if "external_catalog" in lock:
+        return load_external(root, warehouse, lock)
     con = duckdb.connect()
     sources = load_sources(root, warehouse)
     tables: list[TableEntry] = []
@@ -271,7 +282,10 @@ def build_warehouse(
             elif any(ty.startswith(k) for k in TIME_TYPES):
                 role, unit = "time", "none"
             elif not any(ty.startswith(k) for k in NUMERIC):
-                role, unit = ("label" if "VARCHAR" in ty or "BOOL" in ty else "key"), "none"
+                role, unit = (
+                    ("label" if "VARCHAR" in ty or "BOOL" in ty else "key"),
+                    "none",
+                )
             else:
                 base = re.sub(r"_(low|high|moe)$", "", n)
                 if base != n and base in units_by_name:
@@ -387,7 +401,11 @@ def build_warehouse(
 
 
 def build_metrics(
-    root: Path, warehouse: str, con: Any, tables: list[TableEntry], quarantine: list[QuarantineRow]
+    root: Path,
+    warehouse: str,
+    con: Any,
+    tables: list[TableEntry],
+    quarantine: list[QuarantineRow],
 ) -> list[Metric]:
     base = root / "data" / "warehouses" / warehouse
     mart = METRIC_MART[warehouse]
@@ -527,7 +545,10 @@ def humanize(name: str) -> str:
 def definition_docs(root: Path) -> list[Doc]:
     """Each entry of each build's definitions document, whole paragraph, cited by line."""
     docs: list[Doc] = []
-    for warehouse in ("doorstep", "turnaround", "ledger"):
+    selected = warehouse_lock.load(root)
+    for warehouse in sorted(selected["warehouses"]):
+        if "external_catalog" in selected["warehouses"][warehouse]:
+            continue
         text = (root / "data/warehouses" / warehouse / "docs/definitions.md").read_text(encoding="utf-8")
         seen: set[str] = set()
         for e in parse(text):
@@ -550,7 +571,9 @@ def definition_docs(root: Path) -> list[Doc]:
 
 
 def docs_for(
-    catalogs: list[WarehouseCatalog], manifest: list[ManifestRow], root: Path | None = None
+    catalogs: list[WarehouseCatalog],
+    manifest: list[ManifestRow],
+    root: Path | None = None,
 ) -> list[Doc]:
     docs: list[Doc] = definition_docs(root) if root is not None else []
     for c in catalogs:
@@ -637,7 +660,7 @@ def write_manifest_index(path: Path, rows: Iterable[ManifestRow]) -> None:
 
 
 def build(root: Path) -> dict[str, Any]:
-    lock = json.loads((root / "data/warehouses.lock.json").read_text(encoding="utf-8"))
+    lock = warehouse_lock.load(root)
     rules = Rules.load(root / "catalog/unit_rules.yaml")
     quarantine: list[QuarantineRow] = []
     catalogs = [
@@ -645,6 +668,8 @@ def build(root: Path) -> dict[str, Any]:
     ]
     manifest: list[ManifestRow] = []
     for w in sorted(lock["warehouses"]):
+        if "external_catalog" in lock["warehouses"][w]:
+            continue
         manifest.extend(manifest_rows(root, w, quarantine))
     for c in catalogs:
         locked = {t["table"] for t in lock["warehouses"][c.warehouse]["tables"]}

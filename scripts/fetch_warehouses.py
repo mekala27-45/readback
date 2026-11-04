@@ -128,7 +128,8 @@ def main() -> int:
     parser.add_argument("--verify", action="store_true")
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
-    lock_path = ROOT / "data" / "warehouses.lock.json"
+    selected = Path(os.environ.get("READBACK_WAREHOUSE_LOCK", "data/warehouses.lock.json"))
+    lock_path = selected if selected.is_absolute() else ROOT / selected
     base = Path(os.environ.get("READBACK_WAREHOUSES", ROOT / "data" / "warehouses"))
     if args.verify:
         n = verify(lock_path, base)
