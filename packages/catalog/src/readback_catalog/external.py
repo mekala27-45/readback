@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import duckdb
+
 from readback_catalog.model import WarehouseCatalog
 
 
@@ -65,7 +66,6 @@ def load_external(root: Path, warehouse: str, lock: dict[str, Any]) -> Warehouse
                     raise ValueError("Declared table grain is not unique")
         # External metric SQL is data, not executable catalog-build code. Table queries
         # still go through the normal SQL guard and numeric readback gate at runtime.
-        catalog.metrics = []
-        return catalog
+        return catalog.model_copy(update={"metrics": []})
     finally:
         con.close()

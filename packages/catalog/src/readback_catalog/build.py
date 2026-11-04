@@ -23,6 +23,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from readback_core import warehouse_lock
+from readback_core.units import SPECS, Unit, spec
+
 from readback_catalog.definitions import Entry, by_term, parse
 from readback_catalog.external import load_external
 from readback_catalog.index import Doc, Index, Synonyms
@@ -36,8 +39,6 @@ from readback_catalog.model import (
     TableEntry,
     WarehouseCatalog,
 )
-from readback_core import warehouse_lock
-from readback_core.units import SPECS, Unit, spec
 
 NUMERIC = (
     "TINYINT",
