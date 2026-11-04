@@ -98,11 +98,13 @@ jobs:
 
   container:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - name: The Vercel image builds and answers /health
         run: |
-          docker build -f Dockerfile.vercel -t readback .
+          docker build --secret id=github_token,env=GITHUB_TOKEN -f Dockerfile.vercel -t readback .
           docker run -d --name rb -p 8080:80 -e READBACK_SQLITE=/tmp/rb.sqlite readback
           for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8080/health && break; sleep 2; done
           curl -fsS http://127.0.0.1:8080/health | grep -q '"status":"ok"'
