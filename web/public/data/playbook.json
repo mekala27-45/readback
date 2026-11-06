@@ -150,6 +150,11 @@
    "date": "2026-10-23",
    "html": "<p>The first live question on the desk came back empty. On Vercel the container listens on port 80, so\nthe agent's loopback client sent a Host header with no port, and the DNS rebinding protection only\nallowed the loopback names with a port. Every test had used a random high port and never saw it.\nThe bare loopback names are allowed now, with a test; the port is read when a turn starts rather\nthan at import; a turn that fails on the server now ends its stream with an error event, and the\ndesk says so when a stream closes without an answer, instead of showing nothing.</p>\n",
    "title": "the agent's loopback client was refused by the server's own Host check (revision 2026-07-28)"
+  },
+  {
+   "date": "2026-11-04",
+   "html": "<p>MLSpend publishes a simulated showback table and consumer catalog. The optional combined lock is generated from a pinned source checkout; the original lock and registered evaluation remain unchanged. Runtime discovery and the read-only connection use the selected lock. External catalogs must match locked bytes, table identities, column types, row counts and unique grains. External metric SQL is not executed. Guarded SQL and numeric readback remain required; the deterministic floor keeps its existing families. A separate integration job exercises the actual exported table and both refusal layers.</p>\n",
+   "title": "optional MLSpend warehouse"
   }
  ],
  "skills": [
