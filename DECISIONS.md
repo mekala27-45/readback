@@ -244,3 +244,8 @@ desk says so when a stream closes without an answer, instead of showing nothing.
 
 MLSpend publishes a simulated showback table and consumer catalog. The optional combined lock is generated from a pinned source checkout; the original lock and registered evaluation remain unchanged. Runtime discovery and the read-only connection use the selected lock. External catalogs must match locked bytes, table identities, column types, row counts and unique grains. External metric SQL is not executed. Guarded SQL and numeric readback remain required; the deterministic floor keeps its existing families. A separate integration job exercises the actual exported table and both refusal layers.
 
+## 2026-11-06: pin Pages to the supported browser runner
+
+The Pages freshness check exposed an unrefreshed playbook after the MLSpend decision. Regenerate it from the committed exporter and run the same freshness check in regular CI so pull requests catch this mismatch. The next publish then reached browser installation and found that ubuntu-latest had moved to Ubuntu 26.04, which the locked Playwright version does not support. Pin the Pages build to supported Ubuntu 24.04 without changing the browser or application dependencies. Keep the freshness and browser checks required before deployment.
+
+
