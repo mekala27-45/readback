@@ -35,6 +35,10 @@ jobs:
         run: uv run python scripts/fetch_warehouses.py
       - name: Gates
         run: make gates
+      - name: Generated site data is current
+        run: |
+          uv run python scripts/export_site.py
+          git diff --exit-code -- web/public/data
       - name: Lint and types
         run: |
           uv run ruff check .
